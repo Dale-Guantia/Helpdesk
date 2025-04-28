@@ -12,6 +12,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Models\Office;
+
 
 class UserResource extends Resource
 {
@@ -31,49 +33,66 @@ class UserResource extends Resource
                     ->email()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('phone')
-                    ->label('Phone Number')
-                    ->tel()
-                    ->prefix('+63')
-                    ->minLength(10) // At least 11 digits
-                    ->maxLength(11) // Up to 11 digits
-                    ->numeric() // Only allow numbers
-                    ->dehydrated(fn ($state) => filled($state)) // Send only if field has value
-                    ->visible(fn ($record) => true) // Always visible (edit or create)
-                    ->placeholder('Enter phone number')
-                    ->prefixIcon('heroicon-o-phone')
-                    ->autocomplete('tel')
-                    ->rules([
-                        'nullable',
-                        'regex:/^[0-9]{10,11}$/'
-                    ]),
-                // Forms\Components\Select::make('office_id')
-                //     ->options(Office::all()
-                //         ->pluck('name', 'id'))
-                //     ->searchable(),
+                    ->tel(),
+                Forms\Components\Select::make('office_id')
+                    ->options(Office::all()
+                    ->pluck('office_name', 'id')),
                 Forms\Components\TextInput::make('password')
                     ->password()
                     ->confirmed()
+                    ->required()
                     ->revealable()
-                    ->maxLength(255)
-                    ->dehydrated(fn ($state) => filled($state)) // Only send if filled
-                    ->visible(fn ($record) => $record === null) // Show only when creating
-                    ->required(fn ($record) => $record === null) // Required only when creating
-                    ->same('passwordConfirmation') // Must match the confirmation field
-                    ->autocomplete('new-password'),
-                Forms\Components\TextInput::make('passwordConfirmation')
-                    ->label('Confirm Password')
+                    ->visible(fn ($record) => $record === null),
+                Forms\Components\TextInput::make('password_confirmation')
                     ->password()
+                    ->required()
                     ->revealable()
-                    ->required(fn ($state, $get) => filled($get('password'))) // Only require if password is filled
-                    ->autocomplete('new-password'),
+                    ->visible(fn ($record) => $record === null),
+                Forms\Components\Toggle::make('is_active')
+                    ->label('Activate/Deactivate User')
+                    ->default(true)
+                    ->inline(false)
+                    ->required()
+                    ->reactive()
+                    ->dehydrated(fn ($state) => filled($state)) // Only send if field has value
+                    ->visible(fn ($record) => true) // Always visible (edit or create)
+                    ->rules([
+                        'boolean',
+                        'nullable',
+                    ]),
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->query(User::with('office'))
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('id')
+                    ->label('User ID')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Name')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('email')
+                    ->label('Email')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('phone')
+                    ->label('Phone Number')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('office.office_name')
+                    ->label('Office Name')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\BooleanColumn::make('is_active')
+                    ->label('Status')
+                    ->trueIcon('heroicon-o-check-circle')
+                    ->falseIcon('heroicon-o-x-circle')
+                    ->sortable(),
             ])
             ->filters([
                 //
