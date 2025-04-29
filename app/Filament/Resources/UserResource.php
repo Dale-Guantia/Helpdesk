@@ -19,7 +19,7 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
     public static function form(Form $form): Form
     {
@@ -27,27 +27,36 @@ class UserResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->prefixIcon('heroicon-m-user'),
                 Forms\Components\TextInput::make('email')
                     ->required()
                     ->email()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->prefixIcon('heroicon-m-envelope'),
                 Forms\Components\TextInput::make('phone')
-                    ->tel(),
+                    ->label('Phone Number')
+                    ->tel()
+                    ->maxLength(11)
+                    ->minLength(10)
+                    ->prefixIcon('heroicon-m-phone'),
                 Forms\Components\Select::make('office_id')
                     ->options(Office::all()
-                    ->pluck('office_name', 'id')),
+                    ->pluck('office_name', 'id'))
+                    ->prefixIcon('heroicon-m-building-office-2'),
                 Forms\Components\TextInput::make('password')
                     ->password()
                     ->confirmed()
                     ->required()
                     ->revealable()
-                    ->visible(fn ($record) => $record === null),
+                    ->visible(fn ($record) => $record === null)
+                    ->prefixIcon('heroicon-m-lock-closed'),
                 Forms\Components\TextInput::make('password_confirmation')
                     ->password()
                     ->required()
                     ->revealable()
-                    ->visible(fn ($record) => $record === null),
+                    ->visible(fn ($record) => $record === null)
+                    ->prefixIcon('heroicon-m-lock-closed'),
                 Forms\Components\Toggle::make('is_active')
                     ->label('Activate/Deactivate User')
                     ->default(true)

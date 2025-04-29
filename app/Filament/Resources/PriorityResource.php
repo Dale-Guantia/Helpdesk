@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\OfficeResource\Pages;
-use App\Filament\Resources\OfficeResource\RelationManagers;
-use App\Models\Office;
+use App\Filament\Resources\PriorityResource\Pages;
+use App\Filament\Resources\PriorityResource\RelationManagers;
+use App\Models\Priority;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,17 +13,17 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class OfficeResource extends Resource
+class PriorityResource extends Resource
 {
-    protected static ?string $model = Office::class;
+    protected static ?string $model = Priority::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
+    protected static ?string $navigationIcon = 'heroicon-o-flag';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('office_name')
+                Forms\Components\TextInput::make('priority_name')
                 ->required()
                 ->maxLength(255),
             ]);
@@ -34,11 +34,11 @@ class OfficeResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')
-                    ->label('Office ID')
+                    ->label('Priority ID')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('office_name')
-                    ->label('Office Name')
+                Tables\Columns\TextColumn::make('priority_name')
+                    ->label('Priority Name')
                     ->searchable()
                     ->sortable(),
             ])
@@ -65,9 +65,9 @@ class OfficeResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListOffices::route('/'),
-            'create' => Pages\CreateOffice::route('/create'),
-            'edit' => Pages\EditOffice::route('/{record}/edit'),
+            'index' => Pages\ListPriorities::route('/'),
+            'create' => Pages\CreatePriority::route('/create'),
+            'edit' => Pages\EditPriority::route('/{record}/edit'),
         ];
     }
 }

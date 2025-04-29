@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 
-class Office extends Model
+class Status extends Model
 {
     use HasFactory, Notifiable, SoftDeletes;
     /**
@@ -16,11 +16,10 @@ class Office extends Model
      *
      * @return array<string, string>s
      */
-
-    protected $table = 'offices';
+    protected $table = 'statuses';
 
     protected $fillable = [
-        'office_name',
+        'status_name',
         'created_at',
         'updated_at',
         'deleted_at',
