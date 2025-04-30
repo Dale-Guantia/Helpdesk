@@ -41,8 +41,7 @@ class UserResource extends Resource
                     ->minLength(10)
                     ->prefixIcon('heroicon-m-phone'),
                 Forms\Components\Select::make('office_id')
-                    ->options(Office::all()
-                    ->pluck('office_name', 'id'))
+                    ->relationship('office', 'office_name')
                     ->prefixIcon('heroicon-m-building-office-2'),
                 Forms\Components\TextInput::make('password')
                     ->password()

@@ -24,4 +24,9 @@ class ProblemCategory extends Model
         'updated_at',
         'deleted_at',
     ];
+
+    public function office()
+    {
+        return $this->belongsTo(Office::class);
+    }
 }

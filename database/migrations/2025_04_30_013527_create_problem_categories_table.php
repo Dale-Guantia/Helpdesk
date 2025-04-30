@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('problem_categories', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('office_id')->nullable()->constrained()->index()->onUpdate('cascade')->onDelete('cascade');
             $table->string('category_name');
             $table->timestamps();
             $table->softDeletes();

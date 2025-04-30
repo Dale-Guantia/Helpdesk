@@ -23,9 +23,12 @@ class ProblemCategoryResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\Select::make('office_id')
+                    ->relationship('office', 'office_name')
+                    ->prefixIcon('heroicon-m-building-office-2'),
                 Forms\Components\TextInput::make('category_name')
-                ->required()
-                ->maxLength(255),
+                    ->required()
+                    ->maxLength(255),
             ]);
     }
 
@@ -35,6 +38,10 @@ class ProblemCategoryResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->label('Category ID')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('office.office_name')
+                    ->label('Office Name')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('category_name')
