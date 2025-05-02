@@ -18,6 +18,20 @@ class Ticket extends Model
      */
     protected $table = 'tickets';
 
+    protected $fillable = [
+        'title',
+        'description',
+        'office_id',
+        'priority_id',
+        'status_id',
+        'category_id',
+        'attachment',
+    ];
+
+    protected $casts = [
+        'attachment' => 'array',
+    ];
+
 
     public function office()
     {
@@ -34,7 +48,7 @@ class Ticket extends Model
         return $this->belongsTo(Status::class);
     }
 
-    public function problem_category()
+    public function problemCategory()
     {
         return $this->belongsTo(ProblemCategory::class);
     }

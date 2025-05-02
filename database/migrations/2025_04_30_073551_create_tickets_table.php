@@ -14,11 +14,12 @@ return new class extends Migration
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('office_id')->nullable()->index('office_id');
-            $table->unsignedBigInteger('category_id')->nullable()->index('category_id');
+            $table->unsignedBigInteger('problem_category_id')->nullable()->index('category_id');
             $table->unsignedBigInteger('priority_id')->nullable()->index('priority_id');
             $table->unsignedBigInteger('status_id')->nullable()->index('status_id');
             $table->string('title');
             $table->text('description');
+            $table->string('attachment')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
