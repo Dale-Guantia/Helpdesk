@@ -17,6 +17,8 @@ class PriorityResource extends Resource
 {
     protected static ?string $model = Priority::class;
 
+    protected static ?int $navigationSort = 3;
+
     protected static ?string $navigationIcon = 'heroicon-o-flag';
 
     public static function form(Form $form): Form

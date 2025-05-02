@@ -17,6 +17,7 @@ class StatusResource extends Resource
 {
     protected static ?string $model = Status::class;
 
+    protected static ?int $navigationSort = 5;
     protected static ?string $navigationIcon = 'heroicon-o-tag';
 
     public static function form(Form $form): Form
