@@ -21,6 +21,9 @@ use App\Filament\Resources;
 use Joaopaulolndev\FilamentEditProfile\FilamentEditProfilePlugin;
 use Joaopaulolndev\FilamentEditProfile\Pages\EditProfilePage;
 use Filament\Navigation\MenuItem;
+use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
+use Illuminate\Support\Facades\Auth;
+
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -65,16 +68,17 @@ class AdminPanelProvider extends PanelProvider
                     ->setTitle('My Profile')
                     ->setIcon('heroicon-o-user')
                     ->setSort(10)
-                    ->canAccess(fn () => auth()->user()->id === 1)
+                    ->canAccess(fn () => Auth::user()->id === 1)
                     ->shouldRegisterNavigation(false)
                     ->shouldShowDeleteAccountForm(false)
                     ->shouldShowAvatarForm()
-                    ->shouldShowBrowserSessionsForm(false)
+                    ->shouldShowBrowserSessionsForm(false),
+                FilamentApexChartsPlugin::make()
             ])
 
             ->userMenuItems([
                 'profile' => MenuItem::make()
-                    ->label(fn() => auth()->user()->name)
+                    ->label(fn() => Auth::user()->name)
                     ->url(fn (): string => EditProfilePage::getUrl())
                     ->icon('heroicon-m-user-circle')
                     //If you are using tenancy need to check with the visible method where ->company() is the relation between the user and tenancy model as you called
