@@ -30,8 +30,8 @@ class AdminPanelProvider extends PanelProvider
     {
         return $panel
             ->default()
-            ->id('admin')
-            ->path('admin')
+            ->id('ticketing')
+            ->path('ticketing')
             ->login()
             ->sidebarCollapsibleOnDesktop()
             ->colors([
@@ -67,7 +67,7 @@ class AdminPanelProvider extends PanelProvider
                     ->setTitle('My Profile')
                     ->setIcon('heroicon-o-user')
                     ->setSort(10)
-                    ->canAccess(fn () => Auth::user()->id === 1)
+                    ->canAccess(fn () => Auth::user()->role === 'ADMIN' || Auth::user()->role === 'EMPLOYEE')
                     ->shouldRegisterNavigation(false)
                     ->shouldShowDeleteAccountForm(false)
                     ->shouldShowAvatarForm()

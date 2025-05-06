@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,6 +19,7 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->foreignId('office_id')->nullable()->constrained()->index()->onUpdate('cascade')->onDelete('cascade');
             $table->boolean('is_active')->default(true);
+            $table->string('role')->default(User::DEFAULT_ROLE);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

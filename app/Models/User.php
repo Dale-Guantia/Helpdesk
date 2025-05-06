@@ -3,16 +3,43 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Support\Facades\Storage;
+use Filament\Panel;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
+
+    const ROLE_ADMIN = 'ADMIN';
+    const ROLE_EMPLOYEE = 'EMPLOYEE';
+    const ROLE_USER = 'USER';
+    const DEFAULT_ROLE = self::ROLE_USER;
+    const ROLES = [
+        self::ROLE_ADMIN => 'Admin',
+        self::ROLE_EMPLOYEE => 'Employee',
+        self::ROLE_USER => 'User',
+    ];
+
+    public function isAdmin()
+    {
+        return $this->role === self::ROLE_ADMIN;
+    }
+
+    public function isEmployee()
+    {
+        return $this->role === self::ROLE_EMPLOYEE;
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->isAdmin() || $this->isEmployee();
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -26,6 +53,7 @@ class User extends Authenticatable
         'phone',
         'office_id',
         'is_active',
+        'role',
         'avatar_url',
         'created_at',
         'updated_at',

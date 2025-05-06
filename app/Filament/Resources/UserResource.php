@@ -23,6 +23,11 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->can('viewAny', User::class);
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -58,6 +63,10 @@ class UserResource extends Resource
                     ->revealable()
                     ->visible(fn ($record) => $record === null)
                     ->prefixIcon('heroicon-m-lock-closed'),
+                Forms\Components\Select::make('role')
+                    ->options(User::ROLES)
+                    ->required()
+                    ->prefixIcon('heroicon-m-users'),
                 Forms\Components\Toggle::make('is_active')
                     ->label('Activate/Deactivate User')
                     ->default(true)
@@ -90,8 +99,8 @@ class UserResource extends Resource
                     ->label('Email')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('phone')
-                    ->label('Phone Number')
+                Tables\Columns\TextColumn::make('role')
+                    ->label('Role')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('office.office_name')
