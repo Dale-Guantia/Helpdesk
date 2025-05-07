@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
+use Parallax\FilamentComments\Models\Traits\HasFilamentComments;
 
 class Ticket extends Model
 {
-    use HasFactory, Notifiable, SoftDeletes;
+    use HasFactory, Notifiable, SoftDeletes, HasFilamentComments;
     /**
      * The attributes that should be cast.
      *
