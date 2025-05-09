@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\TicketResource\RelationManagers;
 
 use Filament\Forms;
-use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
@@ -12,8 +11,7 @@ use Filament\Forms\Components\Card;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+
 
 class CommentsRelationManager extends RelationManager
 {
@@ -27,6 +25,7 @@ class CommentsRelationManager extends RelationManager
                     Forms\Components\Textarea::make('comment'),
                     Forms\Components\FileUpload::make('attachment')
                     ->multiple()
+                    ->preserveFilenames()
                     ->enableOpen()
                     ->enableDownload()
                     ->directory('attachments/' . date('m-y'))
@@ -78,11 +77,25 @@ class CommentsRelationManager extends RelationManager
                 })
             ])
             ->actions([
-                Tables\Actions\Action::make('attachment')->action(function ($record) {
-                    return response()->download('storage/' . $record->attachments);
-                })->hidden(fn ($record) => $record->attachments == ''),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\Action::make('attachment')
+                    ->label('')
+                    ->icon('heroicon-o-paper-clip')
+                    ->modalSubmitAction(false)
+                    ->modalCancelAction(false)
+                    ->modalHeading('Attachments')
+                    ->modalSubheading('Click on an attachment to open it in a new tab.')
+                    ->modalContent(function ($record) {
+                        $attachments = $record['attachment'] ?? [];
+                        return view('filament.components.attachment-modal', [
+                            'attachments' => $attachments,
+                        ]);
+                    }),
+                Tables\Actions\EditAction::make()
+                    ->label('')
+                    ->hidden(fn ($record) => !auth()->user()->isAdmin() && auth()->id() !== $record->id),
+                Tables\Actions\DeleteAction::make()
+                    ->label('')
+                    ->hidden(fn ($record) => !auth()->user()->isAdmin() && auth()->id() !== $record->id),
             ])
             ->bulkActions([]);
     }

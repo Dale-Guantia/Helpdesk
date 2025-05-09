@@ -11,6 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use App\Models\Office;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ProblemCategoryResource extends Resource
@@ -27,7 +28,19 @@ class ProblemCategoryResource extends Resource
             ->schema([
                 Forms\Components\Select::make('office_id')
                     ->relationship('office', 'office_name')
-                    ->prefixIcon('heroicon-m-building-office-2'),
+                    ->prefixIcon('heroicon-m-building-office-2')
+                    ->options(function () {
+                        $user = auth()->user();
+                        // Admin can select all offices
+                        if ($user->isAdmin()) {
+                            return Office::all()->pluck('office_name', 'id');
+                        }
+                        // Non-admin: only their own office
+                        return Office::where('id', $user->office_id)->pluck('office_name', 'id');
+                    })
+                    ->default(auth()->user()->isAdmin() ? null : auth()->user()->office_id)
+                    ->disabled(!auth()->user()->isAdmin()) // disable for non-admins
+                    ->required(),
                 Forms\Components\TextInput::make('category_name')
                     ->required()
                     ->maxLength(255),
@@ -37,6 +50,7 @@ class ProblemCategoryResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->query(static::getTableQuery())
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->label('Category ID')
@@ -62,6 +76,19 @@ class ProblemCategoryResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    protected static function getTableQuery(): Builder
+    {
+        $user = auth()->user();
+
+        // If admin, return all records
+        if ($user->isAdmin()) {
+            return static::getModel()::query();
+        }
+
+        // Otherwise filter by office_id
+        return static::getModel()::where('office_id', $user->office_id);
     }
 
     public static function getRelations(): array

@@ -85,7 +85,7 @@ class UserResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->query(User::with('office'))
+            ->query(static::getTableQuery())
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->label('User ID')
@@ -124,6 +124,19 @@ class UserResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    protected static function getTableQuery(): Builder
+    {
+        $user = auth()->user();
+
+        // If admin, return all records
+        if ($user->isAdmin()) {
+            return static::getModel()::query();
+        }
+
+        // Otherwise filter by office_id
+        return static::getModel()::where('office_id', $user->office_id);
     }
 
     public static function getRelations(): array

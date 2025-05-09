@@ -25,25 +25,10 @@ class TicketResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('title')
+                Forms\Components\Section::make()->schema([
+                    Forms\Components\TextInput::make('title')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Select::make('office_id')
-                    ->label('Office of concern')
-                    ->required()
-                    ->relationship('office', 'office_name'),
-                Forms\Components\Select::make('problem_category_id')
-                    ->label('Problem Category')
-                    ->required()
-                    ->relationship('problemCategory', 'category_name'),
-                Forms\Components\Select::make('priority_id')
-                    ->label('Priority Level')
-                    ->required()
-                    ->relationship('priority', 'priority_name'),
-                Forms\Components\Select::make('status_id')
-                    ->label('Status')
-                    ->required()
-                    ->relationship('status', 'status_name'),
                 Forms\Components\Textarea::make('description')
                     ->label('Description')
                     ->maxLength(65535),
@@ -54,7 +39,6 @@ class TicketResource extends Resource
                     ->enableDownload()
                     ->directory('uploads')
                     ->maxSize(25000)
-                    ->columnSpanFull()
                     ->acceptedFileTypes([
                         'image/jpeg',
                         'image/png',
@@ -66,12 +50,33 @@ class TicketResource extends Resource
                         'application/zip',
                         'text/plain',
                     ]),
-            ]);
+                ])->columnSpan(2),
+
+                Forms\Components\Section::make()->schema([
+                    Forms\Components\Select::make('office_id')
+                        ->label('Office of concern')
+                        ->required()
+                        ->relationship('office', 'office_name'),
+                    Forms\Components\Select::make('problem_category_id')
+                        ->label('Problem Category')
+                        ->required()
+                        ->relationship('problemCategory', 'category_name'),
+                    Forms\Components\Select::make('priority_id')
+                        ->label('Priority Level')
+                        ->required()
+                        ->relationship('priority', 'priority_name'),
+                    Forms\Components\Select::make('status_id')
+                        ->label('Status')
+                        ->required()
+                        ->relationship('status', 'status_name'),
+                ])->columnSpan(1)
+            ])->columns(3);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->query(static::getTableQuery())
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->label('Ticket ID')
@@ -115,6 +120,19 @@ class TicketResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    protected static function getTableQuery(): Builder
+    {
+        $user = auth()->user();
+
+        // If admin, return all records
+        if ($user->isAdmin()) {
+            return static::getModel()::query();
+        }
+
+        // Otherwise filter by office_id
+        return static::getModel()::where('office_id', $user->office_id);
     }
 
     public static function getRelations(): array
