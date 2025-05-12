@@ -24,7 +24,7 @@ class Ticket extends Model
         'office_id',
         'priority_id',
         'status_id',
-        'category_id',
+        'problem_category_id',
         'attachment',
     ];
 

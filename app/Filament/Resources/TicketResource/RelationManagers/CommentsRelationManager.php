@@ -26,8 +26,8 @@ class CommentsRelationManager extends RelationManager
                     Forms\Components\FileUpload::make('attachment')
                     ->multiple()
                     ->preserveFilenames()
-                    ->enableOpen()
-                    ->enableDownload()
+                    ->openable()
+                    ->downloadable()
                     ->directory('attachments/' . date('m-y'))
                     ->maxSize(25000)
                     ->columnSpanFull()
@@ -83,7 +83,7 @@ class CommentsRelationManager extends RelationManager
                     ->modalSubmitAction(false)
                     ->modalCancelAction(false)
                     ->modalHeading('Attachments')
-                    ->modalSubheading('Click on an attachment to open it in a new tab.')
+                    ->modalDescription('Click on an attachment to open it in a new tab.')
                     ->modalContent(function ($record) {
                         $attachments = $record['attachment'] ?? [];
                         return view('filament.components.attachment-modal', [
@@ -92,10 +92,10 @@ class CommentsRelationManager extends RelationManager
                     }),
                 Tables\Actions\EditAction::make()
                     ->label('')
-                    ->hidden(fn ($record) => !auth()->user()->isAdmin() && auth()->id() !== $record->id),
+                    ->hidden(fn ($record) => !auth()->user()->isAdmin() && auth()->id() !== $record->user_id),
                 Tables\Actions\DeleteAction::make()
                     ->label('')
-                    ->hidden(fn ($record) => !auth()->user()->isAdmin() && auth()->id() !== $record->id),
+                    ->hidden(fn ($record) => !auth()->user()->isAdmin() && auth()->id() !== $record->user_id),
             ])
             ->bulkActions([]);
     }

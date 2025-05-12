@@ -2,10 +2,12 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Ticket;
 use App\Models\User;
-use Filament\Widgets\StatsOverviewWidget as BaseWidget;
+use App\Models\Office;
+use App\Models\Ticket;
+use App\Models\ProblemCategory;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 
 class Stats extends BaseWidget
 {
@@ -13,10 +15,10 @@ class Stats extends BaseWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Total Users', User::count()),
-            Stat::make('Total Tickets', Ticket::count()),
-            Stat::make('Resolved Tickets', Ticket::where('status_id', '4')->count()),
-            Stat::make('Unassigned Tickets', Ticket::where('status_id', '3')->count()),
+            Stat::make('Users', User::count()),
+            Stat::make('Tickets', Ticket::count()),
+            Stat::make('Offices', Office::count()),
+            Stat::make('Problem Categories', ProblemCategory::count()),
         ];
     }
 }

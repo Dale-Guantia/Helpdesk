@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProblemCategoryResource\Pages;
-use App\Filament\Resources\ProblemCategoryResource\RelationManagers;
 use App\Models\ProblemCategory;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -12,7 +11,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\Office;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+
 
 class ProblemCategoryResource extends Resource
 {

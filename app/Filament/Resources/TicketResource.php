@@ -10,8 +10,8 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\TicketResource\RelationManagers;
+use App\Models\ProblemCategory;
 
 class TicketResource extends Resource
 {
@@ -34,10 +34,11 @@ class TicketResource extends Resource
                     ->maxLength(65535),
                 Forms\Components\FileUpload::make('attachment')
                     ->multiple()
+
                     ->reorderable()
-                    ->enableOpen()
-                    ->enableDownload()
-                    ->directory('uploads')
+                    ->openable()
+                    ->downloadable()
+                    ->directory('attachments/' . date('m-y'))
                     ->maxSize(25000)
                     ->acceptedFileTypes([
                         'image/jpeg',
@@ -56,11 +57,23 @@ class TicketResource extends Resource
                     Forms\Components\Select::make('office_id')
                         ->label('Office of concern')
                         ->required()
+                        ->reactive()
                         ->relationship('office', 'office_name'),
                     Forms\Components\Select::make('problem_category_id')
                         ->label('Problem Category')
                         ->required()
-                        ->relationship('problemCategory', 'category_name'),
+                        ->options(function (callable $get) {
+                            $office_id = $get('office_id');
+
+                            if (!$office_id) {
+                                return [];
+                            }
+
+                            return ProblemCategory::where('office_id', $office_id)
+                                ->pluck('category_name', 'id')
+                                ->toArray();
+                        })
+                        ->disabled(fn (callable $get) => !$get('office_id')), // Disable if office_id is not selected
                     Forms\Components\Select::make('priority_id')
                         ->label('Priority Level')
                         ->required()
@@ -84,12 +97,8 @@ class TicketResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('title')
                     ->label('Title')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('description')
-                    ->label('Description')
-                    ->wrap()
-                    ->html()
+                    ->limit(20)
+                    ->tooltip(fn ($record) => $record->title)
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('office.office_name')
@@ -99,7 +108,9 @@ class TicketResource extends Resource
                 Tables\Columns\TextColumn::make('problemCategory.category_name')
                     ->label('Problem category')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->limit(20)
+                    ->tooltip(fn ($record) => $record->problemCategory?->category_name ?? '-'),
                 Tables\Columns\TextColumn::make('priority.priority_name')
                     ->label('Priority Level')
                     ->searchable()
@@ -108,12 +119,25 @@ class TicketResource extends Resource
                     ->label('Status')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Created at')
+                    ->dateTime()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Updated at')
+                    ->dateTime()
+                    ->sortable(),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->label('')
+                    ->hidden(fn ($record) => !auth()->user()->isAdmin() && auth()->id() !== $record->user_id),
+                Tables\Actions\DeleteAction::make()
+                    ->label('')
+                    ->hidden(fn ($record) => !auth()->user()->isAdmin() && auth()->id() !== $record->user_id),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

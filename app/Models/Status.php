@@ -24,4 +24,9 @@ class Status extends Model
         'updated_at',
         'deleted_at',
     ];
+
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class, 'status_id');
+    }
 }

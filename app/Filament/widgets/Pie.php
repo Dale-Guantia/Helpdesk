@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\Status;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
 class Pie extends ApexChartWidget
@@ -32,18 +33,20 @@ class Pie extends ApexChartWidget
      */
     protected function getOptions(): array
     {
+        $ticketStatuses = Status::select('id', 'status_name')->withCount(['tickets'])->get();
         return [
             'chart' => [
                 'type' => 'pie',
                 'height' => 350,
             ],
-            'series' => [2, 4, 6, 10, 14],
-            'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+            'series' => $ticketStatuses->pluck('tickets_count')->toArray(),
+            'labels' => $ticketStatuses->pluck('status_name')->toArray(),
             'legend' => [
                 'labels' => [
                     'fontFamily' => 'inherit',
                 ],
             ],
+            'colors' => ['#10b981','#3b82f6', '#f59e0b', '#ef4444', '#f59e0b'],
         ];
     }
 }
