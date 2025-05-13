@@ -16,12 +16,10 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use App\Filament\Resources;
 use Joaopaulolndev\FilamentEditProfile\FilamentEditProfilePlugin;
 use Joaopaulolndev\FilamentEditProfile\Pages\EditProfilePage;
 use Filament\Navigation\MenuItem;
 use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
-use Illuminate\Support\Facades\Auth;
 
 
 class AdminPanelProvider extends PanelProvider
@@ -67,7 +65,7 @@ class AdminPanelProvider extends PanelProvider
                     ->setTitle('My Profile')
                     ->setIcon('heroicon-o-user')
                     ->setSort(10)
-                    ->canAccess(fn () => Auth::user()->role === 'ADMIN' || Auth::user()->role === 'EMPLOYEE')
+                    ->canAccess(fn () => auth()->user()->role === 1 || auth()->user()->role === 2)
                     ->shouldRegisterNavigation(false)
                     ->shouldShowDeleteAccountForm(false)
                     ->shouldShowAvatarForm()
@@ -77,7 +75,7 @@ class AdminPanelProvider extends PanelProvider
 
             ->userMenuItems([
                 'profile' => MenuItem::make()
-                    ->label(fn() => Auth::user()->name)
+                    ->label(fn() => auth()->user()->name)
                     ->url(fn (): string => EditProfilePage::getUrl())
                     ->icon('heroicon-m-user-circle')
             ]);

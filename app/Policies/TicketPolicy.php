@@ -13,7 +13,7 @@ class TicketPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isAdmin() || $user->isEmployee();
+        return $user->isSuperAdmin() || $user->isHRDOAdmin();
     }
 
     /**
@@ -21,7 +21,7 @@ class TicketPolicy
      */
     public function view(User $user, Ticket $ticket): bool
     {
-        return $user->isAdmin() || $user->isEmployee();
+        return $user->isSuperAdmin() || $user->isHRDOAdmin();
     }
 
     /**
@@ -29,7 +29,7 @@ class TicketPolicy
      */
     public function create(User $user): bool
     {
-        return $user->isAdmin() || $user->isEmployee();
+        return $user->isSuperAdmin() || $user->isHRDOAdmin();
     }
 
     /**
@@ -37,7 +37,7 @@ class TicketPolicy
      */
     public function update(User $user, Ticket $ticket): bool
     {
-        return $user->isAdmin() || $user->isEmployee();
+        return $user->isSuperAdmin() || $user->isHRDOAdmin();
     }
 
     /**
@@ -45,7 +45,7 @@ class TicketPolicy
      */
     public function delete(User $user, Ticket $ticket): bool
     {
-        return $user->isAdmin();
+        return $user->isSuperAdmin();
     }
 
     /**
@@ -53,7 +53,7 @@ class TicketPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->isAdmin();
+        return $user->isSuperAdmin();
     }
 
     /**
@@ -61,7 +61,7 @@ class TicketPolicy
      */
     public function restore(User $user, Ticket $ticket): bool
     {
-        return $user->isAdmin();
+        return $user->isSuperAdmin();
     }
 
 
@@ -70,7 +70,7 @@ class TicketPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->isAdmin();
+        return $user->isSuperAdmin();
     }
 
     /**
@@ -78,7 +78,7 @@ class TicketPolicy
      */
     public function forceDelete(User $user, Ticket $ticket): bool
     {
-        return $user->isAdmin();
+        return $user->isSuperAdmin();
     }
 
         /**
@@ -86,6 +86,6 @@ class TicketPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->isAdmin();
+        return $user->isSuperAdmin();
     }
 }

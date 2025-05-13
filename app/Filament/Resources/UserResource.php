@@ -101,23 +101,39 @@ class UserResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('role')
                     ->label('Role')
+                    ->formatStateUsing(fn ($state) => match ($state) {
+                        1 => 'Super Admin',
+                        2 => 'HRDO Admin',
+                        3 => 'Employee',
+                        default => 'Unknown',
+                    })
+                    ->badge() // Optional: to show it as a badge style
+                    ->color(fn ($state) => match ($state) {
+                        1 => 'warning',  // Green for Super Admin
+                        2 => 'info',     // Blue for HRDO Admin
+                        3 => 'warning',  // Yellow for Employee
+                        default => 'gray', // Gray for unknown roles
+                    })
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('office.office_name')
                     ->label('Office Name')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\BooleanColumn::make('is_active')
+                Tables\Columns\TextColumn::make('is_active')
                     ->label('Status')
-                    ->trueIcon('heroicon-o-check-circle')
-                    ->falseIcon('heroicon-o-x-circle')
-                    ->sortable(),
+                    ->formatStateUsing(fn (bool $state): string => $state ? 'Active' : 'Inactive')
+                    ->badge() // This shows it as a badge
+                    ->color(fn (bool $state): string => $state ? 'success' : 'danger'),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->label(''),
+                Tables\Actions\DeleteAction::make()
+                    ->label(''),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -131,7 +147,7 @@ class UserResource extends Resource
         $user = auth()->user();
 
         // If admin, return all records
-        if ($user->isAdmin()) {
+        if ($user->isSuperAdmin()) {
             return static::getModel()::query();
         }
 

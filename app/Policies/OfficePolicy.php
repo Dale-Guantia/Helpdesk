@@ -13,7 +13,7 @@ class OfficePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isAdmin();
+        return $user->isSuperAdmin();
     }
 
     /**
@@ -21,7 +21,7 @@ class OfficePolicy
      */
     public function view(User $user, Office $office): bool
     {
-        return $user->isAdmin();
+        return $user->isSuperAdmin();
     }
 
     /**
@@ -29,7 +29,7 @@ class OfficePolicy
      */
     public function create(User $user): bool
     {
-        return $user->isAdmin();
+        return $user->isSuperAdmin();
     }
 
     /**
@@ -37,7 +37,7 @@ class OfficePolicy
      */
     public function update(User $user, Office $office): bool
     {
-        return $user->isAdmin();
+        return $user->isSuperAdmin();
     }
 
     /**
@@ -45,7 +45,7 @@ class OfficePolicy
      */
     public function delete(User $user, Office $office): bool
     {
-        return $user->isAdmin();
+        return $user->isSuperAdmin();
     }
 
     /**
@@ -53,7 +53,7 @@ class OfficePolicy
      */
     public function restore(User $user, Office $office): bool
     {
-        return $user->isAdmin();
+        return $user->isSuperAdmin();
     }
 
     /**
@@ -61,6 +61,6 @@ class OfficePolicy
      */
     public function forceDelete(User $user, Office $office): bool
     {
-        return $user->isAdmin();
+        return $user->isSuperAdmin();
     }
 }

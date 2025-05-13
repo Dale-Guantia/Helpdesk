@@ -41,6 +41,12 @@ class PriorityResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('priority_name')
                     ->label('Priority Name')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'High' => 'danger',
+                        'Medium' => 'warning',
+                        'Low' => 'info',
+                    })
                     ->searchable()
                     ->sortable(),
             ])
@@ -48,7 +54,10 @@ class PriorityResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->label(''),
+                Tables\Actions\DeleteAction::make()
+                    ->label(''),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

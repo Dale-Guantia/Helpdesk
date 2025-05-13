@@ -31,14 +31,14 @@ class ProblemCategoryResource extends Resource
                     ->options(function () {
                         $user = auth()->user();
                         // Admin can select all offices
-                        if ($user->isAdmin()) {
+                        if ($user->isSuperAdmin()) {
                             return Office::all()->pluck('office_name', 'id');
                         }
                         // Non-admin: only their own office
                         return Office::where('id', $user->office_id)->pluck('office_name', 'id');
                     })
-                    ->default(auth()->user()->isAdmin() ? null : auth()->user()->office_id)
-                    ->disabled(!auth()->user()->isAdmin()) // disable for non-admins
+                    ->default(auth()->user()->isSuperAdmin() ? null : auth()->user()->office_id)
+                    ->disabled(!auth()->user()->isSuperAdmin()) // disable for non-admins
                     ->required(),
                 Forms\Components\TextInput::make('category_name')
                     ->required()
@@ -68,7 +68,10 @@ class ProblemCategoryResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->label(''),
+                Tables\Actions\DeleteAction::make()
+                    ->label(''),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -82,7 +85,7 @@ class ProblemCategoryResource extends Resource
         $user = auth()->user();
 
         // If admin, return all records
-        if ($user->isAdmin()) {
+        if ($user->isSuperAdmin()) {
             return static::getModel()::query();
         }
 

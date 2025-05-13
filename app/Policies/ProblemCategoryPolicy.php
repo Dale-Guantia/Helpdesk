@@ -13,7 +13,7 @@ class ProblemCategoryPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isAdmin() || $user->isEmployee();
+        return $user->isSuperAdmin() || $user->isHRDOAdmin();
     }
 
     /**
@@ -21,7 +21,7 @@ class ProblemCategoryPolicy
      */
     public function view(User $user, ProblemCategory $problemCategory): bool
     {
-        return $user->isAdmin() || $user->isEmployee();
+        return $user->isSuperAdmin() || $user->isHRDOAdmin();
     }
 
     /**
@@ -29,7 +29,7 @@ class ProblemCategoryPolicy
      */
     public function create(User $user): bool
     {
-        return $user->isAdmin() || $user->isEmployee();
+        return $user->isSuperAdmin() || $user->isHRDOAdmin();
     }
 
     /**
@@ -37,7 +37,7 @@ class ProblemCategoryPolicy
      */
     public function update(User $user, ProblemCategory $problemCategory): bool
     {
-        return $user->isAdmin() || $user->isEmployee();
+        return $user->isSuperAdmin() || $user->isHRDOAdmin();
     }
 
    /**
@@ -45,7 +45,7 @@ class ProblemCategoryPolicy
      */
     public function delete(User $user, ProblemCategory $problemCategory): bool
     {
-        return $user->isAdmin();
+        return $user->isSuperAdmin();
     }
 
     /**
@@ -53,7 +53,7 @@ class ProblemCategoryPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->isAdmin();
+        return $user->isSuperAdmin();
     }
 
     /**
@@ -61,7 +61,7 @@ class ProblemCategoryPolicy
      */
     public function restore(User $user, ProblemCategory $problemCategory): bool
     {
-        return $user->isAdmin();
+        return $user->isSuperAdmin();
     }
 
 
@@ -70,7 +70,7 @@ class ProblemCategoryPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->isAdmin();
+        return $user->isSuperAdmin();
     }
 
     /**
@@ -78,7 +78,7 @@ class ProblemCategoryPolicy
      */
     public function forceDelete(User $user, ProblemCategory $problemCategory): bool
     {
-        return $user->isAdmin();
+        return $user->isSuperAdmin();
     }
 
         /**
@@ -86,6 +86,6 @@ class ProblemCategoryPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->isAdmin();
+        return $user->isSuperAdmin();
     }
 }

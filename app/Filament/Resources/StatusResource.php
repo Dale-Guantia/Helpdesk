@@ -40,6 +40,12 @@ class StatusResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status_name')
                     ->label('Status Name')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'Pending' => 'warning',
+                        'Resolved' => 'success',
+                        'Unassigned' => 'gray',
+                    })
                     ->searchable()
                     ->sortable(),
             ])
@@ -47,7 +53,10 @@ class StatusResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->label(''),
+                Tables\Actions\DeleteAction::make()
+                    ->label(''),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

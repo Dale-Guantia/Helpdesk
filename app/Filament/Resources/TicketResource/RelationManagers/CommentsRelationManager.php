@@ -92,10 +92,10 @@ class CommentsRelationManager extends RelationManager
                     }),
                 Tables\Actions\EditAction::make()
                     ->label('')
-                    ->hidden(fn ($record) => !auth()->user()->isAdmin() && auth()->id() !== $record->user_id),
+                    ->hidden(fn ($record) => !auth()->user()->isSuperAdmin() && auth()->id() !== $record->user_id),
                 Tables\Actions\DeleteAction::make()
                     ->label('')
-                    ->hidden(fn ($record) => !auth()->user()->isAdmin() && auth()->id() !== $record->user_id),
+                    ->hidden(fn ($record) => !auth()->user()->isSuperAdmin() && auth()->id() !== $record->user_id),
             ])
             ->bulkActions([]);
     }

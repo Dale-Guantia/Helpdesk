@@ -12,6 +12,8 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\TicketResource\RelationManagers;
 use App\Models\ProblemCategory;
+use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Support\Arr;
 
 class TicketResource extends Resource
 {
@@ -30,7 +32,7 @@ class TicketResource extends Resource
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Textarea::make('description')
-                    ->label('Description')
+                    ->label('Message')
                     ->maxLength(65535),
                 Forms\Components\FileUpload::make('attachment')
                     ->multiple()
@@ -68,7 +70,6 @@ class TicketResource extends Resource
                             if (!$office_id) {
                                 return [];
                             }
-
                             return ProblemCategory::where('office_id', $office_id)
                                 ->pluck('category_name', 'id')
                                 ->toArray();
@@ -113,10 +114,22 @@ class TicketResource extends Resource
                     ->tooltip(fn ($record) => $record->problemCategory?->category_name ?? '-'),
                 Tables\Columns\TextColumn::make('priority.priority_name')
                     ->label('Priority Level')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'High' => 'danger',
+                        'Medium' => 'warning',
+                        'Low' => 'info',
+                    })
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status.status_name')
                     ->label('Status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'Pending' => 'warning',
+                        'Resolved' => 'success',
+                        'Unassigned' => 'gray',
+                    })
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -129,15 +142,29 @@ class TicketResource extends Resource
                     ->sortable(),
             ])
             ->filters([
-                //
+                SelectFilter::make('status')
+                    ->multiple()
+                    ->options([
+                        'Pending' => 'Pending',
+                        'Resolved' => 'Resolved',
+                        'Unassigned' => 'Unassigned',
+                    ])
+                    ->query(function ($query, array $data) {
+                        $values = $data['values'] ?? [];
+                        if (count($values)) {
+                            $query->whereHas('status', function ($q) use ($values) {
+                                $q->whereIn('status_name', $values);
+                            });
+                        }
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
                     ->label('')
-                    ->hidden(fn ($record) => !auth()->user()->isAdmin() && auth()->id() !== $record->user_id),
+                    ->hidden(fn ($record) => !auth()->user()->isSuperAdmin() && auth()->id() !== $record->user_id),
                 Tables\Actions\DeleteAction::make()
                     ->label('')
-                    ->hidden(fn ($record) => !auth()->user()->isAdmin() && auth()->id() !== $record->user_id),
+                    ->hidden(fn ($record) => !auth()->user()->isSuperAdmin() && auth()->id() !== $record->user_id),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -151,7 +178,7 @@ class TicketResource extends Resource
         $user = auth()->user();
 
         // If admin, return all records
-        if ($user->isAdmin()) {
+        if ($user->isSuperAdmin()) {
             return static::getModel()::query();
         }
 

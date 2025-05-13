@@ -16,29 +16,29 @@ class User extends Authenticatable implements FilamentUser
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    const ROLE_ADMIN = 'ADMIN';
-    const ROLE_EMPLOYEE = 'EMPLOYEE';
-    const ROLE_USER = 'USER';
-    const DEFAULT_ROLE = self::ROLE_USER;
+    const ROLE_SUPER_ADMIN = 1;
+    const ROLE_HRDO_ADMIN = 2;
+    const ROLE_EMPLOYEE = 3;
+    const DEFAULT_ROLE = self::ROLE_EMPLOYEE;
     const ROLES = [
-        self::ROLE_ADMIN => 'Admin',
+        self::ROLE_SUPER_ADMIN => 'Super Admin',
+        self::ROLE_HRDO_ADMIN => 'HRDO Admin',
         self::ROLE_EMPLOYEE => 'Employee',
-        self::ROLE_USER => 'User',
     ];
 
-    public function isAdmin()
+    public function isSuperAdmin()
     {
-        return $this->role === self::ROLE_ADMIN;
+        return $this->role === self::ROLE_SUPER_ADMIN;
     }
 
-    public function isEmployee()
+    public function isHRDOAdmin()
     {
-        return $this->role === self::ROLE_EMPLOYEE;
+        return $this->role === self::ROLE_HRDO_ADMIN;
     }
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->isAdmin() || $this->isEmployee();
+        return $this->isSuperAdmin() || $this->isHRDOAdmin();
     }
 
     /**

@@ -13,7 +13,7 @@ class PriorityPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isAdmin();
+        return $user->isSuperAdmin();
     }
 
     /**
@@ -21,7 +21,7 @@ class PriorityPolicy
      */
     public function view(User $user, Priority $priority): bool
     {
-        return $user->isAdmin();
+        return $user->isSuperAdmin();
     }
 
     /**
@@ -29,7 +29,7 @@ class PriorityPolicy
      */
     public function create(User $user): bool
     {
-        return $user->isAdmin();
+        return $user->isSuperAdmin();
     }
 
     /**
@@ -37,7 +37,7 @@ class PriorityPolicy
      */
     public function update(User $user, Priority $priority): bool
     {
-        return $user->isAdmin();
+        return $user->isSuperAdmin();
     }
 
     /**
@@ -45,7 +45,7 @@ class PriorityPolicy
      */
     public function delete(User $user, Priority $priority): bool
     {
-        return $user->isAdmin();
+        return $user->isSuperAdmin();
     }
 
     /**
@@ -53,7 +53,7 @@ class PriorityPolicy
      */
     public function restore(User $user, Priority $priority): bool
     {
-        return $user->isAdmin();
+        return $user->isSuperAdmin();
     }
 
     /**
@@ -61,6 +61,6 @@ class PriorityPolicy
      */
     public function forceDelete(User $user, Priority $priority): bool
     {
-        return $user->isAdmin();
+        return $user->isSuperAdmin();
     }
 }
