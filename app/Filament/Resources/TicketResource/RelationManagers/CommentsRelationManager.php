@@ -11,6 +11,8 @@ use Filament\Forms\Components\Card;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Support\Carbon;
+use Filament\Tables\Columns\ViewColumn;
 
 
 class CommentsRelationManager extends RelationManager
@@ -52,16 +54,14 @@ class CommentsRelationManager extends RelationManager
             ->recordTitleAttribute('comment')
             ->columns([
                 Stack::make([
-                    Split::make([
                         TextColumn::make('user.name')
                             ->translateLabel()
                             ->weight('bold')
                             ->grow(false),
                         TextColumn::make('created_at')
-                            ->translateLabel()
-                            ->dateTime()
-                            ->color('secondary'),
-                    ]),
+                            ->html()
+                            ->formatStateUsing(fn (string $state) =>'<span class="text-xs">' . e(Carbon::parse($state)->format('F d, Y g:i A')) . '</span>')
+                            ->color('warning'),
                     TextColumn::make('comment')
                         ->wrap()
                         ->html(),

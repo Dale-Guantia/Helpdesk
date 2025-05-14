@@ -13,7 +13,9 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\TicketResource\RelationManagers;
 use App\Models\ProblemCategory;
 use Filament\Tables\Filters\SelectFilter;
-use Illuminate\Support\Arr;
+use Filament\Infolists\Infolist;
+use Filament\Infolists\Components;
+use Filament\Infolists\Components\ViewEntry;
 
 class TicketResource extends Resource
 {
@@ -36,7 +38,7 @@ class TicketResource extends Resource
                     ->maxLength(65535),
                 Forms\Components\FileUpload::make('attachment')
                     ->multiple()
-
+                    ->preserveFilenames()
                     ->reorderable()
                     ->openable()
                     ->downloadable()
@@ -131,15 +133,7 @@ class TicketResource extends Resource
                         'Unassigned' => 'gray',
                     })
                     ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('Created at')
-                    ->dateTime()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->label('Updated at')
-                    ->dateTime()
-                    ->sortable(),
+                    ->sortable()
             ])
             ->filters([
                 SelectFilter::make('status')
@@ -159,6 +153,8 @@ class TicketResource extends Resource
                     }),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make()
+                    ->label(''),
                 Tables\Actions\EditAction::make()
                     ->label('')
                     ->hidden(fn ($record) => !auth()->user()->isSuperAdmin() && auth()->id() !== $record->user_id),
@@ -173,15 +169,61 @@ class TicketResource extends Resource
             ]);
     }
 
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Components\Grid::make()
+                    ->schema([
+                        Components\Section::make('Ticket Details')
+                            ->schema([
+                                Components\TextEntry::make('id')->label('Ticket ID'),
+                                Components\TextEntry::make('title')->label('Title'),
+                                Components\TextEntry::make('description')->label('Message'),
+                                ViewEntry::make('attachment')
+                                    ->label('Attachments:')
+                                    ->view('filament.components.attachment-list')
+                                    ->visible(fn (Ticket $record) => is_array($record->attachment) && count($record->attachment) > 0),
+                            ])->columnSpan(9), // 8/12 columns = ~66%
+                        Components\Section::make()
+                            ->schema([
+                                Components\TextEntry::make('office.office_name')->label('Office of concern'),
+                                Components\TextEntry::make('problemCategory.category_name')->label('Problem category'),
+                                Components\TextEntry::make('priority.priority_name')
+                                    ->label('Priority Level')
+                                    ->badge()
+                                    ->color(fn (string $state): string => match ($state) {
+                                        'High' => 'danger',
+                                        'Medium' => 'warning',
+                                        'Low' => 'info',
+                                    }),
+                                Components\TextEntry::make('status.status_name')
+                                    ->label('Status')
+                                    ->badge()
+                                    ->color(fn (string $state): string => match ($state) {
+                                        'Pending' => 'warning',
+                                        'Resolved' => 'success',
+                                        'Unassigned' => 'gray',
+                                    }),
+                                Components\TextEntry::make('created_at')->dateTime('F j, Y g:i A')->label('Created at'),
+                                Components\TextEntry::make('updated_at')->dateTime('F j, Y g:i A')->label('Updated at'),
+
+                            ])->columnSpan(3), // 4/12 columns = ~33%
+                    ])
+                    ->columns(12), // total columns for grid system
+            ]);
+    }
+
+
+
+
     protected static function getTableQuery(): Builder
     {
         $user = auth()->user();
-
         // If admin, return all records
         if ($user->isSuperAdmin()) {
             return static::getModel()::query();
         }
-
         // Otherwise filter by office_id
         return static::getModel()::where('office_id', $user->office_id);
     }
@@ -199,6 +241,7 @@ class TicketResource extends Resource
             'index' => Pages\ListTickets::route('/'),
             'create' => Pages\CreateTicket::route('/create'),
             'edit' => Pages\EditTicket::route('/{record}/edit'),
+            'view' => Pages\ViewTicket::route('/{record}'),
         ];
     }
 }
