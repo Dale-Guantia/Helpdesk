@@ -105,14 +105,12 @@ class UserResource extends Resource
                         1 => 'Super Admin',
                         2 => 'HRDO Admin',
                         3 => 'Employee',
-                        default => 'Unknown',
                     })
                     ->badge() // Optional: to show it as a badge style
                     ->color(fn ($state) => match ($state) {
-                        1 => 'warning',  // Green for Super Admin
+                        1 => 'warning',  // Yellow for Super Admin
                         2 => 'info',     // Blue for HRDO Admin
-                        3 => 'warning',  // Yellow for Employee
-                        default => 'gray', // Gray for unknown roles
+                        3 => 'gray',  // Gray for Employee
                     })
                     ->searchable()
                     ->sortable(),

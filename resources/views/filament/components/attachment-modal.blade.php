@@ -3,7 +3,7 @@
         <ul>
             @foreach ($attachments as $attachment)
                 <li>
-                    <a href="{{ asset('storage/' . $attachment) }}" target="_blank" class="text-blue-500 hover:underline">
+                    <a href="{{ asset('storage/' . $attachment) }}" target="_blank" target="_blank" class="text-sm underline" style="color: #fbbf24">
                         {{ basename($attachment) }}
                     </a>
                 </li>

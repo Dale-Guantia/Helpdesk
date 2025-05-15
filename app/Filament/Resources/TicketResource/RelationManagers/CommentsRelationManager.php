@@ -13,6 +13,7 @@ use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\Carbon;
 use Filament\Tables\Columns\ViewColumn;
+use Filament\Tables\Actions\CreateAction as BaseCreateAction;
 
 
 class CommentsRelationManager extends RelationManager
@@ -74,7 +75,7 @@ class CommentsRelationManager extends RelationManager
                 Tables\Actions\CreateAction::make()->mutateFormDataUsing(function (array $data): array {
                     $data['user_id'] = auth()->id();
                     return $data;
-                })
+                }),
             ])
             ->actions([
                 Tables\Actions\Action::make('attachment')
