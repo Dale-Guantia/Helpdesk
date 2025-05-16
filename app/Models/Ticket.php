@@ -19,6 +19,7 @@ class Ticket extends Model
     protected $table = 'tickets';
 
     protected $fillable = [
+        'user_id',
         'title',
         'description',
         'office_id',
@@ -31,6 +32,7 @@ class Ticket extends Model
     protected $casts = [
         'attachment' => 'array',
     ];
+
 
 
     public function office()

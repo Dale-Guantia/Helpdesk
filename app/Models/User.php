@@ -36,9 +36,14 @@ class User extends Authenticatable implements FilamentUser
         return $this->role === self::ROLE_HRDO_ADMIN;
     }
 
+    public function isEmployee()
+    {
+        return $this->role === self::ROLE_EMPLOYEE;
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->isSuperAdmin() || $this->isHRDOAdmin();
+        return $this->isSuperAdmin() || $this->isHRDOAdmin() || $this->isEmployee();
     }
 
     /**

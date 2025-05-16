@@ -39,8 +39,12 @@ class ViewTicket extends ViewRecord
                             ])->columnSpan(9), // 8/12 columns = ~66%
                         Components\Section::make()
                             ->schema([
-                                Components\TextEntry::make('office.office_name')->label('Office of concern'),
-                                Components\TextEntry::make('problemCategory.category_name')->label('Problem category'),
+                                Components\TextEntry::make('office.office_name')
+                                    ->label('Office of concern')
+                                    ->default('N/A'),
+                                Components\TextEntry::make('problemCategory.category_name')
+                                    ->label('Problem category')
+                                    ->default('N/A'),
                                 Components\TextEntry::make('priority.priority_name')
                                     ->label('Priority Level')
                                     ->badge()

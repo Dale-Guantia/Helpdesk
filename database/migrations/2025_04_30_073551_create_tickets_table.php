@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('office_id')->nullable()->index('office_id');
-            $table->unsignedBigInteger('problem_category_id')->nullable()->index('category_id');
-            $table->unsignedBigInteger('priority_id')->nullable()->index('priority_id');
-            $table->unsignedBigInteger('status_id')->nullable()->index('status_id');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('office_id')->nullable()->constrained('offices')->onDelete('cascade');
+            $table->foreignId('problem_category_id')->nullable()->constrained('problem_categories')->onDelete('cascade');
+            $table->foreignId('priority_id')->nullable()->constrained('priorities')->onDelete('cascade');
+            $table->foreignId('status_id')->nullable()->constrained('statuses')->onDelete('cascade');
             $table->string('title');
             $table->text('description');
             $table->string('attachment')->nullable();

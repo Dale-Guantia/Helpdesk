@@ -14,6 +14,7 @@ class TicketTableSeeder extends Seeder
     public function run(): void
     {
         Ticket::create([
+            'user_id' => 1,
             'office_id' => 1,
             'problem_category_id' => 1,
             'priority_id' => 1,

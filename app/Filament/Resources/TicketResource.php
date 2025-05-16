@@ -27,6 +27,8 @@ class TicketResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\Hidden::make('user_id')
+                ->default(auth()->id()),
                 Forms\Components\Section::make('Ticket Details')
                     ->collapsed(fn ($livewire) => $livewire instanceof \Filament\Resources\Pages\CreateRecord ? false : true)
                     ->schema([
@@ -63,12 +65,13 @@ class TicketResource extends Resource
                             ->schema([
                                 Forms\Components\Select::make('office_id')
                                     ->label('Office of concern')
-                                    ->required()
                                     ->reactive()
-                                    ->relationship('office', 'office_name'),
+                                    ->relationship('office', 'office_name')
+                                    ->afterStateUpdated(function ($state, callable $set) {
+                                        $set('status_id', $state ? 1 : 3);
+                                    }),
                                 Forms\Components\Select::make('problem_category_id')
                                     ->label('Problem Category')
-                                    ->required()
                                     ->options(function (callable $get) {
                                         $office_id = $get('office_id');
 
@@ -82,11 +85,11 @@ class TicketResource extends Resource
                                     ->disabled(fn (callable $get) => !$get('office_id')), // Disable if office_id is not selected
                                 Forms\Components\Select::make('priority_id')
                                     ->label('Priority Level')
-                                    ->required()
+                                    ->default(3)
                                     ->relationship('priority', 'priority_name'),
                                 Forms\Components\Select::make('status_id')
                                     ->label('Status')
-                                    ->required()
+                                    ->default(3)
                                     ->relationship('status', 'status_name'),
                         ])->columnSpan(1)
                     ])->columns(3),
@@ -111,10 +114,12 @@ class TicketResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('office.office_name')
                     ->label('Office of concern')
+                    ->default('N/A')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('problemCategory.category_name')
                     ->label('Problem category')
+                    ->default('N/A')
                     ->searchable()
                     ->sortable()
                     ->limit(20)
@@ -181,8 +186,11 @@ class TicketResource extends Resource
         if ($user->isSuperAdmin()) {
             return static::getModel()::query();
         }
-        // Otherwise filter by office_id
-        return static::getModel()::where('office_id', $user->office_id);
+        // Normal User: Tickets in their office OR tickets created by them
+        return static::getModel()::where(function ($query) use ($user) {
+            $query->where('office_id', $user->office_id)
+                ->orWhere('user_id', $user->id);
+        });
     }
 
     public static function getRelations(): array
