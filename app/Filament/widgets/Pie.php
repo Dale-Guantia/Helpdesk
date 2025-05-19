@@ -33,6 +33,7 @@ class Pie extends ApexChartWidget
      */
     protected function getOptions(): array
     {
+
         $ticketStatuses = Status::select('id', 'status_name')->withCount(['tickets'])->get();
         return [
             'chart' => [
@@ -49,4 +50,11 @@ class Pie extends ApexChartWidget
             'colors' => ['#EF5350','#10b981', '#f59e0b', '#ef4444', '#f59e0b'],
         ];
     }
+
+    public static function canView(): bool
+    {
+        $user = auth()->user();
+        return $user->isSuperAdmin() || $user->isHRDOAdmin();
+    }
+
 }

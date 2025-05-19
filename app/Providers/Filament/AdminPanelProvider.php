@@ -21,6 +21,7 @@ use Joaopaulolndev\FilamentEditProfile\FilamentEditProfilePlugin;
 use Joaopaulolndev\FilamentEditProfile\Pages\EditProfilePage;
 use Filament\Navigation\MenuItem;
 use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
+use App\Filament\Pages\Auth\Register;
 
 
 class AdminPanelProvider extends PanelProvider
@@ -32,6 +33,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('ticketing')
             ->path('ticketing')
             ->login()
+            ->registration(Register::class)
             ->sidebarCollapsibleOnDesktop()
             ->colors([
                 'primary' => Color::Amber,
@@ -66,7 +68,6 @@ class AdminPanelProvider extends PanelProvider
                     ->setTitle('My Profile')
                     ->setIcon('heroicon-o-user')
                     ->setSort(10)
-                    ->canAccess(fn () => auth()->user()->role === 1 || auth()->user()->role === 2)
                     ->shouldRegisterNavigation(false)
                     ->shouldShowDeleteAccountForm(false)
                     ->shouldShowAvatarForm()

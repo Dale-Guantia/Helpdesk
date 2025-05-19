@@ -21,4 +21,10 @@ class Stats extends BaseWidget
             Stat::make('Problem Categories', ProblemCategory::count()),
         ];
     }
+
+    public static function canView(): bool
+    {
+        $user = auth()->user();
+        return $user->isSuperAdmin() || $user->isHRDOAdmin();
+    }
 }
