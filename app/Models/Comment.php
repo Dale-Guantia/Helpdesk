@@ -32,6 +32,13 @@ class Comment extends Model
         'attachment' => 'array',
     ];
 
+    protected static function booted()
+    {
+        static::created(function ($comment) {
+            $comment->ticket?->touch();
+        });
+    }
+
     public function user() {
         return $this->belongsTo(User::class);
     }

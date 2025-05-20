@@ -35,6 +35,10 @@ class Ticket extends Model
 
 
 
+    public function User()
+    {
+        return $this->belongsTo(User::class);
+    }
     public function office()
     {
         return $this->belongsTo(Office::class);

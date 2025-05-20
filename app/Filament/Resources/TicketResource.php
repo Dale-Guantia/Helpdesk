@@ -112,11 +112,15 @@ class TicketResource extends Resource
                     ->tooltip(fn ($record) => $record->title)
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('office.office_name')
-                    ->label('Office of concern')
-                    ->default('N/A')
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Created by')
+                    ->translateLabel()
+                    ->grow(false)
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->formatStateUsing(function ($state, $record) {
+                        return $record->user_id === auth()->id() ? 'You' : $state;
+                    }),
                 Tables\Columns\TextColumn::make('problemCategory.category_name')
                     ->label('Problem category')
                     ->default('N/A')
@@ -182,16 +186,23 @@ class TicketResource extends Resource
     protected static function getTableQuery(): Builder
     {
         $user = auth()->user();
-        // If admin, return all records
+        // Super Admin account, return all records
         if ($user->isSuperAdmin()) {
             return static::getModel()::query();
         }
-        // Normal User: Tickets in their office OR tickets created by them
+        // HRDO admin account: return tickets in their office OR tickets created by them
+        elseif ($user->isHRDOAdmin()) {
+            return static::getModel()::where(function ($query) use ($user) {
+                $query->where('office_id', $user->office_id)
+                    ->orWhere('user_id', $user->id);
+            });
+        }
+        // Employee account: return tickets created by them
         return static::getModel()::where(function ($query) use ($user) {
-            $query->where('office_id', $user->office_id)
-                ->orWhere('user_id', $user->id);
+            $query->where('user_id', $user->id);
         });
     }
+
 
     public static function getRelations(): array
     {
