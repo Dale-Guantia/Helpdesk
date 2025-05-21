@@ -6,7 +6,6 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages\Dashboard;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -23,6 +22,7 @@ use Filament\Navigation\MenuItem;
 use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
 use App\Filament\Pages\Auth\Register;
 use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
+use Filament\Enums\ThemeMode;
 
 
 class AdminPanelProvider extends PanelProvider
@@ -36,7 +36,9 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->registration(Register::class)
             ->brandName('HELP DESK')
+            ->darkMode(false)
             ->sidebarCollapsibleOnDesktop()
+            ->sidebarWidth('15rem')
             ->colors([
                 'primary' => Color::Blue,
             ])

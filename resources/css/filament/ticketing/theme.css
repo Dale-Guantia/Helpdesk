@@ -2,6 +2,55 @@
 
 @config 'tailwind.config.js';
 
+@layer base {
+    :root {
+        --color-blue1: #118bf0;
+    }
+
+    :root {
+        --color-blue2: #0e2f66;
+    }
+
+    /* .fi-body {
+        color: white;
+        background-color: var(--color-pasig1) !important;
+    } */
+
+    .fi-topbar > nav {
+        @apply text-white;
+        background-color: var(--color-blue1) !important;
+    }
+
+    .fi-sidebar-header {
+        background-color: var(--color-blue1) !important;
+    }
+
+    .fi-sidebar {
+        background-color: var(--color-blue2) !important;
+    }
+
+    /* .fi-section {
+        background-color: gray-200 !important;
+    } */
+
+    /* .fi-wi-stats-overview-stat {
+        background-color: var(--color-pasig2) !important;
+    } */
+}
+
 .custom-auth-empty-panel {
     @apply bg-white;
 }
+
+.fi-section {
+    @apply bg-gray-200;
+}
+
+.fi-wi-stats-overview-stat {
+    @apply bg-gray-200;
+}
+
+.fi-logo {
+    @apply text-white;
+}
+
