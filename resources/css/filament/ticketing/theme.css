@@ -18,16 +18,16 @@
 
     .fi-topbar > nav {
         @apply text-white;
-        background-color: var(--color-blue1) !important;
-    }
-
-    .fi-sidebar-header {
-        background-color: var(--color-blue1) !important;
-    }
-
-    .fi-sidebar {
         background-color: var(--color-blue2) !important;
     }
+
+        .fi-sidebar-header {
+            background-color: var(--color-blue2) !important;
+        }
+
+    /* .fi-sidebar {
+        background-color: var(--color-blue2) !important;
+    } */
 
     /* .fi-section {
         background-color: gray-200 !important;
@@ -42,15 +42,48 @@
     @apply bg-white;
 }
 
-.fi-section {
+/* .fi-section {
     @apply bg-gray-200;
-}
+} */
 
-.fi-wi-stats-overview-stat {
+/* .fi-section-content-ctn {
     @apply bg-gray-200;
-}
+    @apply rounded-xl;
+    @apply shadow-sm ring-1 ring-gray-950/5;
+} */
+
+/* .fi-wi-stats-overview-stat {
+    @apply bg-gray-200;
+} */
 
 .fi-logo {
     @apply text-white;
 }
 
+.fi-simple-header-heading {
+    @apply text-white;
+}
+
+.fi-simple-header-subheading {
+    @apply text-gray-400;
+}
+
+.fi-fo-field-wrp-label .text-sm{
+    @apply text-white;
+}
+
+.fi-icon-btn-icon {
+    @apply text-gray-400;
+}
+
+.fi-icon-btn-icon:hover {
+    @apply text-gray-200;
+}
+
+/* .fi-sidebar-item-label {
+    @apply text-white;
+} */
+
+/* .fi-sidebar-item-button:hover {
+    @apply bg-gray-800;
+} */
