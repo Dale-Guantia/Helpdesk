@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('offices', function (Blueprint $table) {
             $table->id();
+            $table->string('office_code')->unique();
             $table->string('office_name');
             $table->timestamps();
             $table->softDeletes();

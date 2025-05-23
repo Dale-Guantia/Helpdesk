@@ -3,15 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\OfficeResource\Pages;
-use App\Filament\Resources\OfficeResource\RelationManagers;
 use App\Models\Office;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class OfficeResource extends Resource
 {
@@ -37,6 +34,10 @@ class OfficeResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->label('Office ID')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('office_code')
+                    ->label('Office Code')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('office_name')

@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->string('reference_id')->unique();
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->foreignId('office_id')->nullable()->constrained('offices')->onDelete('cascade');
             $table->foreignId('problem_category_id')->nullable()->constrained('problem_categories')->onDelete('cascade');
             $table->foreignId('priority_id')->nullable()->constrained('priorities')->onDelete('cascade');
@@ -21,6 +22,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
             $table->string('attachment')->nullable();
+            $table->string('guest_name')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

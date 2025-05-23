@@ -21,9 +21,9 @@
         background-color: var(--color-blue2) !important;
     }
 
-        .fi-sidebar-header {
-            background-color: var(--color-blue2) !important;
-        }
+    .fi-sidebar-header {
+        background-color: var(--color-blue2) !important;
+    }
 
     /* .fi-sidebar {
         background-color: var(--color-blue2) !important;
@@ -68,10 +68,6 @@
     @apply text-gray-400;
 }
 
-.fi-fo-field-wrp-label .text-sm{
-    @apply text-white;
-}
-
 .fi-icon-btn-icon {
     @apply text-gray-400;
 }
@@ -87,3 +83,7 @@
 /* .fi-sidebar-item-button:hover {
     @apply bg-gray-800;
 } */
+
+.custom-auth-form-wrapper {
+     @apply text-white;
+}

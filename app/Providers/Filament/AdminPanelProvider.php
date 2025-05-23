@@ -22,7 +22,6 @@ use Filament\Navigation\MenuItem;
 use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
 use App\Filament\Pages\Auth\Register;
 use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
-use Filament\Enums\ThemeMode;
 
 
 class AdminPanelProvider extends PanelProvider

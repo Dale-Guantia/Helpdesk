@@ -11,6 +11,9 @@ use App\Models\Office;
 class Register extends BaseRegister
 {
     use HasCustomLayout;
+
+    protected static string $view = 'filament.auth.register';
+
     public function getForms(): array
     {
         return [

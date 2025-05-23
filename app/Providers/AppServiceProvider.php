@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\DB;
+use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Assets\Css;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,5 +26,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         DB::statement("SET time_zone = '+08:00'");
+        FilamentAsset::register([
+            Css::make('custom-stylesheet', __DIR__ . '/../../resources/css/custom.css')->loadedOnRequest(),
+        ]);
     }
 }
