@@ -42,6 +42,10 @@
     @apply bg-white;
 }
 
+.custom-auth-form-wrapper .fi-fo-field-wrp .fi-fo-field-wrp-label .text-sm {
+    @apply text-white !important;
+}
+
 /* .fi-section {
     @apply bg-gray-200;
 } */

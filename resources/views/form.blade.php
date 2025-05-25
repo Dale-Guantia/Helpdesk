@@ -21,7 +21,7 @@
     }
   </style>
 </head>
-<body class="bg-[#fafafa] font-sans text-gray-900">
+<body class="bg-[#f5f5f5] font-sans text-gray-900">
   <!-- Header -->
   <header class="bg-[#0e2f66] flex justify-between items-center px-6 py-3">
     <span class="text-white font-extrabold text-lg select-none">HELP DESK</span>
@@ -155,7 +155,7 @@
         </button>
         <a
             class="bg-white border border-gray-300 text-xs font-normal rounded px-3 py-1.5 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-600"
-            href="#"
+            href="{{ route('index') }}"
         >
             Cancel
         </a>
