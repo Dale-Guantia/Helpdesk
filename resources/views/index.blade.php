@@ -32,7 +32,7 @@
     </h1>
    <div class="mt-10 w-full max-w-md flex justify-between px-6">
     <div class="flex flex-col pr-10 items-center">
-    <a class="bg-[#118bf0] text-white text-s rounded-md px-4 py-2 font-sans" type="button" href="{{ route('submit_ticket')}}">
+    <a class="bg-[#118bf0] text-white text-s rounded-md px-4 py-2 font-sans" type="button" href="{{ route('ticket_create')}}">
         Submit Ticket
     </a>
      {{-- <p class="text-[16px] mt-1 font-sans">

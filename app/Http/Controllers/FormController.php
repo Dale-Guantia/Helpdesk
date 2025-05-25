@@ -6,12 +6,12 @@ use Illuminate\Http\Request;
 
 class FormController extends Controller
 {
-    public function Form()
+    public function form()
     {
         return view('form');
     }
 
-    public function Index()
+    public function index()
     {
         return view('index');
     }

@@ -36,10 +36,6 @@ class OfficeResource extends Resource
                     ->label('Office ID')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('office_code')
-                    ->label('Office Code')
-                    ->searchable()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('office_name')
                     ->label('Office Name')
                     ->searchable()

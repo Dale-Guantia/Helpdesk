@@ -21,12 +21,16 @@ class Ticket extends Model
     protected $fillable = [
         'user_id',
         'title',
+        'reference_id',
         'description',
         'office_id',
         'priority_id',
         'status_id',
         'problem_category_id',
         'attachment',
+        'guest_firstName',
+        'guest_middleName',
+        'guest_lastName',
     ];
 
     protected $casts = [
@@ -34,6 +38,16 @@ class Ticket extends Model
     ];
 
 
+    protected static function booted()
+    {
+        static::creating(function ($ticket) {
+            $today = now()->format('mdy'); // e.g., 052225
+            $countToday = static::whereDate('created_at', now()->toDateString())->count() + 1;
+            $increment = str_pad($countToday, 4, '0', STR_PAD_LEFT); // 0001
+
+            $ticket->reference_id = "{$increment}-{$today}";
+        });
+    }
 
     public function User()
     {

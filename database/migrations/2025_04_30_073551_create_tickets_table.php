@@ -22,7 +22,9 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
             $table->string('attachment')->nullable();
-            $table->string('guest_name')->nullable();
+            $table->string('guest_firstName')->nullable();
+            $table->string('guest_middleName')->nullable();
+            $table->string('guest_lastName')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
