@@ -14,6 +14,26 @@ class OfficeResource extends Resource
 {
     protected static ?string $model = Office::class;
 
+    public static function label(): string
+    {
+        return 'Divisions';
+    }
+
+    public static function getModelLabel(): string
+    {
+        return 'Division';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Divisions';
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return 'Divisions';
+    }
+
     protected static ?int $navigationSort = 4;
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
@@ -33,11 +53,11 @@ class OfficeResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')
-                    ->label('Office ID')
+                    ->label('Division ID')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('office_name')
-                    ->label('Office Name')
+                    ->label('Division Name')
                     ->searchable()
                     ->sortable(),
             ])

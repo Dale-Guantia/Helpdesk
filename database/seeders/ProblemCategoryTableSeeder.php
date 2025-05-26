@@ -15,31 +15,31 @@ class ProblemCategoryTableSeeder extends Seeder
     {
         ProblemCategory::create([
             'office_id' => 1,
-            'category_name' => 'IT PROBLEM',
+            'category_name' => 'IT ISSUE',
         ]);
         ProblemCategory::create([
             'office_id' => 2,
-            'category_name' => 'ADMIN PROBLEM',
+            'category_name' => 'ADMIN ISSUE',
         ]);
         ProblemCategory::create([
             'office_id' => 3,
-            'category_name' => 'PAYROLL PROBLEM',
+            'category_name' => 'PAYROLL ISSUE',
         ]);
                 ProblemCategory::create([
             'office_id' => 4,
-            'category_name' => 'RECORDS PROBLEM',
+            'category_name' => 'RECORDS ISSUE',
         ]);
         ProblemCategory::create([
             'office_id' => 5,
-            'category_name' => 'CLAIMS AND BENEFITS PROBLEM',
+            'category_name' => 'CLAIMS AND BENEFITS ISSUE',
         ]);
         ProblemCategory::create([
             'office_id' => 6,
-            'category_name' => 'APPOINTMENT PROBLEM',
+            'category_name' => 'APPOINTMENT ISSUE',
         ]);
         ProblemCategory::create([
             'office_id' => 7,
-            'category_name' => 'LEARNING AND DEVELOPMENT PROBLEM',
+            'category_name' => 'LEARNING AND DEVELOPMENT ISSUE',
         ]);
     }
 }

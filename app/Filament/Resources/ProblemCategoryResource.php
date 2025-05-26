@@ -17,6 +17,29 @@ class ProblemCategoryResource extends Resource
 {
     protected static ?string $model = ProblemCategory::class;
 
+    protected static ?string $navigationLabel = 'Issues';
+
+    public static function label(): string
+    {
+        return 'Issue';
+    }
+
+    public static function getModelLabel(): string
+    {
+        return 'Issue';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Issues';
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return 'Issues';
+    }
+
+
     protected static ?int $navigationSort = 2;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-group';
@@ -26,6 +49,7 @@ class ProblemCategoryResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('office_id')
+                    ->label('Division')
                     ->relationship('office', 'office_name')
                     ->prefixIcon('heroicon-m-building-office-2')
                     ->options(function () {
@@ -41,6 +65,7 @@ class ProblemCategoryResource extends Resource
                     ->disabled(!auth()->user()->isSuperAdmin()) // disable for non-admins
                     ->required(),
                 Forms\Components\TextInput::make('category_name')
+                    ->label('Type of Issue')
                     ->required()
                     ->maxLength(255),
             ]);
@@ -52,15 +77,15 @@ class ProblemCategoryResource extends Resource
             ->query(static::getTableQuery())
             ->columns([
                 Tables\Columns\TextColumn::make('id')
-                    ->label('Category ID')
+                    ->label('Issue ID')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('office.office_name')
-                    ->label('Office Name')
+                    ->label('Division Name')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('category_name')
-                    ->label('Category Name')
+                    ->label('Type of Issue')
                     ->searchable()
                     ->sortable(),
             ])

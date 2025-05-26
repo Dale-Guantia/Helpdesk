@@ -12,3 +12,5 @@ Route::get('/', function () {
 
 Route::get('/submit_ticket', [TicketController::class, 'create'])->name('ticket_create');
 Route::post('/submit_ticket', [TicketController::class, 'store'])->name('ticket_store');
+Route::get('/problem_categories/{office}', [TicketController::class, 'getCategories']);
+

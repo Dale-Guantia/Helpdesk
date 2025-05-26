@@ -105,33 +105,34 @@
 
           <!-- Right side inputs -->
           <div class="w-full md:w-64 space-y-4">
+                <!-- Office Dropdown -->
                 <div>
-                    <label for="office_id" class="block text-xs font-semibold mb-1 select-none">Office of concern</label>
-                        <select
-                            id="office_id"
-                            name="office_id"
-                            class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600"
-                            required
-                        >
-                            <option selected>Select an option</option>
-                            @foreach ($offices as $office)
+                    <label for="office_id" class="block text-xs font-semibold mb-1">Office of concern</label>
+                    <select
+                        id="office_id"
+                        name="office_id"
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+                        required
+                    >
+                        <option selected>Select an office</option>
+                        @foreach ($offices as $office)
                             <option value="{{ $office->id }}">{{ $office->office_name }}</option>
-                            @endforeach
-                        </select>
+                        @endforeach
+                    </select>
                 </div>
+
+                <!-- Problem Category Dropdown -->
                 <div>
-                    <label for="problem_category" class="block text-xs font-semibold mb-1 select-none">Problem Category</label>
-                        <select
-                            id="problem_category_id"
-                            name="problem_category_id"
-                            class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600"
-                            required
-                        >
-                            <option selected>Select an option</option>
-                            @foreach ($problem_categories as $problem_category)
-                            <option value="{{ $problem_category->id }}">{{ $problem_category->category_name }}</option>
-                            @endforeach
-                        </select>
+                    <label for="problem_category_id" class="block text-xs font-semibold mb-1">Problem Category</label>
+                    <select
+                        id="problem_category_id"
+                        name="problem_category_id"
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-700"
+                        required
+                        disabled
+                    >
+                        <option selected disabled>Select an office first</option>
+                    </select>
                 </div>
                 <div>
                     <label for="priority" class="block text-xs font-semibold mb-1 select-none">Priority Level</label>
@@ -168,4 +169,30 @@
     </form>
   </main>
 </body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $('#office_id').on('change', function () {
+        var officeId = $(this).val();
+
+        if (!officeId) return;
+
+        // Disable and clear problem categories until fetched
+        $('#problem_category_id').prop('disabled', true).html('<option>Loading...</option>');
+
+        $.ajax({
+            url: '/problem_categories/' + officeId,
+            type: 'GET',
+            success: function (data) {
+                let options = '<option selected >Select a problem category</option>';
+                data.forEach(function (category) {
+                    options += `<option value="${problem_category.id}">${problem_category.category_name}</option>`;
+                });
+                $('#problem_category_id').html(options).prop('disabled', false);
+            },
+            error: function () {
+                $('#problem_category_id').html('<option>Error loading categories</option>').prop('disabled', true);
+            }
+        });
+    });
+</script>
 </html>

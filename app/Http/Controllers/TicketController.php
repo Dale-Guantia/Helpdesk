@@ -19,6 +19,13 @@ class TicketController extends Controller
         return view('form', compact( 'problem_categories', 'priorities', 'offices'));
     }
 
+    public function getCategories($officeId)
+    {
+        $categories = ProblemCategory::where('office_id', $officeId)->get();
+        return response()->json($categories);
+    }
+
+
     public function store(Request $request)
     {
         $request->validate([

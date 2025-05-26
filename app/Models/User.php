@@ -17,12 +17,14 @@ class User extends Authenticatable implements FilamentUser
     use HasFactory, Notifiable;
 
     const ROLE_SUPER_ADMIN = 1;
-    const ROLE_HRDO_ADMIN = 2;
-    const ROLE_EMPLOYEE = 3;
+    const ROLE_HRDO_DIVISION_HEAD = 2;
+    const ROLE_HRDO_STAFF = 3;
+    const ROLE_EMPLOYEE = 4;
     const DEFAULT_ROLE = self::ROLE_EMPLOYEE;
     const ROLES = [
         self::ROLE_SUPER_ADMIN => 'Super Admin',
-        self::ROLE_HRDO_ADMIN => 'HRDO Admin',
+        self::ROLE_HRDO_DIVISION_HEAD => 'HRDO Division Head',
+        self::ROLE_HRDO_STAFF => 'HRDO Staff',
         self::ROLE_EMPLOYEE => 'Employee',
     ];
 
@@ -31,9 +33,14 @@ class User extends Authenticatable implements FilamentUser
         return $this->role === self::ROLE_SUPER_ADMIN;
     }
 
-    public function isHRDOAdmin()
+    public function isHrdoDivisionHead()
     {
-        return $this->role === self::ROLE_HRDO_ADMIN;
+        return $this->role === self::ROLE_HRDO_DIVISION_HEAD;
+    }
+
+    public function isHrdoStaff()
+    {
+        return $this->role === self::ROLE_HRDO_STAFF;
     }
 
     public function isEmployee()
@@ -43,7 +50,7 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->isSuperAdmin() || $this->isHRDOAdmin() || $this->isEmployee();
+        return $this->isSuperAdmin() || $this->isHrdoDivisionHead() || $this->isHrdoStaff() || $this->isEmployee();
     }
 
     /**

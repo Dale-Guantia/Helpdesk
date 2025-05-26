@@ -103,19 +103,21 @@ class UserResource extends Resource
                     ->label('Role')
                     ->formatStateUsing(fn ($state) => match ($state) {
                         1 => 'Super Admin',
-                        2 => 'HRDO Admin',
-                        3 => 'Employee',
+                        2 => 'HRDO Division Head',
+                        3 => 'HRDO Staff',
+                        4 => 'Employee',
                     })
                     ->badge() // Optional: to show it as a badge style
                     ->color(fn ($state) => match ($state) {
                         1 => 'warning',  // Yellow for Super Admin
-                        2 => 'info',     // Blue for HRDO Admin
-                        3 => 'gray',  // Gray for Employee
+                        2 => 'info',     // Blue for HRDO Division Head
+                        3 => 'success',  // Green for HRDO Staff
+                        4 => 'gray',  // Gray for Employee
                     })
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('office.office_name')
-                    ->label('Office Name')
+                    ->label('Division Name')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('is_active')

@@ -13,7 +13,7 @@ class TicketPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isSuperAdmin() || $user->isHRDOAdmin() || $user->isEmployee();
+        return $user->isSuperAdmin() || $user->isHrdoDivisionHead() || $user->isHrdoStaff() || $user->isEmployee();
     }
 
     /**
@@ -21,7 +21,7 @@ class TicketPolicy
      */
     public function view(User $user, Ticket $ticket): bool
     {
-        return $user->isSuperAdmin() || $user->isHRDOAdmin() || $user->isEmployee();
+        return $user->isSuperAdmin() || $user->isHrdoDivisionHead() || $user->isHrdoStaff() || $user->isEmployee();
     }
 
     /**
@@ -29,7 +29,7 @@ class TicketPolicy
      */
     public function create(User $user): bool
     {
-        return $user->isSuperAdmin() || $user->isHRDOAdmin() || $user->isEmployee();
+        return $user->isSuperAdmin() || $user->isHrdoDivisionHead() || $user->isHrdoStaff() || $user->isEmployee();
     }
 
     /**
@@ -37,7 +37,7 @@ class TicketPolicy
      */
     public function update(User $user, Ticket $ticket): bool
     {
-        return $user->isSuperAdmin() || $user->isHRDOAdmin() || $user->isEmployee();
+        return $user->isSuperAdmin() || $user->isHrdoDivisionHead() || $user->isHrdoStaff() || $user->isEmployee();
     }
 
     /**

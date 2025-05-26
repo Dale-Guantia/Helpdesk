@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\TicketResource\RelationManagers;
 use App\Models\ProblemCategory;
 use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Support\Facades\Auth;
 
 
 class TicketResource extends Resource
@@ -90,11 +91,34 @@ class TicketResource extends Resource
                                 Forms\Components\Select::make('status_id')
                                     ->label('Status')
                                     ->default(3)
-                                    ->relationship('status', 'status_name'),
+                                    ->relationship('status', 'status_name')
+                                    ->visible(function (Forms\Get $get, Forms\Set $set, ?Ticket $record) {
+                                        $user = Auth::user();
+
+                                        if (!$user) {
+                                            return false;
+                                        }
+
+                                        // Always visible for Super Admins
+                                        if ($user->isSuperAdmin()) {
+                                            return true;
+                                        }
+
+                                        // HRDO Admins: Only show if editing someone else's ticket
+                                        if ($user->isHrdoDivisionHead()) {
+                                            // If creating (no record yet) or the ticket is created by themselves, hide
+                                            if (!$record || $record->user_id === $user->id) {
+                                                return false;
+                                            }
+                                            return true;
+                                        }
+
+                                        // Employees: always hidden
+                                        return false;
+                                    }),
                         ])->columnSpan(1)
                     ])->columns(3),
             ]);
-
     }
 
     public static function table(Table $table): Table
@@ -102,7 +126,7 @@ class TicketResource extends Resource
         return $table
             ->query(static::getTableQuery())
             ->columns([
-                Tables\Columns\TextColumn::make('id')
+                Tables\Columns\TextColumn::make('reference_id')
                     ->label('Ticket ID')
                     ->searchable()
                     ->sortable(),
@@ -122,7 +146,7 @@ class TicketResource extends Resource
                         return $record->user_id === auth()->id() ? 'You' : $state;
                     }),
                 Tables\Columns\TextColumn::make('problemCategory.category_name')
-                    ->label('Problem category')
+                    ->label('Type of Issue')
                     ->default('N/A')
                     ->searchable()
                     ->sortable()
@@ -171,7 +195,7 @@ class TicketResource extends Resource
                     ->label(''),
                 Tables\Actions\EditAction::make()
                     ->label('')
-                    ->hidden(fn ($record) => !auth()->user()->isSuperAdmin() && auth()->id() !== $record->user_id),
+                    ->hidden(fn ($record) => !auth()->user()->isSuperAdmin() && !auth()->user()->isHrdoDivisionHead() && auth()->id() !== $record->user_id),
                 Tables\Actions\DeleteAction::make()
                     ->label('')
                     ->hidden(fn ($record) => !auth()->user()->isSuperAdmin() && auth()->id() !== $record->user_id),
@@ -191,7 +215,7 @@ class TicketResource extends Resource
             return static::getModel()::query();
         }
         // HRDO admin account: return tickets in their office OR tickets created by them
-        elseif ($user->isHRDOAdmin()) {
+        elseif ($user->isHrdoDivisionHead()) {
             return static::getModel()::where(function ($query) use ($user) {
                 $query->where('office_id', $user->office_id)
                     ->orWhere('user_id', $user->id);
