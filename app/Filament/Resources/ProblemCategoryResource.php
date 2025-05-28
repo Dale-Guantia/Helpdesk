@@ -65,7 +65,7 @@ class ProblemCategoryResource extends Resource
                     ->disabled(!auth()->user()->isSuperAdmin()) // disable for non-admins
                     ->required(),
                 Forms\Components\TextInput::make('category_name')
-                    ->label('Type of Issue')
+                    ->label('Issue Description')
                     ->required()
                     ->maxLength(255),
             ]);
@@ -85,7 +85,7 @@ class ProblemCategoryResource extends Resource
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('category_name')
-                    ->label('Type of Issue')
+                    ->label('Issue Description')
                     ->searchable()
                     ->sortable(),
             ])

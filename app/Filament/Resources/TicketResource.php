@@ -132,7 +132,7 @@ class TicketResource extends Resource
                         return $record->user_id === auth()->id() ? 'You' : $state;
                     }),
                 Tables\Columns\TextColumn::make('problemCategory.category_name')
-                    ->label('Type of Issue')
+                    ->label('Issue Description')
                     ->default('N/A')
                     ->searchable()
                     ->sortable()
