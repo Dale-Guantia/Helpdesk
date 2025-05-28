@@ -10,11 +10,12 @@ use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Support\Facades\Storage;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes;
 
     const ROLE_SUPER_ADMIN = 1;
     const ROLE_HRDO_DIVISION_HEAD = 2;
@@ -48,6 +49,15 @@ class User extends Authenticatable implements FilamentUser
         return $this->role === self::ROLE_EMPLOYEE;
     }
 
+    public function isAgent(): bool
+    {
+        return in_array($this->role, [
+            self::ROLE_SUPER_ADMIN,
+            self::ROLE_HRDO_DIVISION_HEAD,
+            self::ROLE_HRDO_STAFF,
+        ]);
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
         return $this->isSuperAdmin() || $this->isHrdoDivisionHead() || $this->isHrdoStaff() || $this->isEmployee();
@@ -66,6 +76,7 @@ class User extends Authenticatable implements FilamentUser
         'office_id',
         'is_active',
         'role',
+        'resolved_tickets_count',
         'avatar_url',
         'created_at',
         'updated_at',

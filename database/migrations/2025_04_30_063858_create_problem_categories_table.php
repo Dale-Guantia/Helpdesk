@@ -16,7 +16,6 @@ return new class extends Migration
             $table->unsignedBigInteger('office_id')->nullable()->index('office_id');
             $table->string('category_name');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

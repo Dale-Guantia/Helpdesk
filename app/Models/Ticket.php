@@ -3,14 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 
 class Ticket extends Model
 {
-    use HasFactory, Notifiable, SoftDeletes;
+    use HasFactory, Notifiable;
     /**
      * The attributes that should be cast.
      *
@@ -41,13 +39,19 @@ class Ticket extends Model
     protected static function booted()
     {
         static::creating(function ($ticket) {
-            $today = now()->format('mdy'); // e.g., 052225
-            $countToday = static::whereDate('created_at', now()->toDateString())->count() + 1;
-            $increment = str_pad($countToday, 4, '0', STR_PAD_LEFT); // 0001
+            $today = now()->format('mdy'); // e.g., 052725
+            $countToday = static::whereDate('created_at', now()->toDateString())->count();
 
-            $ticket->reference_id = "{$increment}-{$today}";
+            do {
+                $countToday++;
+                $increment = str_pad($countToday, 4, '0', STR_PAD_LEFT);
+                $referenceId = "{$increment}-{$today}";
+            } while (static::where('reference_id', $referenceId)->exists());
+
+            $ticket->reference_id = $referenceId;
         });
     }
+
 
     public function User()
     {

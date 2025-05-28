@@ -14,6 +14,7 @@ use App\Filament\Resources\TicketResource\RelationManagers;
 use App\Models\ProblemCategory;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Carbon;
 
 
 class TicketResource extends Resource
@@ -90,31 +91,16 @@ class TicketResource extends Resource
                                     ->relationship('priority', 'priority_name'),
                                 Forms\Components\Select::make('status_id')
                                     ->label('Status')
-                                    ->default(3)
                                     ->relationship('status', 'status_name')
-                                    ->visible(function (Forms\Get $get, Forms\Set $set, ?Ticket $record) {
-                                        $user = Auth::user();
-
-                                        if (!$user) {
-                                            return false;
+                                    ->disabled(fn () => !Auth::user()?->isSuperAdmin())
+                                    ->dehydrated(true)
+                                    ->required()
+                                    ->default(function (Forms\Get $get) {
+                                        $officeId = $get('office_id');
+                                        if ($officeId == 1) {
+                                            return 1; // Replace with the ID of "Pending"
                                         }
-
-                                        // Always visible for Super Admins
-                                        if ($user->isSuperAdmin()) {
-                                            return true;
-                                        }
-
-                                        // HRDO Admins: Only show if editing someone else's ticket
-                                        if ($user->isHrdoDivisionHead()) {
-                                            // If creating (no record yet) or the ticket is created by themselves, hide
-                                            if (!$record || $record->user_id === $user->id) {
-                                                return false;
-                                            }
-                                            return true;
-                                        }
-
-                                        // Employees: always hidden
-                                        return false;
+                                        return 3; // Replace with the ID of "Unassigned"
                                     }),
                         ])->columnSpan(1)
                     ])->columns(3),
@@ -171,7 +157,23 @@ class TicketResource extends Resource
                         'Unassigned' => 'gray',
                     })
                     ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Created At')
+                    ->dateTime()
                     ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->formatStateUsing(function ($state) {
+                        return Carbon::parse($state)->format('h:i A - m/d/y');
+                    }),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Updated At')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->formatStateUsing(function ($state) {
+                        return Carbon::parse($state)->format('h:i A - m/d/y');
+                    }),
             ])
             ->filters([
                 SelectFilter::make('status')
@@ -186,6 +188,21 @@ class TicketResource extends Resource
                         if (count($values)) {
                             $query->whereHas('status', function ($q) use ($values) {
                                 $q->whereIn('status_name', $values);
+                            });
+                        }
+                    }),
+                SelectFilter::make('priority')
+                    ->multiple()
+                    ->options([
+                        'High' => 'High',
+                        'Medium' => 'Medium',
+                        'Low' => 'Low',
+                    ])
+                    ->query(function ($query, array $data) {
+                        $values = $data['values'] ?? [];
+                        if (count($values)) {
+                            $query->whereHas('priority', function ($q) use ($values) {
+                                $q->whereIn('priority_name', $values);
                             });
                         }
                     }),

@@ -22,6 +22,7 @@ return new class extends Migration
             $table->integer('role')->default(User::DEFAULT_ROLE);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->integer('resolved_tickets_count')->default(0);
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

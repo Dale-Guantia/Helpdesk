@@ -58,7 +58,7 @@ class CommentsRelationManager extends RelationManager
                             ->grow(false),
                         TextColumn::make('created_at')
                             ->html()
-                            ->formatStateUsing(fn (string $state) =>'<span class="text-xs">' . e(Carbon::parse($state)->format('F d, Y g:i A')) . '</span>')
+                            ->formatStateUsing(fn (string $state) =>'<span class="text-xs">' . e(Carbon::parse($state)->format('h:i A - m/d/y')) . '</span>')
                             ->color('warning'),
                     TextColumn::make('comment')
                         ->wrap()
