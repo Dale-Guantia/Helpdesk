@@ -55,7 +55,10 @@ class CommentsRelationManager extends RelationManager
                         TextColumn::make('user.name')
                             ->translateLabel()
                             ->weight('bold')
-                            ->grow(false),
+                            ->grow(false)
+                            ->formatStateUsing(function ($state, $record) {
+                                return $record->user_id === auth()->id() ? 'You' : $state;
+                            }),
                         TextColumn::make('created_at')
                             ->html()
                             ->formatStateUsing(fn (string $state) =>'<span class="text-xs">' . e(Carbon::parse($state)->format('h:i A - m/d/y')) . '</span>')

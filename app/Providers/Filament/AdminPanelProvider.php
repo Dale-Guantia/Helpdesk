@@ -78,7 +78,11 @@ class AdminPanelProvider extends PanelProvider
                     ->setSort(10)
                     ->shouldRegisterNavigation(false)
                     ->shouldShowDeleteAccountForm(false)
-                    ->shouldShowAvatarForm()
+                    ->shouldShowAvatarForm(
+                        value: true,
+                        directory: 'avatars', // image will be stored in 'storage/app/public/avatars
+                        rules: 'mimes:jpeg,png|max:1024'
+                    )
                     ->shouldShowBrowserSessionsForm(false),
                 FilamentApexChartsPlugin::make(),
                 AuthUIEnhancerPlugin::make()

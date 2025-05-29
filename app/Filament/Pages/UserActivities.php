@@ -24,12 +24,12 @@ class UserActivities extends Page implements HasTable
 
     public function getDefaultTableSortColumn(): ?string
     {
-        return 'resolved_tickets_count'; // 👈 your column name
+        return 'resolved_tickets_count'; // your column name
     }
 
     public function getDefaultTableSortDirection(): ?string
     {
-        return 'desc'; // 👈 sort highest to lowest
+        return 'desc'; // sort highest to lowest
     }
 
     protected function getTableQuery()
@@ -38,10 +38,13 @@ class UserActivities extends Page implements HasTable
 
         $query = User::query()->with(['office']); // make sure office relationship is loaded
 
-        // 🔐 Restrict by office unless SuperAdmin
+        // Restrict by office unless SuperAdmin
         if (!$user->isSuperAdmin()) {
             $query->where('office_id', $user->office_id);
         }
+
+        // Exclude users with role_id = 4 (employee)
+        $query->where('role', '!=', 4);
 
         return $query;
     }

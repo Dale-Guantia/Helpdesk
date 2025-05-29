@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class User extends Authenticatable implements FilamentUser
+class User extends Authenticatable implements FilamentUser, HasAvatar
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, SoftDeletes;
@@ -114,6 +114,6 @@ class User extends Authenticatable implements FilamentUser
     public function getFilamentAvatarUrl(): ?string
     {
         $avatarColumn = config('filament-edit-profile.avatar_column', 'avatar_url');
-        return $this->$avatarColumn ? Storage::url("$this->$avatarColumn") : null;
+        return $this->$avatarColumn ? Storage::url($this->$avatarColumn) : null;
     }
 }

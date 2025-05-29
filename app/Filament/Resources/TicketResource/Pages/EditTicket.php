@@ -6,6 +6,8 @@ use App\Filament\Resources\TicketResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Model;
+
 
 class EditTicket extends EditRecord
 {
@@ -32,5 +34,32 @@ class EditTicket extends EditRecord
                 $user->increment('resolved_tickets_count');
             }
         }
+
+        if ($record->wasChanged('status_id') && $record->status_id == 2) {
+            $user = auth()->user();
+
+            if ($user && ($user->isAgent())) {
+                $record->comments()->create([
+                    'user_id' => $user->id,
+                    'comment' => 'This ticket has been resolved. For further concerns regarding this matter, please submit a new ticket. Thank you!',
+                ]);
+            }
+        }
     }
+
+    public static function canEdit(Model $record): bool
+    {
+        // Disallow editing if resolved (status_id = 2)
+        return $record->status_id !== 2;
+    }
+
+    protected function authorizeAccess(): void
+    {
+        if ($this->record->status_id == 2) {
+            abort(403, 'This ticket is already resolved and cannot be edited.');
+        }
+
+        parent::authorizeAccess();
+    }
+
 }

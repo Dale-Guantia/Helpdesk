@@ -16,6 +16,16 @@ class ViewTicket extends ViewRecord
 
     protected function getHeaderActions(): array
     {
+        // If the record is not loaded yet, return nothing.
+        if (!$this->record) {
+            return [];
+        }
+
+        // Hide edit button if ticket is resolved (status_id = 2)
+        if ($this->record->status_id === 2) {
+            return [];
+        }
+
         return [
             Actions\EditAction::make(),
         ];
