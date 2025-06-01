@@ -38,6 +38,8 @@ class AdminPanelProvider extends PanelProvider
             ->darkMode(false)
             ->sidebarCollapsibleOnDesktop()
             ->sidebarWidth('15rem')
+            ->databaseNotifications(true)
+            ->databaseNotificationsPolling('30s')
             ->colors([
                 'danger' => Color::Red,
                 'gray' => Color::Zinc,
@@ -91,13 +93,16 @@ class AdminPanelProvider extends PanelProvider
                     ->formPanelWidth('40%')
                     ->emptyPanelBackgroundImageUrl(asset('images/AuthPagePanel.png'))
             ])
-
             ->userMenuItems([
                 'profile' => MenuItem::make()
                     ->label(fn() => auth()->user()->name)
                     ->url(fn (): string => EditProfilePage::getUrl())
                     ->icon('heroicon-m-user-circle')
             ])
+            ->renderHook(
+                'head.start',
+                fn () => '<meta name="user-id" content="' . auth()->id() . '">'
+            )
             ->viteTheme('resources/css/filament/ticketing/theme.css');
     }
 }

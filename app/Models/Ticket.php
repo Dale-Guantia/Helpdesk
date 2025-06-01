@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
+use Filament\Notifications\Notification;
+use Filament\Notifications\Actions\Action;
+use Filament\Notifications\DatabaseNotificationSent;
 
 class Ticket extends Model
 {
@@ -49,6 +52,92 @@ class Ticket extends Model
             } while (static::where('reference_id', $referenceId)->exists());
 
             $ticket->reference_id = $referenceId;
+        });
+
+
+        static::created(function ($ticket) {
+            $ticket->load('user'); // Ensure the user relationship is loaded
+
+            $recipients = User::where('id', '!=', $ticket->user_id)
+                ->where(function ($query) use ($ticket) {
+                    $query->where('role', User::ROLE_SUPER_ADMIN)
+                        ->orWhere(function ($q) use ($ticket) {
+                            $q->where('office_id', $ticket->office_id)
+                            ->whereIn('role', [
+                                User::ROLE_HRDO_DIVISION_HEAD,
+                                User::ROLE_HRDO_STAFF,
+                            ]);
+                        });
+                })
+                ->get();
+
+            foreach ($recipients as $recipient) {
+                Notification::make()
+                    ->title('New Ticket Created')
+                    ->body("Ticket #{$ticket->reference_id} has been created.")
+                    ->icon('heroicon-o-information-circle')
+                    ->info()
+                    ->actions([
+                        Action::make('view')
+                            ->label('View Ticket')
+                            ->url(route('filament.ticketing.resources.tickets.view', ['record' => $ticket->id]))
+                            ->button()
+                            ->openUrlInNewTab(false),
+                    ])
+                    ->sendToDatabase($recipient)
+                    ->broadcast($recipient);
+            }
+        });
+
+        static::updated(function ($ticket) {
+            $ticket->load('user'); // Ensure the user relationship is loaded
+
+            $recipients = User::where('id', '!=', $ticket->user_id)
+                ->where(function ($query) use ($ticket) {
+                    $query->where('role', User::ROLE_SUPER_ADMIN)
+                        ->orWhere(function ($q) use ($ticket) {
+                            $q->where('office_id', $ticket->office_id)
+                            ->whereIn('role', [
+                                User::ROLE_HRDO_DIVISION_HEAD,
+                                User::ROLE_HRDO_STAFF,
+                            ]);
+                        });
+                })
+                ->get();
+
+            foreach ($recipients as $recipient) {
+                Notification::make()
+                    ->title('Ticket Updated')
+                    ->body("Ticket #{$ticket->reference_id} has been updated.")
+                    ->icon('heroicon-o-information-circle')
+                    ->info()
+                    ->actions([
+                        Action::make('view')
+                            ->label('View Ticket')
+                            ->url(route('filament.ticketing.resources.tickets.view', ['record' => $ticket->id]))
+                            ->button()
+                            ->openUrlInNewTab(false),
+                    ])
+                    ->sendToDatabase($recipient)
+                    ->broadcast($recipient);
+            }
+
+            // ✅ Notify the employee who owns the ticket
+            if ($ticket->user && $ticket->user->isEmployee()) {
+                Notification::make()
+                    ->title('Your Ticket Was Updated')
+                    ->body("Ticket #{$ticket->reference_id} has been updated.")
+                    ->icon('heroicon-o-information-circle')
+                    ->info()
+                    ->actions([
+                        Action::make('view')
+                            ->label('View Update')
+                            ->url(route('filament.ticketing.resources.tickets.view', ['record' => $ticket->id]))
+                            ->button(),
+                    ])
+                    ->sendToDatabase($ticket->user)
+                    ->broadcast($ticket->user);
+            }
         });
     }
 

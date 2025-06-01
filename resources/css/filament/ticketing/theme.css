@@ -10,55 +10,28 @@
     :root {
         --color-blue2: #0e2f66;
     }
-
-    /* .fi-body {
-        color: white;
-        background-color: var(--color-pasig1) !important;
-    } */
-
-    .fi-topbar > nav {
-        @apply text-white;
-        background-color: var(--color-blue2) !important;
-    }
-
-    .fi-sidebar-header {
-        background-color: var(--color-blue2) !important;
-    }
-
-    /* .fi-sidebar {
-        background-color: var(--color-blue2) !important;
-    } */
-
-    /* .fi-section {
-        background-color: gray-200 !important;
-    } */
-
-    /* .fi-wi-stats-overview-stat {
-        background-color: var(--color-pasig2) !important;
-    } */
 }
 
 .custom-auth-empty-panel {
     @apply bg-white;
 }
 
+.custom-auth-form-panel {
+    @apply bg-[#0e2f66];
+}
+
+.fi-sidebar-header {
+    @apply bg-[#0e2f66];
+}
+
+.fi-topbar > nav {
+    @apply text-white;
+    @apply bg-[#0e2f66];
+}
+
 .custom-auth-form-wrapper .fi-fo-field-wrp .fi-fo-field-wrp-label .text-sm {
     @apply text-white !important;
 }
-
-/* .fi-section {
-    @apply bg-gray-200;
-} */
-
-/* .fi-section-content-ctn {
-    @apply bg-gray-200;
-    @apply rounded-xl;
-    @apply shadow-sm ring-1 ring-gray-950/5;
-} */
-
-/* .fi-wi-stats-overview-stat {
-    @apply bg-gray-200;
-} */
 
 .fi-logo {
     @apply text-white;
@@ -79,14 +52,6 @@
 .fi-icon-btn-icon:hover {
     @apply text-gray-200;
 }
-
-/* .fi-sidebar-item-label {
-    @apply text-white;
-} */
-
-/* .fi-sidebar-item-button:hover {
-    @apply bg-gray-800;
-} */
 
 .custom-auth-form-wrapper {
      @apply text-white;

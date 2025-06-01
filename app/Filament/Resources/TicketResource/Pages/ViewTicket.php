@@ -27,7 +27,7 @@ class ViewTicket extends ViewRecord
         }
 
         return [
-            Actions\EditAction::make(),
+            Actions\EditAction::make()->label('Edit / Add Comment'),
         ];
     }
 

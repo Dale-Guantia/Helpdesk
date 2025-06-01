@@ -17,24 +17,24 @@ class Stats extends BaseWidget
         return [
             Stat::make('Total Users', User::count())
                 // ->description('32k increase')
-                ->descriptionIcon('heroicon-m-arrow-trending-up')
+                // ->descriptionIcon('heroicon-m-arrow-trending-up')
                 ->color('info')
-                ->chart([7, 2, 10, 3, 15, 4, 17]),
+                ->chart([1, 1, 1, 1, 1, 1, 1]),
             Stat::make('Total Tickets', Ticket::count())
                 // ->description('32k increase')
-                ->descriptionIcon('heroicon-m-arrow-trending-up')
+                // ->descriptionIcon('heroicon-m-arrow-trending-up')
                 ->color('info')
-                ->chart([7, 2, 10, 3, 15, 4, 17]),
+                ->chart([1, 1, 1, 1, 1, 1, 1]),
             Stat::make('Total Divisions', Office::count())
                 // ->description('32k increase')
-                ->descriptionIcon('heroicon-m-arrow-trending-up')
+                // ->descriptionIcon('heroicon-m-arrow-trending-up')
                 ->color('info')
-                ->chart([7, 2, 10, 3, 15, 4, 17]),
+                ->chart([1, 1, 1, 1, 1, 1, 1]),
             Stat::make('Total Issues', ProblemCategory::count())
                 // ->description('32k increase')
-                ->descriptionIcon('heroicon-m-arrow-trending-up')
+                // ->descriptionIcon('heroicon-m-arrow-trending-up')
                 ->color('info')
-                ->chart([7, 2, 10, 3, 15, 4, 17]),
+                ->chart([1, 1, 1, 1, 1, 1, 1]),
         ];
     }
 

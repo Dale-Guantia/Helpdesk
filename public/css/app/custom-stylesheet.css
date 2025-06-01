@@ -1,6 +1,0 @@
-/* .fi-fo-field-wrp-label .text-sm {
-    color: whitesmoke !important;
-}
-
-add to your custom CSS file to apply styles globally
-<div x-data="{}" x-load-css="[@js(\Filament\Support\Facades\FilamentAsset::getStyleHref('custom-stylesheet'))]"> */
