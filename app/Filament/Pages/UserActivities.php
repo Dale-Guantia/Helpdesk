@@ -16,7 +16,7 @@ class UserActivities extends Page implements HasTable
 
     protected static string $resource = UserResource::class;
 
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 7;
 
     protected static ?string $navigationIcon = 'heroicon-o-presentation-chart-line';
 
@@ -69,11 +69,32 @@ class UserActivities extends Page implements HasTable
                 ->formatStateUsing(function ($state, $record) {
                     return $record->id === auth()->id() ? 'You' : $state;
                 }),
-            Tables\Columns\TextColumn::make('office.office_name')->label('Division Name')
+            Tables\Columns\TextColumn::make('department.department_name')->label('Department')
+                ->extraAttributes(['class' => 'text-xs'])
                 ->searchable()
+                ->limit(20)
+                ->sortable(),
+            Tables\Columns\TextColumn::make('office.office_name')->label('Division')
+                ->searchable()
+                ->limit(20)
                 ->sortable(),
             Tables\Columns\TextColumn::make('resolved_tickets_count')->label('Total Resolved Tickets')
                 ->sortable(),
+        ];
+    }
+
+    protected function getTableFilters(): array
+    {
+        return [
+            Tables\Filters\SelectFilter::make('department_id')
+                ->label('Department')
+                ->multiple()
+                ->relationship('department', 'department_name'),
+
+            Tables\Filters\SelectFilter::make('office_id')
+                ->label('Division')
+                ->multiple()
+                ->relationship('office', 'office_name'),
         ];
     }
 

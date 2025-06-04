@@ -99,10 +99,6 @@ class AdminPanelProvider extends PanelProvider
                     ->url(fn (): string => EditProfilePage::getUrl())
                     ->icon('heroicon-m-user-circle')
             ])
-            ->renderHook(
-                'head.start',
-                fn () => '<meta name="user-id" content="' . auth()->id() . '">'
-            )
             ->viteTheme('resources/css/filament/ticketing/theme.css');
     }
 }

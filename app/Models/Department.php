@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 
-class ProblemCategory extends Model
+class Department extends Model
 {
     use HasFactory, Notifiable;
     /**
@@ -14,23 +14,12 @@ class ProblemCategory extends Model
      *
      * @return array<string, string>s
      */
-    protected $table = 'problem_categories';
+
+    protected $table = 'departments';
 
     protected $fillable = [
-        'category_name',
-        'department_id',
-        'office_id',
+        'department_name',
         'created_at',
         'updated_at',
     ];
-
-    public function department()
-    {
-        return $this->belongsTo(Department::class);
-    }
-
-    public function office()
-    {
-        return $this->belongsTo(Office::class);
-    }
 }

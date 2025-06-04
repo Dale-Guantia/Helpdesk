@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\ProblemCategoryResource\Pages;
+namespace App\Filament\Resources\DepartmentResource\Pages;
 
-use App\Filament\Resources\ProblemCategoryResource;
+use App\Filament\Resources\DepartmentResource;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
-class CreateProblemCategory extends CreateRecord
+class CreateDepartment extends CreateRecord
 {
-    protected static string $resource = ProblemCategoryResource::class;
+    protected static string $resource = DepartmentResource::class;
 
     protected static bool $canCreateAnother = false;
 

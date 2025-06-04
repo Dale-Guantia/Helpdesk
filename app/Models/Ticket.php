@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 use Filament\Notifications\Notification;
 use Filament\Notifications\Actions\Action;
-use Filament\Notifications\DatabaseNotificationSent;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Ticket extends Model
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, softDeletes;
     /**
      * The attributes that should be cast.
      *
@@ -56,20 +56,24 @@ class Ticket extends Model
 
 
         static::created(function ($ticket) {
-            $ticket->load('user'); // Ensure the user relationship is loaded
+        $ticket->load('user');
 
-            $recipients = User::where('id', '!=', $ticket->user_id)
-                ->where(function ($query) use ($ticket) {
-                    $query->where('role', User::ROLE_SUPER_ADMIN)
-                        ->orWhere(function ($q) use ($ticket) {
-                            $q->where('office_id', $ticket->office_id)
-                            ->whereIn('role', [
+            $recipients = User::where(function ($query) use ($ticket) {
+                $query->where('role', User::ROLE_SUPER_ADMIN)
+                    ->orWhere(function ($q) use ($ticket) {
+                        $q->whereIn('role', [
                                 User::ROLE_HRDO_DIVISION_HEAD,
                                 User::ROLE_HRDO_STAFF,
-                            ]);
+                            ])
+                            ->where(function ($inner) use ($ticket) {
+                                $inner->when($ticket->office_id, function ($q) use ($ticket) {
+                                    $q->where('office_id', $ticket->office_id);
+                                })->when(!$ticket->office_id && $ticket->department_id, function ($q) use ($ticket) {
+                                    $q->where('department_id', $ticket->department_id);
+                                });
+                            });
                         });
-                })
-                ->get();
+            })->get();
 
             foreach ($recipients as $recipient) {
                 Notification::make()
@@ -89,21 +93,30 @@ class Ticket extends Model
             }
         });
 
-        static::updated(function ($ticket) {
-            $ticket->load('user'); // Ensure the user relationship is loaded
 
-            $recipients = User::where('id', '!=', $ticket->user_id)
-                ->where(function ($query) use ($ticket) {
-                    $query->where('role', User::ROLE_SUPER_ADMIN)
-                        ->orWhere(function ($q) use ($ticket) {
-                            $q->where('office_id', $ticket->office_id)
-                            ->whereIn('role', [
+        static::updated(function ($ticket) {
+            if ($ticket->wasRecentlyCreated) {
+                return; // Prevent double notification
+            }
+
+            $ticket->load('user');
+
+            $recipients = User::where(function ($query) use ($ticket) {
+                $query->where('role', User::ROLE_SUPER_ADMIN)
+                    ->orWhere(function ($q) use ($ticket) {
+                        $q->whereIn('role', [
                                 User::ROLE_HRDO_DIVISION_HEAD,
                                 User::ROLE_HRDO_STAFF,
-                            ]);
+                            ])
+                            ->where(function ($inner) use ($ticket) {
+                                $inner->when($ticket->office_id, function ($q) use ($ticket) {
+                                    $q->where('office_id', $ticket->office_id);
+                                })->when(!$ticket->office_id && $ticket->department_id, function ($q) use ($ticket) {
+                                    $q->where('department_id', $ticket->department_id);
+                                });
+                            });
                         });
-                })
-                ->get();
+            })->get();
 
             foreach ($recipients as $recipient) {
                 Notification::make()
@@ -122,7 +135,6 @@ class Ticket extends Model
                     ->broadcast($recipient);
             }
 
-            // ✅ Notify the employee who owns the ticket
             if ($ticket->user && $ticket->user->isEmployee()) {
                 Notification::make()
                     ->title('Your Ticket Was Updated')
@@ -144,8 +156,14 @@ class Ticket extends Model
 
     public function User()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
+    }
+
     public function office()
     {
         return $this->belongsTo(Office::class);

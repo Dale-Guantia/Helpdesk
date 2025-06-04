@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('problem_categories', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('office_id')->nullable()->index('office_id');
+            $table->foreignId('department_id')->constrained('departments')->onDelete('cascade');
+            $table->foreignId('office_id')->nullable()->constrained('offices')->onDelete('cascade');
             $table->string('category_name');
             $table->timestamps();
         });

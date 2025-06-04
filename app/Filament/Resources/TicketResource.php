@@ -11,6 +11,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\TicketResource\RelationManagers;
+use App\Models\Office;
 use App\Models\ProblemCategory;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Facades\Auth;
@@ -65,26 +66,66 @@ class TicketResource extends Resource
 
                         Forms\Components\Section::make()
                             ->schema([
-                                Forms\Components\Select::make('office_id')
-                                    ->label('Office of concern')
+                                Forms\Components\Select::make('department_id')
+                                    ->label('Department of concern')
+                                    ->placeholder('Select a Department')
                                     ->reactive()
-                                    ->relationship('office', 'office_name')
+                                    ->relationship('department', 'department_name')
                                     ->afterStateUpdated(function ($state, callable $set) {
                                         $set('status_id', $state ? 1 : 3);
                                     }),
-                                Forms\Components\Select::make('problem_category_id')
-                                    ->label('Problem Category')
+                                Forms\Components\Select::make('office_id')
+                                    ->label('Division of concern')
+                                    ->reactive()
                                     ->options(function (callable $get) {
-                                        $office_id = $get('office_id');
+                                        $department_id = $get('department_id');
 
-                                        if (!$office_id) {
+                                        if (!$department_id) {
                                             return [];
                                         }
-                                        return ProblemCategory::where('office_id', $office_id)
-                                            ->pluck('category_name', 'id')
+
+                                        $division = Office::where('department_id', $department_id)
+                                            ->pluck('office_name', 'id')
                                             ->toArray();
+
+                                        return $division ?: ['' => 'No Division Available'];
                                     })
-                                    ->disabled(fn (callable $get) => !$get('office_id')), // Disable if office_id is not selected
+                                    ->disabled(fn (callable $get) => !$get('department_id')),
+                                Forms\Components\Select::make('problem_category_id')
+                                    ->label('Issue Category')
+                                    ->disabled(fn (callable $get) => !$get('department_id'))
+                                    ->options(function (callable $get) {
+                                        $office_id = $get('office_id');
+                                        $department_id = $get('department_id');
+
+                                        if (!$department_id) {
+                                            return [];
+                                        }
+
+                                        // Check if the department has any offices
+                                        $hasDivisions = Office::where('department_id', $department_id)->exists();
+
+                                        if ($hasDivisions) {
+                                            // If department has divisions, require an office to be selected
+                                            if (!$office_id) {
+                                                return ['' => 'Select Division First'];
+                                            }
+
+                                            $issues = ProblemCategory::where('office_id', $office_id)
+                                                ->pluck('category_name', 'id')
+                                                ->toArray();
+
+                                            return $issues ?: ['' => 'No Issue Category Available'];
+                                        } else {
+                                            // If no divisions, get issues directly under department (office_id is null)
+                                            $issues = ProblemCategory::whereNull('office_id')
+                                                ->where('department_id', $department_id)
+                                                ->pluck('category_name', 'id')
+                                                ->toArray();
+
+                                            return $issues ?: ['' => 'No Issue Category Available'];
+                                        }
+                                    }), // Disable if office_id is not selected
                                 Forms\Components\Select::make('priority_id')
                                     ->label('Priority Level')
                                     ->default(3)
@@ -96,8 +137,8 @@ class TicketResource extends Resource
                                     ->dehydrated(true)
                                     ->required()
                                     ->default(function (Forms\Get $get) {
-                                        $officeId = $get('office_id');
-                                        if ($officeId == 1) {
+                                        $department_id = $get('department_id');
+                                        if ($department_id == 1) {
                                             return 1; // Replace with the ID of "Pending"
                                         }
                                         return 3; // Replace with the ID of "Unassigned"
@@ -234,8 +275,14 @@ class TicketResource extends Resource
         // HRDO admin account: return tickets in their office OR tickets created by them
         elseif ($user->isHrdoDivisionHead()) {
             return static::getModel()::where(function ($query) use ($user) {
-                $query->where('office_id', $user->office_id)
-                    ->orWhere('user_id', $user->id);
+                if ($user->office_id !== null) {
+                    $query->where('office_id', $user->office_id);
+                } else {
+                    $query->where('department_id', $user->department_id);
+                }
+
+                // Also allow tickets created by the user themselves
+                $query->orWhere('user_id', $user->id);
             });
         }
         // Employee account: return tickets created by them

@@ -12,6 +12,10 @@
     }
 }
 
+.fi-ta-text-item-label {
+    @apply text-xs !important;
+}
+
 .custom-auth-empty-panel {
     @apply bg-white;
 }

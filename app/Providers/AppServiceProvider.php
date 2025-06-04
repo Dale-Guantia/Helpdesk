@@ -8,7 +8,13 @@ use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Assets\Css;
 use Filament\Notifications\Livewire\DatabaseNotifications;
 use Filament\Support\Assets\Js;
-use Filament\Facades\Filament;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Laravel\Fortify\Fortify;
+use Illuminate\Validation\ValidationException;
+use App\Models\User;
+
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -34,9 +40,5 @@ class AppServiceProvider extends ServiceProvider
             Css::make('custom-stylesheet', __DIR__ . '/../../resources/css/custom.css')->loadedOnRequest(),
             Js::make('custom-filament-scripts', __DIR__ . '/../../resources/js/custom-filament-scripts.js'),
         ]);
-        Filament::registerRenderHook(
-            'head.start',
-            fn () => '<meta name="user-id" content="' . auth()->id() . '">'
-        );
     }
 }

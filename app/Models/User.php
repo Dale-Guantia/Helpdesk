@@ -73,6 +73,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         'email',
         'password',
         'phone',
+        'department_id',
         'office_id',
         'is_active',
         'role',
@@ -104,6 +105,11 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
     }
 
     public function office()

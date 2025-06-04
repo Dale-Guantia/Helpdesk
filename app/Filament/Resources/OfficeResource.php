@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\Filters\SelectFilter;
 
 class OfficeResource extends Resource
 {
@@ -34,17 +35,22 @@ class OfficeResource extends Resource
         return 'Divisions';
     }
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 6;
 
-    protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
+    protected static ?string $navigationIcon = 'heroicon-o-building-office';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
+                Forms\Components\Select::make('department_id')
+                    ->relationship('department', 'department_name')
+                    ->required()
+                    ->prefixIcon('heroicon-m-building-office-2'),
                 Forms\Components\TextInput::make('office_name')
-                ->required()
-                ->maxLength(255),
+                    ->label('Division Name')
+                    ->required()
+                    ->maxLength(255),
             ]);
     }
 
@@ -56,13 +62,22 @@ class OfficeResource extends Resource
                     ->label('Division ID')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('department.department_name')
+                    ->label('Department')
+                    ->limit(30)
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('office_name')
-                    ->label('Division Name')
+                    ->label('Division')
+                    ->limit(30)
                     ->searchable()
                     ->sortable(),
             ])
             ->filters([
-                //
+                SelectFilter::make('department_id')
+                    ->label('Department')
+                    ->multiple()
+                    ->relationship('department', 'department_name'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()

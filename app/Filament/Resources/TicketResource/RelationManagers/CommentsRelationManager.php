@@ -75,7 +75,7 @@ class CommentsRelationManager extends RelationManager
                 Tables\Actions\CreateAction::make()->mutateFormDataUsing(function (array $data): array {
                     $data['user_id'] = auth()->id();
                     return $data;
-                }),
+                })->disableCreateAnother(),
             ])
             ->actions([
                 Tables\Actions\Action::make('attachment')

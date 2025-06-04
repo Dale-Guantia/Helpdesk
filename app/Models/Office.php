@@ -19,7 +19,13 @@ class Office extends Model
 
     protected $fillable = [
         'office_name',
+        'department_id',
         'created_at',
         'updated_at',
     ];
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
+    }
 }

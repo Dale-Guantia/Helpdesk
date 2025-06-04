@@ -5,8 +5,8 @@ use App\Http\Controllers\TicketController;
 use Filament\Notifications\Notification;
 
 Route::get('/', function () {
-    return view('index');
-    // return redirect()->route('filament.ticketing.auth.login');
+    // return view('index');
+    return redirect()->route('filament.ticketing.auth.login');
 })->name('index');
 
 

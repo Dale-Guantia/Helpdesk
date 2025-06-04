@@ -49,8 +49,11 @@ class ViewTicket extends ViewRecord
                             ])->columnSpan(9), // 8/12 columns = ~66%
                         Components\Section::make()
                             ->schema([
+                                Components\TextEntry::make('department.department_name')
+                                    ->label('Department of concern')
+                                    ->default('N/A'),
                                 Components\TextEntry::make('office.office_name')
-                                    ->label('Office of concern')
+                                    ->label('Division of concern')
                                     ->default('N/A'),
                                 Components\TextEntry::make('problemCategory.category_name')
                                     ->label('Problem category')

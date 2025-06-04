@@ -2,29 +2,27 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\StatusResource\Pages;
-use App\Filament\Resources\StatusResource\RelationManagers;
-use App\Models\Status;
+use App\Filament\Resources\DepartmentResource\Pages;
+use App\Models\Department;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class StatusResource extends Resource
+class DepartmentResource extends Resource
 {
-    protected static ?string $model = Status::class;
+    protected static ?string $model = Department::class;
 
-    protected static ?int $navigationSort = 4;
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
+    protected static ?int $navigationSort = 5;
+
+    protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('status_name')
+                Forms\Components\TextInput::make('department_name')
                 ->required()
                 ->maxLength(255),
             ]);
@@ -35,18 +33,14 @@ class StatusResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')
-                    ->label('Status ID')
+                    ->label('Department ID')
                     ->searchable()
+                    ->limit(30)
                     ->sortable(),
-                Tables\Columns\TextColumn::make('status_name')
-                    ->label('Status Name')
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'Pending' => 'warning',
-                        'Resolved' => 'success',
-                        'Unassigned' => 'gray',
-                    })
+                Tables\Columns\TextColumn::make('department_name')
+                    ->label('Department Name')
                     ->searchable()
+                    ->limit(30)
                     ->sortable(),
             ])
             ->filters([
@@ -75,9 +69,9 @@ class StatusResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListStatuses::route('/'),
-            'create' => Pages\CreateStatus::route('/create'),
-            'edit' => Pages\EditStatus::route('/{record}/edit'),
+            'index' => Pages\ListDepartments::route('/'),
+            'create' => Pages\CreateDepartment::route('/create'),
+            'edit' => Pages\EditDepartment::route('/{record}/edit'),
         ];
     }
 }

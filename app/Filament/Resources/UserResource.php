@@ -3,21 +3,21 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
+use App\Models\Office;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Filters\SelectFilter;
 
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 8;
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
@@ -45,9 +45,30 @@ class UserResource extends Resource
                     ->maxLength(11)
                     ->minLength(10)
                     ->prefixIcon('heroicon-m-phone'),
+                Forms\Components\Select::make('department_id')
+                    ->relationship('department', 'department_name')
+                    ->prefixIcon('heroicon-m-building-office-2')
+                    ->required()
+                    ->reactive(),
                 Forms\Components\Select::make('office_id')
+                    ->label('Division')
                     ->relationship('office', 'office_name')
-                    ->prefixIcon('heroicon-m-building-office-2'),
+                    ->prefixIcon('heroicon-m-building-office-2')
+                    ->disabled(fn (callable $get) => !$get('department_id'))
+                    ->options(function (callable $get) {
+                        $department_id = $get('department_id');
+
+                        if (!$department_id) {
+                            return [];
+                        }
+                        return Office::where('department_id', $department_id)
+                            ->pluck('office_name', 'id')
+                            ->toArray();
+                    }),
+                Forms\Components\Select::make('role')
+                    ->options(User::ROLES)
+                    ->required()
+                    ->prefixIcon('heroicon-m-users'),
                 Forms\Components\TextInput::make('password')
                     ->password()
                     ->confirmed()
@@ -61,10 +82,6 @@ class UserResource extends Resource
                     ->revealable()
                     ->visible(fn ($record) => $record === null)
                     ->prefixIcon('heroicon-m-lock-closed'),
-                Forms\Components\Select::make('role')
-                    ->options(User::ROLES)
-                    ->required()
-                    ->prefixIcon('heroicon-m-users'),
                 Forms\Components\Toggle::make('is_active')
                     ->label('Activate/Deactivate User')
                     ->default(true)
@@ -83,7 +100,7 @@ class UserResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->query(static::getTableQuery())
+            // ->query(static::getTableQuery())
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->label('User ID')
@@ -114,18 +131,43 @@ class UserResource extends Resource
                     })
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('office.office_name')
-                    ->label('Division Name')
-                    ->searchable()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('is_active')
                     ->label('Status')
                     ->formatStateUsing(fn (bool $state): string => $state ? 'Active' : 'Inactive')
                     ->badge() // This shows it as a badge
                     ->color(fn (bool $state): string => $state ? 'success' : 'danger'),
+                Tables\Columns\TextColumn::make('department.department_name')
+                    ->label('Department')
+                    ->limit(20)
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('office.office_name')
+                    ->label('Division')
+                    ->default('N/A')
+                    ->limit(20)
+                    ->searchable()
+                    ->sortable(),
             ])
             ->filters([
-                //
+                SelectFilter::make('role')
+                    ->label('User Role')
+                    ->multiple()
+                    ->options(User::ROLES),
+                SelectFilter::make('is_active')
+                    ->label('Active Status')
+                    ->placeholder('')
+                    ->options([
+                        1 => 'Active',
+                        0 => 'Inactive',
+                    ]),
+                SelectFilter::make('department_id')
+                    ->label('Department')
+                    ->multiple()
+                    ->relationship('department', 'department_name'),
+                SelectFilter::make('office_id')
+                    ->label('Division')
+                    ->multiple()
+                    ->relationship('office', 'office_name'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
@@ -140,18 +182,18 @@ class UserResource extends Resource
             ]);
     }
 
-    protected static function getTableQuery(): Builder
-    {
-        $user = auth()->user();
+    // protected static function getTableQuery(): Builder
+    // {
+    //     $user = auth()->user();
 
-        // If admin, return all records
-        if ($user->isSuperAdmin()) {
-            return static::getModel()::query();
-        }
+    //     // If admin, return all records
+    //     if ($user->isSuperAdmin()) {
+    //         return static::getModel()::query();
+    //     }
 
-        // Otherwise filter by office_id
-        return static::getModel()::where('office_id', $user->office_id);
-    }
+    //     // Otherwise filter by office_id
+    //     return static::getModel()::where('office_id', $user->office_id);
+    // }
 
     public static function getRelations(): array
     {

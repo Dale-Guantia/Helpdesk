@@ -16,6 +16,7 @@ class TicketTableSeeder extends Seeder
         Ticket::create([
             'user_id' => 1,
             'reference_id' => '0001-052225',
+            'department_id' => 1,
             'office_id' => 1,
             'problem_category_id' => 1,
             'priority_id' => 1,
@@ -26,10 +27,11 @@ class TicketTableSeeder extends Seeder
         Ticket::create([
             'user_id' => 4,
             'reference_id' => '0002-052225',
+            'department_id' => 1,
             'office_id' => 2,
             'problem_category_id' => 2,
             'priority_id' => 2,
-            'status_id' => 2,
+            'status_id' => 1,
             'title' => 'Test title 2',
             'description' => 'Test message 2',
         ]);
