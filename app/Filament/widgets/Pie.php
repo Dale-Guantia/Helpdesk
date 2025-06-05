@@ -16,7 +16,7 @@ class Pie extends ApexChartWidget
 
     protected static ?int $sort = 2;
 
-    protected int | string | array $columnSpan = 'full';
+    // protected int | string | array $columnSpan = 'full';
 
     /**
      * Widget Title
@@ -33,7 +33,6 @@ class Pie extends ApexChartWidget
      */
     protected function getOptions(): array
     {
-
         $ticketStatuses = Status::select('id', 'status_name')->withCount(['tickets'])->get();
         return [
             'chart' => [

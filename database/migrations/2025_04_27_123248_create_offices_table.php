@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('offices', function (Blueprint $table) {
             $table->id();
             $table->foreignId('department_id')->constrained('departments')->onDelete('cascade');
-            $table->string('office_name')->unique();
+            $table->string('office_name');
             $table->timestamps();
         });
     }

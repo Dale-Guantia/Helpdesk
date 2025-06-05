@@ -21,6 +21,7 @@ use Joaopaulolndev\FilamentEditProfile\Pages\EditProfilePage;
 use Filament\Navigation\MenuItem;
 use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
 use App\Filament\Pages\Auth\Register;
+use App\Filament\Pages\Auth\Login;
 use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
 
 
@@ -32,8 +33,9 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('ticketing')
             ->path('ticketing')
-            ->login()
+            ->login(Login::class)
             ->registration(Register::class)
+            // ->emailVerification()
             ->brandName('HELP DESK')
             ->darkMode(false)
             ->sidebarCollapsibleOnDesktop()

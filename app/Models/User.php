@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class User extends Authenticatable implements FilamentUser, HasAvatar
+class User extends Authenticatable implements FilamentUser, HasAvatar //MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, SoftDeletes;
@@ -60,7 +60,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->isSuperAdmin() || $this->isHrdoDivisionHead() || $this->isHrdoStaff() || $this->isEmployee();
+        return $this->isSuperAdmin() || $this->isHrdoDivisionHead() || $this->isHrdoStaff() || $this->isEmployee() || $this->is_active === 0;
     }
 
     /**

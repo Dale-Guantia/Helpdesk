@@ -28,4 +28,9 @@ class Office extends Model
     {
         return $this->belongsTo(Department::class);
     }
+
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class, 'office_id');
+    }
 }
