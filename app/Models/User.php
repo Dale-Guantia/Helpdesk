@@ -18,14 +18,14 @@ class User extends Authenticatable implements FilamentUser, HasAvatar //MustVeri
     use HasFactory, Notifiable, SoftDeletes;
 
     const ROLE_SUPER_ADMIN = 1;
-    const ROLE_HRDO_DIVISION_HEAD = 2;
-    const ROLE_HRDO_STAFF = 3;
+    const ROLE_DIVISION_HEAD = 2;
+    const ROLE_STAFF = 3;
     const ROLE_EMPLOYEE = 4;
     const DEFAULT_ROLE = self::ROLE_EMPLOYEE;
     const ROLES = [
         self::ROLE_SUPER_ADMIN => 'Super Admin',
-        self::ROLE_HRDO_DIVISION_HEAD => 'HRDO Division Head',
-        self::ROLE_HRDO_STAFF => 'HRDO Staff',
+        self::ROLE_DIVISION_HEAD => 'Division Head',
+        self::ROLE_STAFF => 'Staff',
         self::ROLE_EMPLOYEE => 'Employee',
     ];
 
@@ -34,14 +34,14 @@ class User extends Authenticatable implements FilamentUser, HasAvatar //MustVeri
         return $this->role === self::ROLE_SUPER_ADMIN;
     }
 
-    public function isHrdoDivisionHead()
+    public function isDivisionHead()
     {
-        return $this->role === self::ROLE_HRDO_DIVISION_HEAD;
+        return $this->role === self::ROLE_DIVISION_HEAD;
     }
 
-    public function isHrdoStaff()
+    public function isStaff()
     {
-        return $this->role === self::ROLE_HRDO_STAFF;
+        return $this->role === self::ROLE_STAFF;
     }
 
     public function isEmployee()
@@ -53,14 +53,14 @@ class User extends Authenticatable implements FilamentUser, HasAvatar //MustVeri
     {
         return in_array($this->role, [
             self::ROLE_SUPER_ADMIN,
-            self::ROLE_HRDO_DIVISION_HEAD,
-            self::ROLE_HRDO_STAFF,
+            self::ROLE_DIVISION_HEAD,
+            self::ROLE_STAFF,
         ]);
     }
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->isSuperAdmin() || $this->isHrdoDivisionHead() || $this->isHrdoStaff() || $this->isEmployee() || $this->is_active === 0;
+        return $this->isSuperAdmin() || $this->isDivisionHead() || $this->isStaff() || $this->isEmployee() || $this->is_active === 0;
     }
 
     /**
@@ -121,5 +121,10 @@ class User extends Authenticatable implements FilamentUser, HasAvatar //MustVeri
     {
         $avatarColumn = config('filament-edit-profile.avatar_column', 'avatar_url');
         return $this->$avatarColumn ? Storage::url($this->$avatarColumn) : null;
+    }
+
+    public function resolvedTickets()
+    {
+        return $this->hasMany(Ticket::class, 'user_id')->where('status_id', 2);
     }
 }

@@ -2,25 +2,37 @@
 
 namespace App\Filament\Pages;
 
+
 use Filament\Pages\Page;
 use App\Filament\Resources\UserResource;
 use Filament\Tables;
+use Filament\Tables\Table;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Concerns\InteractsWithTable;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Filament\Actions\Action;
 
-class UserActivities extends Page implements HasTable
+
+class Reports extends Page implements HasTable
 {
     use InteractsWithTable;
-
-    protected static string $resource = UserResource::class;
-
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 8;
 
     protected static ?string $navigationIcon = 'heroicon-o-presentation-chart-line';
 
     protected static string $view = 'filament.pages.user_activities';
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('Download report')
+                ->icon('heroicon-m-arrow-down-tray')
+                ->url(route('reports_pdf')) // your PDF route here
+                ->openUrlInNewTab()
+                ->button(),
+        ];
+    }
 
     public function getDefaultTableSortColumn(): ?string
     {
@@ -53,7 +65,7 @@ class UserActivities extends Page implements HasTable
     {
         $user = Auth::user();
 
-        return $user && ($user->isSuperAdmin() || $user->isHrdoDivisionHead());
+        return $user && ($user->isSuperAdmin() || $user->isDivisionHead());
     }
 
     protected function getTableColumns(): array
@@ -75,6 +87,7 @@ class UserActivities extends Page implements HasTable
                 ->limit(20)
                 ->sortable(),
             Tables\Columns\TextColumn::make('office.office_name')->label('Division')
+                ->default('N/A')
                 ->searchable()
                 ->limit(20)
                 ->sortable(),

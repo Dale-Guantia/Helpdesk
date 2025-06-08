@@ -41,6 +41,6 @@ class Stats extends BaseWidget
     public static function canView(): bool
     {
         $user = auth()->user();
-        return $user->isSuperAdmin() || $user->isHrdoDivisionHead() || $user->isHrdoStaff();
+        return $user->isSuperAdmin() || $user->isDivisionHead() || $user->isStaff();
     }
 }

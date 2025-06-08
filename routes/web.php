@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TicketController;
+use App\Http\Controllers\ReportController;
 use Filament\Notifications\Notification;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
@@ -35,7 +36,7 @@ Route::get('/', function () {
 Route::get('/submit_ticket', [TicketController::class, 'create'])->name('ticket_create');
 Route::post('/submit_ticket', [TicketController::class, 'store'])->name('ticket_store');
 Route::get('/problem_categories/{office}', [TicketController::class, 'getCategories']);
-
+Route::get('/report/pdf', [ReportController::class, 'report'])->name('reports_pdf');
 
 
 // Route::get('test', function () {

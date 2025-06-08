@@ -156,7 +156,7 @@ class ProblemCategoryResource extends Resource
             return static::getModel()::query();
         }
         // HRDO Division Head with office_id set: filter by office
-        elseif ($user->isHrdoDivisionHead() && $user->office_id !== null) {
+        elseif ($user->isDivisionHead() && $user->office_id !== null) {
             return static::getModel()::where('office_id', $user->office_id);
         }
         else {
