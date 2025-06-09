@@ -33,4 +33,9 @@ class ProblemCategory extends Model
     {
         return $this->belongsTo(Office::class);
     }
+
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class, 'problem_category_id');
+    }
 }

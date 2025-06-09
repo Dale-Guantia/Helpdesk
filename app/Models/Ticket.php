@@ -32,10 +32,12 @@ class Ticket extends Model
         'guest_firstName',
         'guest_middleName',
         'guest_lastName',
+        'resolved_at',
     ];
 
     protected $casts = [
         'attachment' => 'array',
+        'resolved_at' => 'datetime',
     ];
 
 
@@ -62,8 +64,8 @@ class Ticket extends Model
                 $query->where('role', User::ROLE_SUPER_ADMIN)
                     ->orWhere(function ($q) use ($ticket) {
                         $q->whereIn('role', [
-                                User::ROLE_HRDO_DIVISION_HEAD,
-                                User::ROLE_HRDO_STAFF,
+                                User::ROLE_DIVISION_HEAD,
+                                User::ROLE_STAFF,
                             ])
                             ->where(function ($inner) use ($ticket) {
                                 $inner->when($ticket->office_id, function ($q) use ($ticket) {
@@ -105,8 +107,8 @@ class Ticket extends Model
                 $query->where('role', User::ROLE_SUPER_ADMIN)
                     ->orWhere(function ($q) use ($ticket) {
                         $q->whereIn('role', [
-                                User::ROLE_HRDO_DIVISION_HEAD,
-                                User::ROLE_HRDO_STAFF,
+                                User::ROLE_DIVISION_HEAD,
+                                User::ROLE_STAFF,
                             ])
                             ->where(function ($inner) use ($ticket) {
                                 $inner->when($ticket->office_id, function ($q) use ($ticket) {

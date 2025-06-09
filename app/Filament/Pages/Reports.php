@@ -2,17 +2,14 @@
 
 namespace App\Filament\Pages;
 
-
 use Filament\Pages\Page;
-use App\Filament\Resources\UserResource;
 use Filament\Tables;
-use Filament\Tables\Table;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Concerns\InteractsWithTable;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Filament\Actions\Action;
-
+use Filament\Tables\Columns\TextColumn;
 
 class Reports extends Page implements HasTable
 {
@@ -21,14 +18,14 @@ class Reports extends Page implements HasTable
 
     protected static ?string $navigationIcon = 'heroicon-o-presentation-chart-line';
 
-    protected static string $view = 'filament.pages.user_activities';
+    protected static string $view = 'filament.pages.reports';
 
     protected function getHeaderActions(): array
     {
         return [
             Action::make('Download report')
                 ->icon('heroicon-m-arrow-down-tray')
-                ->url(route('reports_pdf')) // your PDF route here
+                ->url(route('download_report')) // your PDF route here
                 ->openUrlInNewTab()
                 ->button(),
         ];
@@ -48,15 +45,17 @@ class Reports extends Page implements HasTable
     {
         $user = Auth::user();
 
-        $query = User::query()->with(['office']); // make sure office relationship is loaded
+        $query = User::query()
+            ->with(['department', 'office']); // eager load relationships
 
         // Restrict by office unless SuperAdmin
         if (!$user->isSuperAdmin()) {
             $query->where('office_id', $user->office_id);
         }
 
-        // Exclude users with role_id = 4 (employee)
-        $query->where('role', '!=', 4);
+        // Exclude users with role = 4 and only include department ID 1
+        $query->where('role', '!=', 4)
+            ->where('department_id', 1); // assuming 'department_id' is the correct column
 
         return $query;
     }
@@ -71,27 +70,27 @@ class Reports extends Page implements HasTable
     protected function getTableColumns(): array
     {
         return [
-            Tables\Columns\TextColumn::make('id')
+            TextColumn::make('id')
                 ->label('User ID')
                 ->searchable()
                 ->sortable(),
-            Tables\Columns\TextColumn::make('name')
+            TextColumn::make('name')
                 ->searchable()
                 ->sortable()
                 ->formatStateUsing(function ($state, $record) {
                     return $record->id === auth()->id() ? 'You' : $state;
                 }),
-            Tables\Columns\TextColumn::make('department.department_name')->label('Department')
+            TextColumn::make('department.department_name')->label('Department')
                 ->extraAttributes(['class' => 'text-xs'])
                 ->searchable()
                 ->limit(20)
                 ->sortable(),
-            Tables\Columns\TextColumn::make('office.office_name')->label('Division')
+            TextColumn::make('office.office_name')->label('Division')
                 ->default('N/A')
                 ->searchable()
                 ->limit(20)
                 ->sortable(),
-            Tables\Columns\TextColumn::make('resolved_tickets_count')->label('Total Resolved Tickets')
+            TextColumn::make('resolved_tickets_count')->label('Total Resolved Tickets')
                 ->sortable(),
         ];
     }

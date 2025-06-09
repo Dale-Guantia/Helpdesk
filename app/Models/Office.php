@@ -33,4 +33,9 @@ class Office extends Model
     {
         return $this->hasMany(Ticket::class, 'office_id');
     }
+
+    public function problemCategories()
+    {
+        return $this->hasMany(ProblemCategory::class, 'office_id');
+    }
 }

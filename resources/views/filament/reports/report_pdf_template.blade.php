@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <title>Helpdesk Ticketing Report</title>
     <style>
+        /* Your CSS styles remain the same */
         body {
             font-family: Arial, sans-serif;
         }
-        h1, h2, h3 {
+        h3 {
             text-align: center;
             color: #ffffff;
             background-color: #4169e1;
@@ -32,31 +33,11 @@
         th {
             background-color: #efefef;
         }
-        .charts {
-            display: flex;
-            justify-content: space-between;
-            margin: 20px 0;
-        }
-        .chart {
-            width: 48%;
-            height: auto;
-        }
     </style>
 </head>
 <body>
 
-    <h1>HELPDESK TICKETING REPORT</h1>
-
-    {{-- <div class="charts">
-        <div class="chart">
-            <img src="{{ $barChart }}" style="width: 100%;">
-            <h3 style="text-align: center; color: black;">TICKETS PER MONTH ({{ date('Y') }})</h3>
-        </div>
-        <div class="chart">
-            <img src="{{ $pieChart }}" style="width: 100%;">
-            <h3 style="text-align: center; color: black;">TOTAL TICKETS PER DIVISION ({{ date('Y') }})</h3>
-        </div>
-    </div> --}}
+    <h1 style="text-align: center;">HELPDESK TICKETING REPORT</h1>
 
     <h3 class="section-title">USERS ACTIVITY</h3>
     <table>
@@ -64,7 +45,6 @@
             <tr>
                 <th>User ID</th>
                 <th>Name</th>
-                <th>Department</th>
                 <th>Division</th>
                 <th>Resolved Tickets</th>
             </tr>
@@ -74,7 +54,6 @@
                 <tr>
                     <td>{{ $user->id }}</td>
                     <td>{{ $user->name }}</td>
-                    <td>{{ $user->department->department_name ?? 'N/A' }}</td>
                     <td>{{ $user->office->office_name ?? 'N/A' }}</td>
                     <td>{{ $user->resolved_tickets_count }}</td>
                 </tr>
@@ -82,8 +61,11 @@
         </tbody>
     </table>
 
-    @foreach($divisionsData as $division)
-        <h3 class="section-title">TICKETS OVERVIEW ({{ strtoupper($division['division_name']) }} DIVISION)</h3>
+    <h2 style="text-align: center;">Ticket Overview per Division</h2>
+
+    {{-- UPDATED LOOP: Iterate over the Eloquent collection --}}
+    @foreach($divisions as $division)
+        <h3 class="section-title">{{ strtoupper($division->office_name) }}</h3>
         <table>
             <thead>
                 <tr>
@@ -93,15 +75,17 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse($division['issueName_and_totalTickets'] as $report)
+                {{-- UPDATED INNER LOOP: Use the 'problemCategories' relationship --}}
+                @forelse($division->problemCategories as $category)
                     <tr>
-                        <td>{{ $report['category_name'] }}</td>
-                        <td>{{ $report['total_tickets'] }}</td>
-                        <td>—</td>
+                        {{-- Access model properties directly --}}
+                        <td>{{ $category->category_name }}</td>
+                        <td>{{ $category->tickets_count }}</td> {{-- Use the count from withCount() --}}
+                        <td>{{ $category->average_resolve_time }}</td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="3" style="text-align: center;">No tickets for this division.</td>
+                        <td colspan="3" style="text-align: center;">No issues assigned to this division.</td>
                     </tr>
                 @endforelse
             </tbody>

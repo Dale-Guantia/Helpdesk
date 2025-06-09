@@ -29,23 +29,29 @@ class EditTicket extends EditRecord
         if ($user && method_exists($user, 'isAgent') && $user->isAgent()) {
             $originalStatus = $record->getOriginal('status_id');
 
-            // Replace '5' with your actual resolved status ID
+            // Replace '2' with your actual "Resolved" status ID if needed
             if ($originalStatus !== 2 && $record->status_id == 2) {
                 $user->increment('resolved_tickets_count');
             }
         }
 
+        // If status was changed to "Resolved", add an auto-generated comment
         if ($record->wasChanged('status_id') && $record->status_id == 2) {
-            $user = auth()->user();
-
-            if ($user && ($user->isAgent())) {
+            if ($user && $user->isAgent()) {
                 $record->comments()->create([
                     'user_id' => $user->id,
                     'comment' => 'This ticket has been resolved. For further concerns regarding this matter, please submit a new ticket. Thank you!',
                 ]);
             }
         }
+
+        // Set resolved_at if the ticket is now resolved and it's not already set
+        if ($record->status_id == 2 && is_null($record->resolved_at)) {
+            $record->resolved_at = now();
+            $record->saveQuietly(); // avoid triggering observers/events again
+        }
     }
+
 
     public static function canEdit(Model $record): bool
     {

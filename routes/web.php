@@ -36,7 +36,7 @@ Route::get('/', function () {
 Route::get('/submit_ticket', [TicketController::class, 'create'])->name('ticket_create');
 Route::post('/submit_ticket', [TicketController::class, 'store'])->name('ticket_store');
 Route::get('/problem_categories/{office}', [TicketController::class, 'getCategories']);
-Route::get('/report/pdf', [ReportController::class, 'report'])->name('reports_pdf');
+Route::get('/download/report', [ReportController::class, 'report'])->name('download_report');
 
 
 // Route::get('test', function () {
