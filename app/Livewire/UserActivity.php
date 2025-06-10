@@ -19,7 +19,6 @@ class UserActivity extends Component implements HasTable, HasForms
     use InteractsWithTable;
     use InteractsWithForms;
 
-
     public static function canAccess(): bool
     {
         $user = Auth::user();

@@ -4,14 +4,13 @@
     <meta charset="UTF-8">
     <title>Helpdesk Ticketing Report</title>
     <style>
-        /* Your CSS styles remain the same */
         body {
             font-family: Arial, sans-serif;
         }
         h3 {
             text-align: center;
             color: #ffffff;
-            background-color: #4169e1;
+            background-color: #0e2f66;
             padding: 10px;
             margin: 0;
         }
@@ -37,7 +36,7 @@
 </head>
 <body>
 
-    <h1 style="text-align: center;">HELPDESK TICKETING REPORT</h1>
+    <h1 style="text-align: center;">TICKETING REPORT</h1>
 
     <h3 class="section-title">USERS ACTIVITY</h3>
     <table>
@@ -69,7 +68,7 @@
         <table>
             <thead>
                 <tr>
-                    <th>Issue name</th>
+                    <th>Issue description</th>
                     <th>Total Tickets</th>
                     <th>Average Resolve Time per Ticket</th>
                 </tr>

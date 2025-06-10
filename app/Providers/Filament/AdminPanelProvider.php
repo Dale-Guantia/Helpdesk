@@ -23,6 +23,7 @@ use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
 use App\Filament\Pages\Auth\Register;
 use App\Filament\Pages\Auth\Login;
 use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
+use App\Filament\Widgets;
 
 
 class AdminPanelProvider extends PanelProvider
@@ -55,10 +56,13 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
+            // ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 // Widgets\AccountWidget::class,
                 // Widgets\FilamentInfoWidget::class,
+                Widgets\Stats::class,
+                Widgets\Column::class,
+                Widgets\Pie::class,
             ])
             ->middleware([
                 EncryptCookies::class,
