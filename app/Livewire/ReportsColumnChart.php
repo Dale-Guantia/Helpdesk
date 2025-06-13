@@ -23,20 +23,29 @@ class ReportsColumnChart extends ApexChartWidget
      */
     protected static ?string $heading = 'Tickets per month';
 
+    /**
+     * Chart content height
+     *
+     * @var int|null
+     */
     protected static ?int $contentHeight = 315;
 
-    public function mount(): void
+    protected function getFilters(): ?array
     {
-        $this->filter ??= now()->year;
+        $years = [];
+        $currentYear = Carbon::now()->year;
+
+        for ($i = $currentYear; $i >= $currentYear - 5; $i--) {
+            $years[$i] = (string) $i;
+        }
+
+        return $years;
     }
 
-    protected function getFilters(): array
+    protected function getDefaultFilter(): ?string
     {
-        return collect(range(now()->year, now()->year - 5))
-            ->mapWithKeys(fn ($year) => [$year => (string) $year])
-            ->all();
+        return (string) Carbon::now()->year; // Default to the current year
     }
-
 
     /**
      * Chart options (series, labels, types, size, animations...)
@@ -46,25 +55,33 @@ class ReportsColumnChart extends ApexChartWidget
      */
     protected function getOptions(): array
     {
-        // $selectedYear = $this->filter;
+        // This is the most crucial line for ensuring the year is set.
+        // It guarantees that $selectedYear always has a value,
+        // either from the user's selection ($this->filter) or the default.
+        $selectedYear = (int) ($this->filter ?? $this->getDefaultFilter());
 
-        // $ticketCounts = array_fill(1, 12, 0);
+        // Fetch ticket counts from the database, grouped by month.
+        $ticketCountsByMonth = DB::table('tickets')
+            ->select(
+                DB::raw('MONTH(created_at) as month'),
+                DB::raw('COUNT(*) as count')
+            )
+            ->whereYear('created_at', $selectedYear)
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get()
+            ->keyBy('month');
 
-        // $tickets = DB::table('tickets') // Specify your table name directly
-        //     ->select(
-        //         DB::raw('MONTH(created_at) as month'),
-        //         DB::raw('COUNT(*) as count')
-        //     )
-        //     ->whereYear('created_at', $selectedYear)
-        //     ->groupBy(DB::raw('MONTH(created_at)'))
-        //     ->orderBy('month')
-        //     ->get();
+        // Prepare an array for all 12 months, initialized to 0.
+        $monthlyData = array_fill(1, 12, 0);
 
-        // foreach ($tickets as $ticket) {
-        //     $ticketCounts[$ticket->month] = $ticket->count;
-        // }
+        // Populate the array with the actual ticket counts.
+        foreach ($ticketCountsByMonth as $month => $data) {
+            $monthlyData[$month] = $data->count;
+        }
 
-        // $data = array_values($ticketCounts);
+        // Get the final array of counts for the chart.
+        $chartData = array_values($monthlyData);
 
         return [
             'chart' => [
@@ -75,7 +92,7 @@ class ReportsColumnChart extends ApexChartWidget
             'series' => [
                 [
                     'name' => 'Total Tickets',
-                    'data' => [0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0],
+                    'data' => $chartData,
                 ],
             ],
             'xaxis' => [
@@ -93,7 +110,7 @@ class ReportsColumnChart extends ApexChartWidget
                     ],
                 ],
             ],
-            'colors' => ['#f59e0b'],
+            'colors' => ['#0e2f66'],
         ];
     }
 }

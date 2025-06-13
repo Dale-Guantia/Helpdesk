@@ -38,7 +38,6 @@ Route::post('/submit_ticket', [TicketController::class, 'store'])->name('ticket_
 Route::get('/problem_categories/{office}', [TicketController::class, 'getCategories']);
 Route::get('/download/report', [ReportController::class, 'report'])->name('download_report');
 
-
 // Route::get('test', function () {
 //    Notification::make()
 //        ->title('Saved successfully')
