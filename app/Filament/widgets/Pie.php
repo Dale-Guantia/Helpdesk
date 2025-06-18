@@ -46,14 +46,14 @@ class Pie extends ApexChartWidget
                     'fontFamily' => 'inherit',
                 ],
             ],
-            'colors' => ['#EF5350','#10b981', '#f59e0b', '#ef4444', '#f59e0b'],
+            'colors' => ['#e38b07','#00e396', '#808080', '#0e9ce8', '#f59e0b'],
         ];
     }
 
     public static function canView(): bool
     {
         $user = auth()->user();
-        return $user->isSuperAdmin() || $user->isDivisionHead() || $user->isStaff();
+        return $user->isAgent();
     }
 
 }

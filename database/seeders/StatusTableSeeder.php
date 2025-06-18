@@ -22,5 +22,8 @@ class StatusTableSeeder extends Seeder
         Status::create([
             'status_name' => 'Unassigned',
         ]);
+        Status::create([
+            'status_name' => 'Reopened',
+        ]);
     }
 }

@@ -45,7 +45,8 @@ class PriorityResource extends Resource
                     ->color(fn (string $state): string => match ($state) {
                         'High' => 'danger',
                         'Medium' => 'warning',
-                        'Low' => 'info',
+                        'Low' => 'primary',
+                        default => 'info',
                     })
                     ->searchable()
                     ->sortable(),

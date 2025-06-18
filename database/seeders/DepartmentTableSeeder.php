@@ -14,25 +14,7 @@ class DepartmentTableSeeder extends Seeder
     public function run(): void
     {
         Department::create([
-            'department_name' => 'CITY HUMAN RESOURCE DEVELOPMENT OFFICE',
-        ]);
-        Department::create([
-            'department_name' => 'CITY ACCOUNTING OFFICE',
-        ]);
-        Department::create([
-            'department_name' => 'CITY ADMINISTRATOR OFFICE',
-        ]);
-        Department::create([
-            'department_name' => 'CITY ENGINEER\'S OFFICE',
-        ]);
-        Department::create([
-            'department_name' => 'OFFICE ON GENERAL SERVICES',
-        ]);
-        Department::create([
-            'department_name' => 'CITY HEALTH DEPARTMENT',
-        ]);
-        Department::create([
-            'department_name' => 'MANAGEMENT INFORMATION SYSTEMS OFFICE',
+            'department_name' => 'CITY HUMAN RESOURCE DEVELOPMENT OFFICE'
         ]);
     }
 }

@@ -93,6 +93,7 @@ class TicketResource extends Resource
                                     ->disabled(fn (callable $get) => !$get('department_id')),
                                 Forms\Components\Select::make('problem_category_id')
                                     ->label('Issue Category')
+                                    ->live()
                                     ->disabled(fn (callable $get) => !$get('department_id'))
                                     ->options(function (callable $get) {
                                         $office_id = $get('office_id');
@@ -113,7 +114,7 @@ class TicketResource extends Resource
 
                                             $issues = ProblemCategory::where('office_id', $office_id)
                                                 ->pluck('category_name', 'id')
-                                                ->toArray();
+                                                ->toArray() + ['other' => 'Other'];
 
                                             return $issues ?: ['' => 'No Issue Category Available'];
                                         } else {
@@ -121,11 +122,17 @@ class TicketResource extends Resource
                                             $issues = ProblemCategory::whereNull('office_id')
                                                 ->where('department_id', $department_id)
                                                 ->pluck('category_name', 'id')
-                                                ->toArray();
+                                                ->toArray() + ['other' => 'Other'];
 
                                             return $issues ?: ['' => 'No Issue Category Available'];
                                         }
-                                    }), // Disable if office_id is not selected
+                                    })
+                                    ->dehydrated(fn ($state) => $state !== 'other'),
+                                Forms\Components\TextInput::make('custom_problem_category')
+                                    ->label('If other, please specify')
+                                    ->required()
+                                    ->visible(fn (Forms\Get $get) => $get('problem_category_id') === 'other')
+                                    ->requiredIf('problem_category_id', 'other'),
                                 Forms\Components\Select::make('priority_id')
                                     ->label('Priority Level')
                                     ->default(3)
@@ -178,14 +185,28 @@ class TicketResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->limit(20)
-                    ->tooltip(fn ($record) => $record->problemCategory?->category_name ?? '-'),
+                    ->copyable()
+                    ->tooltip(function ($record) {
+                        if ($record->problem_category_id === null) {
+                            // If problem_category_id is null, use custom_problem_category
+                            return $record->custom_problem_category ?? 'N/A';
+                        }
+                        // Otherwise, use problemCategory.category_name, with a fallback to '-'
+                        return $record->problemCategory?->category_name ?? 'N/A';
+                    })
+                    ->formatStateUsing(function (string $state, $record): string {
+                        if ($record->problem_category_id === null) {
+                            return $record->custom_problem_category ?? 'N/A';
+                        }
+                        return $state;
+                    }),
                 Tables\Columns\TextColumn::make('priority.priority_name')
                     ->label('Priority Level')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'High' => 'danger',
                         'Medium' => 'warning',
-                        'Low' => 'info',
+                        'Low' => 'primary',
                     })
                     ->searchable()
                     ->sortable(),
@@ -196,6 +217,7 @@ class TicketResource extends Resource
                         'Pending' => 'warning',
                         'Resolved' => 'success',
                         'Unassigned' => 'gray',
+                        'Reopened' => 'primary'
                     })
                     ->searchable()
                     ->sortable(),
@@ -262,7 +284,8 @@ class TicketResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ])->defaultSort('created_at', 'desc');
+            ])->defaultSort('created_at', 'desc')
+            ->poll('10s');
     }
 
     protected static function getTableQuery(): Builder

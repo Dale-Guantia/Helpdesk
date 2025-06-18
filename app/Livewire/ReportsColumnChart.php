@@ -113,4 +113,10 @@ class ReportsColumnChart extends ApexChartWidget
             'colors' => ['#0e2f66'],
         ];
     }
+
+    public static function canView(): bool
+    {
+        $user = auth()->user();
+        return $user->isSuperAdmin();
+    }
 }

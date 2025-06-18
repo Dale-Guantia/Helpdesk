@@ -18,22 +18,22 @@ class Stats extends BaseWidget
             Stat::make('Total Users', User::count())
                 // ->description('32k increase')
                 // ->descriptionIcon('heroicon-m-arrow-trending-up')
-                ->color('info')
+                ->color('primary')
                 ->chart([1, 1, 1, 1, 1, 1, 1]),
             Stat::make('Total Tickets', Ticket::count())
                 // ->description('32k increase')
                 // ->descriptionIcon('heroicon-m-arrow-trending-up')
-                ->color('info')
+                ->color('primary')
                 ->chart([1, 1, 1, 1, 1, 1, 1]),
             Stat::make('Total Divisions', Office::count())
                 // ->description('32k increase')
                 // ->descriptionIcon('heroicon-m-arrow-trending-up')
-                ->color('info')
+                ->color('primary')
                 ->chart([1, 1, 1, 1, 1, 1, 1]),
             Stat::make('Total Issues', ProblemCategory::count())
                 // ->description('32k increase')
                 // ->descriptionIcon('heroicon-m-arrow-trending-up')
-                ->color('info')
+                ->color('primary')
                 ->chart([1, 1, 1, 1, 1, 1, 1]),
         ];
     }
@@ -41,6 +41,6 @@ class Stats extends BaseWidget
     public static function canView(): bool
     {
         $user = auth()->user();
-        return $user->isSuperAdmin() || $user->isDivisionHead() || $user->isStaff();
+        return $user->isAgent();
     }
 }

@@ -24,10 +24,6 @@ class TicketOverview extends Component implements HasTable, HasForms
     use InteractsWithTable;
     use InteractsWithForms;
 
-    // Add a public property to hold the default filter value
-    // Filament's `InteractsWithTable` will automatically bind this to the filter's state
-    public $office_id = 1; // Default to division_id 1
-
     public static function canAccess(): bool
     {
         $user = Auth::user();
@@ -37,20 +33,30 @@ class TicketOverview extends Component implements HasTable, HasForms
     protected function getTableQuery(): Builder
     {
         $query = ProblemCategory::query()
-            ->withCount('tickets')
-            ->whereHas('office', function (Builder $query) {
-                // Initial query scope: only problem categories from offices in department_id 1
-                $query->where('department_id', 1);
+            ->withCount('tickets');
+
+        $user = Auth::user();
+
+        if ($user && $user->isDivisionHead()) {
+
+            $query->whereHas('office', function (Builder $officeQuery) use ($user) {
+                $officeQuery->where('id', $user->office_id);
             });
 
-        // The InteractsWithTable trait will automatically apply the filter's query
-        // based on the public $office_id property, so we don't need a manual `if` here.
+        } else {
+
+            $query->whereHas('office', function (Builder $officeQuery) {
+                $officeQuery->where('department_id', 1);
+            });
+        }
 
         return $query;
     }
 
     public function table(Table $table): Table
     {
+        $user = Auth::user();
+
         return $table
             ->query($this->getTableQuery())
             ->columns([
@@ -94,7 +100,7 @@ class TicketOverview extends Component implements HasTable, HasForms
                         }
                         return $query;
                     })
-                    ->default(1), // Set the default value of the filter here
+                    ->visible(fn () => $user && $user->isSuperAdmin()), // <-- HIDE FILTER IF NOT SUPERADMIN
             ])
             ->actions([
                 //

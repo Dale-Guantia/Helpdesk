@@ -63,4 +63,10 @@ class ReportsPieChart extends ApexChartWidget
             ],
         ];
     }
+
+    public static function canView(): bool
+    {
+        $user = auth()->user();
+        return $user->isSuperAdmin();
+    }
 }

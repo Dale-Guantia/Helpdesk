@@ -48,10 +48,5 @@ class ProblemCategoryTableSeeder extends Seeder
             'office_id' => 7,
             'category_name' => 'LEARNING AND DEVELOPMENT ISSUE',
         ]);
-        ProblemCategory::create([
-            'department_id' => 4,
-            'office_id' => null,
-            'category_name' => 'ENGINNEERING ISSUE',
-        ]);
     }
 }

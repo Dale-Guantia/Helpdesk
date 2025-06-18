@@ -28,6 +28,7 @@ class Ticket extends Model
         'priority_id',
         'status_id',
         'problem_category_id',
+        'custom_problem_category',
         'attachment',
         'guest_firstName',
         'guest_middleName',
@@ -58,8 +59,7 @@ class Ticket extends Model
 
 
         static::created(function ($ticket) {
-        $ticket->load('user');
-
+            $ticket->load('user');
             $recipients = User::where(function ($query) use ($ticket) {
                 $query->where('role', User::ROLE_SUPER_ADMIN)
                     ->orWhere(function ($q) use ($ticket) {
@@ -82,7 +82,7 @@ class Ticket extends Model
                     ->title('New Ticket Created')
                     ->body("Ticket #{$ticket->reference_id} has been created.")
                     ->icon('heroicon-o-information-circle')
-                    ->info()
+                    ->primary()
                     ->actions([
                         Action::make('view')
                             ->label('View Ticket')
@@ -90,8 +90,8 @@ class Ticket extends Model
                             ->button()
                             ->openUrlInNewTab(false),
                     ])
-                    ->sendToDatabase($recipient)
-                    ->broadcast($recipient);
+                    ->sendToDatabase($recipient);
+                    // ->broadcast($recipient);
             }
         });
 
@@ -125,7 +125,7 @@ class Ticket extends Model
                     ->title('Ticket Updated')
                     ->body("Ticket #{$ticket->reference_id} has been updated.")
                     ->icon('heroicon-o-information-circle')
-                    ->info()
+                    ->primary()
                     ->actions([
                         Action::make('view')
                             ->label('View Ticket')
@@ -133,8 +133,8 @@ class Ticket extends Model
                             ->button()
                             ->openUrlInNewTab(false),
                     ])
-                    ->sendToDatabase($recipient)
-                    ->broadcast($recipient);
+                    ->sendToDatabase($recipient);
+                    // ->broadcast($recipient);
             }
 
             if ($ticket->user && $ticket->user->isEmployee()) {
@@ -142,15 +142,15 @@ class Ticket extends Model
                     ->title('Your Ticket Was Updated')
                     ->body("Ticket #{$ticket->reference_id} has been updated.")
                     ->icon('heroicon-o-information-circle')
-                    ->info()
+                    ->primary()
                     ->actions([
                         Action::make('view')
                             ->label('View Update')
                             ->url(route('filament.ticketing.resources.tickets.view', ['record' => $ticket->id]))
                             ->button(),
                     ])
-                    ->sendToDatabase($ticket->user)
-                    ->broadcast($ticket->user);
+                    ->sendToDatabase($ticket->user);
+                    // ->broadcast($ticket->user);
             }
         });
     }

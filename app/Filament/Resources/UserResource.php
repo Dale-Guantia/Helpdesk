@@ -118,15 +118,15 @@ class UserResource extends Resource
                     ->label('Role')
                     ->formatStateUsing(fn ($state) => match ($state) {
                         1 => 'Super Admin',
-                        2 => 'HRDO Division Head',
-                        3 => 'HRDO Staff',
+                        2 => 'Division Head',
+                        3 => 'Staff',
                         4 => 'Employee',
                     })
                     ->badge() // Optional: to show it as a badge style
                     ->color(fn ($state) => match ($state) {
                         1 => 'warning',  // Yellow for Super Admin
-                        2 => 'info',     // Blue for HRDO Division Head
-                        3 => 'success',  // Green for HRDO Staff
+                        2 => 'primary',     // Blue for Division Head
+                        3 => 'success',  // Green for Staff
                         4 => 'gray',  // Gray for Employee
                     })
                     ->searchable()

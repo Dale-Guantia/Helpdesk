@@ -17,13 +17,21 @@ class Reports extends Page
 
     protected function getHeaderActions(): array
     {
-        return [
-            Action::make('Download report')
-                ->icon('heroicon-m-arrow-down-tray')
-                ->url(route('download_report')) // your PDF route here
-                ->openUrlInNewTab()
-                ->button(),
-        ];
+        $user = Auth::user();
+
+        if (!$user->isSuperAdmin()) {
+            return [];
+        }
+        else {
+            return [
+                Action::make('Download report')
+                    ->icon('heroicon-m-arrow-down-tray')
+                    ->url(route('download_report')) // your PDF route here
+                    ->openUrlInNewTab()
+                    ->button(),
+            ];
+        }
+
     }
 
     protected function getHeaderWidgets(): array

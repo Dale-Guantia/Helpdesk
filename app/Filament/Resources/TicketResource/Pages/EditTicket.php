@@ -25,9 +25,14 @@ class EditTicket extends EditRecord
         $user = Auth::user();
         $record = $this->record;
 
+        $isAgent = $user && method_exists($user, 'isAgent') ? $user->isAgent() : false;
+
+        // Get original status before the save operation
+        $originalStatus = $record->getOriginal('status_id');
+        $currentStatus = $record->status_id;
+
         // Only proceed if the user is an agent and status was changed to "Resolved"
         if ($user && method_exists($user, 'isAgent') && $user->isAgent()) {
-            $originalStatus = $record->getOriginal('status_id');
 
             // Replace '2' with your actual "Resolved" status ID if needed
             if ($originalStatus !== 2 && $record->status_id == 2) {
@@ -40,29 +45,60 @@ class EditTicket extends EditRecord
             if ($user && $user->isAgent()) {
                 $record->comments()->create([
                     'user_id' => $user->id,
-                    'comment' => 'This ticket has been resolved. For further concerns regarding this matter, please submit a new ticket. Thank you!',
+                    'comment' => 'This ticket has been resolved. For further concerns regarding this matter, reopen this ticket or submit a new ticket. Thank you!',
                 ]);
             }
         }
 
         // Set resolved_at if the ticket is now resolved and it's not already set
-        if ($record->status_id == 2 && is_null($record->resolved_at)) {
+        if ($currentStatus === 2 && is_null($record->resolved_at)) {
             $record->resolved_at = now();
-            $record->saveQuietly(); // avoid triggering observers/events again
+            $record->saveQuietly();
+        }
+
+        // If the ticket was resolved and is now changed to "reopened" status
+        // This handles cases where an agent changes it from Resolved back to Pending or another status
+        if ($record->wasChanged('status_id') && $originalStatus === 2 && $currentStatus !== 2) {
+            $record->resolved_at = null; // Clear the resolved_at timestamp
+
+            // Add a comment when an agent changes it from Resolved to another status
+            if ($isAgent) {
+                // Fetch the new status name for the comment
+                $newStatusName = $record->status->status_name ?? 'N/A'; // Use null coalescing for safety
+                $record->comments()->create([
+                    'user_id' => $user->id,
+                    'comment' => 'This ticket status was changed from Resolved to ' . $newStatusName . ' by ' . $user->name . '.',
+                ]);
+            }
+            $record->saveQuietly(); // Save after potentially adding comment
         }
     }
 
 
     public static function canEdit(Model $record): bool
     {
-        // Disallow editing if resolved (status_id = 2)
-        return $record->status_id !== 2;
+        $user = Auth::user();
+
+        // Allow editing if the ticket is NOT resolved (status_id !== 2)
+        // This now includes 'Pending', 'Unassigned', 'Reopened' (ID 4)
+        if ($record->status_id !== 2) {
+            return true;
+        }
+
+        // If it *is* resolved (status_id === 2), only allow editing if the current user is an admin/staff
+        // The ticket creator can *only* reopen it via the custom action, not directly edit when resolved.
+        if ($user && $user->isSuperAdmin()) {
+            return true;
+        }
+
+        // By default, if resolved and not an admin/staff, cannot edit
+        return false;
     }
 
     protected function authorizeAccess(): void
     {
-        if ($this->record->status_id == 2) {
-            abort(403, 'This ticket is already resolved and cannot be edited.');
+        if (!static::canEdit($this->record)) {
+            abort(403, 'You are not authorized to edit this resolved ticket.');
         }
 
         parent::authorizeAccess();
