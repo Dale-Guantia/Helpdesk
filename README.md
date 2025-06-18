@@ -44,6 +44,11 @@ Create a symlink to the storage:
 php artisan storage:link
 ```
 
+Setting Up Notifications:
+```bash
+php artisan queue:work
+```
+
 Run database migration:
 ```bash
 php artisan migrate --seed
