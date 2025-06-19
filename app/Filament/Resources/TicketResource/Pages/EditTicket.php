@@ -7,6 +7,7 @@ use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 
 class EditTicket extends EditRecord
@@ -32,12 +33,8 @@ class EditTicket extends EditRecord
         $currentStatus = $record->status_id;
 
         // Only proceed if the user is an agent and status was changed to "Resolved"
-        if ($user && method_exists($user, 'isAgent') && $user->isAgent()) {
-
-            // Replace '2' with your actual "Resolved" status ID if needed
-            if ($originalStatus !== 2 && $record->status_id == 2) {
-                $user->increment('resolved_tickets_count');
-            }
+        if ($isAgent && $record->wasChanged('status_id') && $currentStatus == 2) {
+            $user->increment('resolved_tickets_count');
         }
 
         // If status was changed to "Resolved", add an auto-generated comment
@@ -48,17 +45,13 @@ class EditTicket extends EditRecord
                     'comment' => 'This ticket has been resolved. For further concerns regarding this matter, reopen this ticket or submit a new ticket. Thank you!',
                 ]);
             }
-        }
-
-        // Set resolved_at if the ticket is now resolved and it's not already set
-        if ($currentStatus === 2 && is_null($record->resolved_at)) {
             $record->resolved_at = now();
-            $record->saveQuietly();
+            $record->saveQuietly(); // Save the resolved_at timestamp
         }
 
         // If the ticket was resolved and is now changed to "reopened" status
         // This handles cases where an agent changes it from Resolved back to Pending or another status
-        if ($record->wasChanged('status_id') && $originalStatus === 2 && $currentStatus !== 2) {
+        if ($record->wasChanged('status_id') && $originalStatus == 2 && $currentStatus != 2) {
             $record->resolved_at = null; // Clear the resolved_at timestamp
 
             // Add a comment when an agent changes it from Resolved to another status

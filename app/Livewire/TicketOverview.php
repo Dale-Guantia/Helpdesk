@@ -120,39 +120,39 @@ class TicketOverview extends Component implements HasTable, HasForms
         return [];
     }
 
-    public function render()
-    {
-        // These can be fetched here if needed for other sections of the view
-        $userActivities = User::with(['department', 'office'])
-            ->where('department_id', 1)
-            ->where('role', '!=', 4)
-            ->get();
+    // public function render()
+    // {
+    //     // These can be fetched here if needed for other sections of the view
+    //     $userActivities = User::with(['department', 'office'])
+    //         ->where('department_id', 1)
+    //         ->where('role', '!=', 4)
+    //         ->get();
 
-        $divisions = Office::where('department_id', 1)
-            ->with(['problemCategories' => function ($query) {
-                $query->withCount('tickets');
-            }])
-            ->get();
+    //     $divisions = Office::where('department_id', 1)
+    //         ->with(['problemCategories' => function ($query) {
+    //             $query->withCount('tickets');
+    //         }])
+    //         ->get();
 
-        foreach ($divisions as $division) {
-            foreach ($division->problemCategories as $category) {
-                $seconds = Ticket::where('problem_category_id', $category->id)
-                    ->whereNotNull('resolved_at')
-                    ->avg(DB::raw('TIMESTAMPDIFF(SECOND, created_at, resolved_at)'));
+    //     foreach ($divisions as $division) {
+    //         foreach ($division->problemCategories as $category) {
+    //             $seconds = Ticket::where('problem_category_id', $category->id)
+    //                 ->whereNotNull('resolved_at')
+    //                 ->avg(DB::raw('TIMESTAMPDIFF(SECOND, created_at, resolved_at)'));
 
-                if ($seconds) {
-                    $hours = floor($seconds / 3600);
-                    $minutes = floor(($seconds % 3600) / 60);
-                    $category->average_resolve_time = "{$hours}h {$minutes}m";
-                } else {
-                    $category->average_resolve_time = 'N/A';
-                }
-            }
-        }
+    //             if ($seconds) {
+    //                 $hours = floor($seconds / 3600);
+    //                 $minutes = floor(($seconds % 3600) / 60);
+    //                 $category->average_resolve_time = "{$hours}h {$minutes}m";
+    //             } else {
+    //                 $category->average_resolve_time = 'N/A';
+    //             }
+    //         }
+    //     }
 
-        return view('livewire.ticket-overview', [
-            'userActivities' => $userActivities,
-            'divisionsData' => $divisions,
-        ]);
-    }
+    //     return view('livewire.ticket-overview', [
+    //         'userActivities' => $userActivities,
+    //         'divisionsData' => $divisions,
+    //     ]);
+    // }
 }

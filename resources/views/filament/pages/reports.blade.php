@@ -17,7 +17,7 @@
                 @if ($user->isSuperAdmin())
                     Summary of Tickets by Division
                 @elseif ($user->isDivisionHead())
-                    Summary of Tickets for {{ ucwords(strtolower($user->office->office_name)) }} Division
+                    Summary of Tickets ({{ ucwords(strtolower($user->office->office_name)) }} Division)
                 @endif
             </h1>
         @endauth

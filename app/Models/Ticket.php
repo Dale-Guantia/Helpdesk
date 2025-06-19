@@ -82,7 +82,6 @@ class Ticket extends Model
                     ->title('New Ticket Created')
                     ->body("Ticket #{$ticket->reference_id} has been created.")
                     ->icon('heroicon-o-information-circle')
-                    ->primary()
                     ->actions([
                         Action::make('view')
                             ->label('View Ticket')
@@ -125,7 +124,6 @@ class Ticket extends Model
                     ->title('Ticket Updated')
                     ->body("Ticket #{$ticket->reference_id} has been updated.")
                     ->icon('heroicon-o-information-circle')
-                    ->primary()
                     ->actions([
                         Action::make('view')
                             ->label('View Ticket')
@@ -142,7 +140,6 @@ class Ticket extends Model
                     ->title('Your Ticket Was Updated')
                     ->body("Ticket #{$ticket->reference_id} has been updated.")
                     ->icon('heroicon-o-information-circle')
-                    ->primary()
                     ->actions([
                         Action::make('view')
                             ->label('View Update')

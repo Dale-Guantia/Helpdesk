@@ -140,7 +140,7 @@ class TicketResource extends Resource
                                 Forms\Components\Select::make('status_id')
                                     ->label('Status')
                                     ->relationship('status', 'status_name')
-                                    ->disabled(fn () => !Auth::user()?->isSuperAdmin())
+                                    ->disabled(fn () => !Auth::user()?->isAgent())
                                     ->dehydrated(true)
                                     ->required()
                                     ->default(function (Forms\Get $get) {
