@@ -79,7 +79,7 @@ class TicketOverview extends Component implements HasTable, HasForms
                             $minutes = floor(($seconds % 3600) / 60);
                             return "{$hours}h {$minutes}m";
                         }
-                        return 'N/A';
+                        return '0h 0m';
                     })
                     ->sortable(false),
             ])

@@ -38,7 +38,29 @@
 
     <h1 style="text-align: center;">TICKETING REPORT</h1>
 
-    <h3 class="section-title">USERS ACTIVITY</h3>
+    <h3 class="section-title">Number of Tickets per Division as of (DATE RANGE)</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Division</th>
+                <th>Number of tickets</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($divisions as $division)
+                <tr>
+                    <td>{{ $division->office_name }}</td>
+                    <td>{{ $division->tickets_count }}</td> {{-- Display the new count here --}}
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="2" style="text-align: center;">No divisions found.</td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
+
+    <h3 class="section-title">User Activity</h3>
     <table>
         <thead>
             <tr>
@@ -49,14 +71,18 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($userActivities as $user)
+            @forelse($userActivities as $user)
                 <tr>
                     <td>{{ $user->id }}</td>
                     <td>{{ $user->name }}</td>
                     <td>{{ $user->office->office_name ?? 'N/A' }}</td>
                     <td>{{ $user->resolved_tickets_count }}</td>
                 </tr>
-            @endforeach
+            @empty
+                <tr>
+                    <td colspan="4" style="text-align: center;">No Users found.</td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
 
@@ -64,7 +90,7 @@
 
     {{-- UPDATED LOOP: Iterate over the Eloquent collection --}}
     @foreach($divisions as $division)
-        <h3 class="section-title">{{ strtoupper($division->office_name) }}</h3>
+        <h3 class="section-title">{{ ucwords(strtolower($division->office_name)) }}</h3>
         <table>
             <thead>
                 <tr>

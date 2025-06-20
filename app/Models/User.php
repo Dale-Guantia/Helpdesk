@@ -122,4 +122,9 @@ class User extends Authenticatable implements FilamentUser, HasAvatar //MustVeri
         $avatarColumn = config('filament-edit-profile.avatar_column', 'avatar_url');
         return $this->$avatarColumn ? Storage::url($this->$avatarColumn) : null;
     }
+
+    public function resolvedTickets()
+    {
+        return $this->hasMany(Ticket::class, 'resolved_by')->whereNotNull('resolved_at');
+    }
 }

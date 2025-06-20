@@ -29,6 +29,7 @@ return new class extends Migration
             $table->string('guest_lastName')->nullable();
             $table->timestamps();
             $table->timestamp('resolved_at')->nullable();
+            $table->foreignId('resolved_by')->nullable()->constrained('users')->onDelete('set null');
             $table->softDeletes();
         });
     }

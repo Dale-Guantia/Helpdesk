@@ -105,6 +105,10 @@ class AdminPanelProvider extends PanelProvider
                     ->url(fn (): string => EditProfilePage::getUrl())
                     ->icon('heroicon-m-user-circle')
             ])
-            ->viteTheme('resources/css/filament/ticketing/theme.css');
+            ->viteTheme('resources/css/filament/ticketing/theme.css')
+            ->renderHook(
+                'panels::body.end', // Or another suitable hook
+                fn () => view('components.filament-new-tab-listener'),
+            );
     }
 }

@@ -6,13 +6,16 @@ use Filament\Pages\Page;
 use Illuminate\Support\Facades\Auth;
 use Filament\Actions\Action;
 use App\Livewire;
+use Carbon\Carbon;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+// use Filament\Notifications\Notification; // You can remove this use statement if no notifications are used here
 
 class Reports extends Page
 {
     protected static ?int $navigationSort = 8;
-
     protected static ?string $navigationIcon = 'heroicon-o-presentation-chart-line';
-
     protected static string $view = 'filament.pages.reports';
 
     protected function getHeaderActions(): array
@@ -21,17 +24,42 @@ class Reports extends Page
 
         if (!$user->isSuperAdmin()) {
             return [];
-        }
-        else {
+        } else {
             return [
-                Action::make('Download report')
+                Action::make('downloadReportWithDates')
+                    ->label('Download Report')
                     ->icon('heroicon-m-arrow-down-tray')
-                    ->url(route('download_report')) // your PDF route here
-                    ->openUrlInNewTab()
-                    ->button(),
+                    ->color('primary')
+                    ->form([
+                        DatePicker::make('start_date')
+                            ->label('Start Date')
+                            ->default(now()->startOfYear())
+                            ->maxDate(fn (Get $get) => $get('end_date') ?: now())
+                            ->required(),
+                        DatePicker::make('end_date')
+                            ->label('End Date')
+                            ->default(now())
+                            ->maxDate(now())
+                            ->required(),
+                    ])
+                    ->action(function (array $data) {
+                        $startDate = Carbon::parse($data['start_date'])->format('Y-m-d');
+                        $endDate = Carbon::parse($data['end_date'])->format('Y-m-d');
+
+                        $reportUrl = route('download_report', [
+                            'start_date' => $startDate,
+                            'end_date' => $endDate,
+                        ]);
+
+                        // Dispatch the event to open the URL in a new tab
+                        $this->dispatch('open-url-in-new-tab', url: $reportUrl);
+
+                    })
+                    ->modalHeading('Select Date Range')
+                    ->modalSubmitActionLabel('Generate Report')
+                    ->modalCancelActionLabel('Cancel'),
             ];
         }
-
     }
 
     protected function getHeaderWidgets(): array
