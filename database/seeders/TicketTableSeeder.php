@@ -36,7 +36,7 @@ class TicketTableSeeder extends Seeder
             'description' => 'Test message 2',
         ]);
         Ticket::create([
-            'user_id' => 3,
+            'user_id' => 4,
             'reference_id' => '0003-052225',
             'priority_id' => 3,
             'status_id' => 3,

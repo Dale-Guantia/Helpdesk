@@ -11,6 +11,7 @@ use Filament\Infolists\Components;
 use Filament\Infolists\Components\ViewEntry;
 use App\Filament\Actions\ReopenTicketAction;
 use Illuminate\Support\Facades\Auth;
+use Filament\Infolists\Components\Grid;
 
 class ViewTicket extends ViewRecord
 {
@@ -26,7 +27,7 @@ class ViewTicket extends ViewRecord
         $actions = [];
 
         $editAction = Actions\EditAction::make()
-            ->label('Edit / Add Comment')
+            ->label('Edit Ticket')
             ->visible(function (Ticket $record): bool {
                 $currentUser = auth()->user();
                 return $record->status_id !== 2 || ($currentUser && method_exists($currentUser, 'isSuperAdmin') && $currentUser->isSuperAdmin());
@@ -56,46 +57,56 @@ class ViewTicket extends ViewRecord
                                     ->label('Attachments:')
                                     ->view('filament.components.attachment-list')
                                     ->visible(fn (Ticket $record) => is_array($record->attachment) && count($record->attachment) > 0),
-                            ])->columnSpan(9), // 8/12 columns = ~66%
-                        Components\Section::make()
-                            ->schema([
-                                Components\TextEntry::make('user.name')
-                                    ->label('Created by')
-                                    ->formatStateUsing(function ($state, $record) {
-                                        return $record->user_id === auth()->id() ? 'You' : $state;
-                                    }),
-                                Components\TextEntry::make('office.office_name')
-                                    ->label('Division of concern')
-                                    ->default('N/A'),
-                                Components\TextEntry::make('problemCategory.category_name')
-                                    ->label('Problem category')
-                                    ->default('N/A')
-                                    ->formatStateUsing(function (string $state, $record): string {
-                                        if ($record->problem_category_id === null) {
-                                            return $record->custom_problem_category ?? 'N/A';
-                                        }
-                                        return $state;
-                                    }),
-                                Components\TextEntry::make('priority.priority_name')
-                                    ->label('Priority Level')
-                                    ->badge()
-                                    ->color(fn (string $state): string => match ($state) {
-                                        'High' => 'danger',
-                                        'Medium' => 'warning',
-                                        'Low' => 'primary',
-                                    }),
-                                Components\TextEntry::make('status.status_name')
-                                    ->label('Status')
-                                    ->badge()
-                                    ->color(fn (string $state): string => match ($state) {
-                                        'Pending' => 'warning',
-                                        'Resolved' => 'success',
-                                        'Unassigned' => 'gray',
-                                        'Reopened' => 'primary'
-                                    }),
-                                Components\TextEntry::make('created_at')->dateTime('F j, Y g:i A')->label('Created at'),
-                                Components\TextEntry::make('updated_at')->dateTime('F j, Y g:i A')->label('Updated at'),
-                            ])->columnSpan(3), // 4/12 columns = ~33%
+                            ])->columnSpan(7), // 8/12 columns = ~66%
+                            Components\Section::make()
+                                ->schema([
+                                    // Start a new inner grid here for two-column layout
+                                    Grid::make(2) // This grid will have 2 columns
+                                        ->schema([
+                                            Components\TextEntry::make('user.name')
+                                                ->label('Created by')
+                                                ->formatStateUsing(function ($state, $record) {
+                                                    return $record->user_id === auth()->id() ? 'You' : $state;
+                                                }),
+                                            Components\TextEntry::make('assignedToUser.name')
+                                                ->label('Assigned to')
+                                                ->default('N/A')
+                                                ->formatStateUsing(function ($state, $record) {
+                                                    return $record->assigned_to_user_id === auth()->id() ? 'You' : $state;
+                                                }),
+                                            Components\TextEntry::make('office.office_name')
+                                                ->label('Division of concern')
+                                                ->default('N/A'),
+                                            Components\TextEntry::make('problemCategory.category_name')
+                                                ->label('Problem category')
+                                                ->default('N/A')
+                                                ->formatStateUsing(function (string $state, $record): string {
+                                                    if ($record->problem_category_id === null) {
+                                                        return $record->custom_problem_category ?? 'N/A';
+                                                    }
+                                                    return $state;
+                                                }),
+                                            Components\TextEntry::make('priority.priority_name')
+                                                ->label('Priority Level')
+                                                ->badge()
+                                                ->color(fn (string $state): string => match ($state) {
+                                                    'High' => 'danger',
+                                                    'Medium' => 'warning',
+                                                    'Low' => 'primary',
+                                                }),
+                                            Components\TextEntry::make('status.status_name')
+                                                ->label('Status')
+                                                ->badge()
+                                                ->color(fn (string $state): string => match ($state) {
+                                                    'Pending' => 'warning',
+                                                    'Resolved' => 'success',
+                                                    'Unassigned' => 'gray',
+                                                    'Reopened' => 'primary'
+                                                }),
+                                            Components\TextEntry::make('created_at')->dateTime('m/d/y - h:i A')->label('Created at'),
+                                            Components\TextEntry::make('updated_at')->dateTime('m/d/y - h:i A')->label('Updated at'),
+                                        ]), // This section takes 3 out of 12 columns
+                                    ])->columnSpan(5),
                     ])
                     ->columns(12), // total columns for grid system
             ]);

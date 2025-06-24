@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\TicketResource\Pages;
 use App\Models\Ticket;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -33,7 +34,8 @@ class TicketResource extends Resource
                 Forms\Components\Hidden::make('user_id')
                 ->default(auth()->id()),
                 Forms\Components\Section::make('Ticket Details')
-                    ->collapsed(fn ($livewire) => $livewire instanceof \Filament\Resources\Pages\CreateRecord ? false : true)
+                    ->collapsible()
+                    // ->collapsed(fn ($livewire) => $livewire instanceof \Filament\Resources\Pages\CreateRecord ? false : true)
                     ->schema([
                         Forms\Components\Section::make()
                             ->schema([
@@ -42,6 +44,7 @@ class TicketResource extends Resource
                                     ->maxLength(255),
                                 Forms\Components\Textarea::make('description')
                                     ->label('Message')
+                                    ->required()
                                     ->maxLength(65535),
                                 Forms\Components\FileUpload::make('attachment')
                                     ->multiple()
@@ -69,63 +72,73 @@ class TicketResource extends Resource
                                 Forms\Components\Select::make('department_id')
                                     ->label('Department of concern')
                                     ->placeholder('Select a Department')
-                                    ->reactive()
                                     ->relationship('department', 'department_name')
-                                    ->afterStateUpdated(function ($state, callable $set) {
-                                        $set('status_id', $state ? 1 : 3);
-                                    }),
+                                    ->default(1),
                                 Forms\Components\Select::make('office_id')
                                     ->label('Division of concern')
-                                    ->reactive()
-                                    ->options(function (callable $get) {
+                                    ->live()
+                                    ->disabled(fn (callable $get) => !$get('department_id'))
+                                    ->options(function (callable $get, $livewire) {
                                         $department_id = $get('department_id');
+                                        $currentUser = Auth::user();
 
-                                        if (!$department_id) {
-                                            return [];
+                                        if (empty($department_id)) {
+                                            return ['' => 'Select Department First'];
                                         }
 
-                                        $division = Office::where('department_id', $department_id)
-                                            ->pluck('office_name', 'id')
-                                            ->toArray();
+                                        $query = Office::where('department_id', $department_id);
 
+                                        if ($livewire instanceof CreateRecord) { // This `CreateRecord` needs a `use` statement
+                                            if ($currentUser->isSuperAdmin() || $currentUser->isDivisionHead() || $currentUser->isStaff()) {
+                                                if ($currentUser->office_id && Office::where('id', $currentUser->office_id)->where('department_id', $department_id)->exists()) {
+                                                    $query->where('id', '!=', $currentUser->office_id);
+                                                }
+                                            }
+                                        }
+                                        $division = $query->pluck('office_name', 'id')->toArray();
                                         return $division ?: ['' => 'No Division Available'];
-                                    })
-                                    ->disabled(fn (callable $get) => !$get('department_id')),
+                                    }),
                                 Forms\Components\Select::make('problem_category_id')
                                     ->label('Issue Category')
                                     ->live()
-                                    ->disabled(fn (callable $get) => !$get('department_id'))
-                                    ->options(function (callable $get) {
+                                    ->options(function (Forms\Get $get) {
                                         $office_id = $get('office_id');
                                         $department_id = $get('department_id');
 
                                         if (!$department_id) {
-                                            return [];
+                                            return []; // Cannot select issue without department
                                         }
 
-                                        // Check if the department has any offices
                                         $hasDivisions = Office::where('department_id', $department_id)->exists();
 
                                         if ($hasDivisions) {
-                                            // If department has divisions, require an office to be selected
                                             if (!$office_id) {
-                                                return ['' => 'Select Division First'];
+                                                return []; // If department has divisions, must select office first
                                             }
-
                                             $issues = ProblemCategory::where('office_id', $office_id)
                                                 ->pluck('category_name', 'id')
-                                                ->toArray() + ['other' => 'Other'];
-
-                                            return $issues ?: ['' => 'No Issue Category Available'];
+                                                ->toArray();
                                         } else {
-                                            // If no divisions, get issues directly under department (office_id is null)
+                                            // If department has no divisions, get issues directly under department (where office_id is null)
                                             $issues = ProblemCategory::whereNull('office_id')
                                                 ->where('department_id', $department_id)
                                                 ->pluck('category_name', 'id')
-                                                ->toArray() + ['other' => 'Other'];
-
-                                            return $issues ?: ['' => 'No Issue Category Available'];
+                                                ->toArray();
                                         }
+
+                                        // Always add 'Other' option
+                                        $issues['other'] = 'Other';
+
+                                        return $issues ?: ['' => 'No Issue Category Available'];
+                                    })
+                                    ->disabled(function (Forms\Get $get) {
+                                        $department_id = $get('department_id');
+                                        $office_id = $get('office_id');
+                                        $hasDivisions = Office::where('department_id', $department_id)->exists();
+
+                                        // Disable if no department is selected OR
+                                        // if department has divisions but no office is selected
+                                        return !$department_id || ($hasDivisions && !$office_id);
                                     })
                                     ->dehydrated(fn ($state) => $state !== 'other'),
                                 Forms\Components\TextInput::make('custom_problem_category')
@@ -137,19 +150,62 @@ class TicketResource extends Resource
                                     ->label('Priority Level')
                                     ->default(3)
                                     ->relationship('priority', 'priority_name'),
+                                Forms\Components\Select::make('assigned_to_user_id')
+                                    ->label('Assign To')
+                                    ->relationship('assignedToUser', 'name')
+                                    ->placeholder('Unassigned')
+                                    ->searchable()
+                                    ->live()
+                                    ->preload()
+                                    ->options(function (Forms\Get $get) {
+                                        $currentUser = Auth::user();
+                                        $query = User::query();
+
+                                        $query->whereIn('role', [User::ROLE_STAFF, User::ROLE_DIVISION_HEAD, User::ROLE_SUPER_ADMIN]);
+
+                                        $selectedOfficeId = $get('office_id');
+
+                                        if ($currentUser->isSuperAdmin()) {
+                                            if ($selectedOfficeId) {
+                                                $query->where('office_id', $selectedOfficeId);
+                                            }
+                                        } elseif ($currentUser->isDivisionHead()) {
+
+                                            $query->where('office_id', $currentUser->office_id);
+
+                                            if ($selectedOfficeId && $selectedOfficeId != $currentUser->office_id) {
+                                                $query->where('office_id', $selectedOfficeId);
+                                            }
+                                        }
+                                        $query->where('id', '!=', $currentUser->id);
+
+                                        return $query->pluck('name', 'id');
+                                    })
+                                    ->hidden(fn () => !Auth::user()->isSuperAdmin() && !Auth::user()->isDivisionHead())
+                                    ->afterStateUpdated(function ($state, Forms\Set $set, $livewire) {
+                                        if ($livewire instanceof CreateRecord) {
+                                            $set('status_id', !empty($state) ? 1 : 3);
+                                        }
+                                    }),
                                 Forms\Components\Select::make('status_id')
                                     ->label('Status')
                                     ->relationship('status', 'status_name')
-                                    ->disabled(fn () => !Auth::user()?->isAgent())
-                                    ->dehydrated(true)
-                                    ->required()
-                                    ->default(function (Forms\Get $get) {
-                                        $department_id = $get('department_id');
-                                        if ($department_id == 1) {
-                                            return 1; // Replace with the ID of "Pending"
+                                    ->default(3) // Default to Unassigned
+                                    ->disabled(function ($livewire) { // Removed $get as it's not directly needed here
+                                        $currentUser = Auth::user();
+                                        // If it's a "create" page, disable for everyone
+                                        if ($livewire instanceof \Filament\Resources\Pages\CreateRecord) {
+                                            return true; // Always disabled when creating
                                         }
-                                        return 3; // Replace with the ID of "Unassigned"
-                                    }),
+
+                                        // If it's an "edit" page, enable only for agents
+                                        if ($livewire instanceof \Filament\Resources\Pages\EditRecord) {
+                                            return !$currentUser?->isAgent();
+                                        }
+
+                                        return true; // Default to disabled if context is unknown
+                                    })
+                                    ->dehydrated(true),
                         ])->columnSpan(1)
                     ])->columns(3),
             ]);
@@ -179,6 +235,14 @@ class TicketResource extends Resource
                     ->formatStateUsing(function ($state, $record) {
                         return $record->user_id === auth()->id() ? 'You' : $state;
                     }),
+                // Tables\Columns\TextColumn::make('assignedToUser.name')
+                //     ->label('Assigned To')
+                //     ->default('Unassigned') // Display 'Unassigned' if null
+                //     ->searchable()
+                //     ->sortable()
+                //     ->formatStateUsing(function ($state, $record) {
+                //         return $record->assigned_to_user_id  === auth()->id() ? 'You' : $state;
+                //     }),
                 Tables\Columns\TextColumn::make('problemCategory.category_name')
                     ->label('Issue Description')
                     ->default('N/A')
@@ -269,6 +333,19 @@ class TicketResource extends Resource
                             });
                         }
                     }),
+                 // --- NEW FILTER FOR ASSIGNED STAFF ---
+                SelectFilter::make('assigned_to_user_id')
+                    ->label('Assigned To')
+                    ->relationship('assignedToUser', 'name')
+                    ->placeholder('All')
+                    ->default(null)
+                    ->searchable()
+                    ->options(function () {
+                        // Only show agents (Super Admin, Division Head, Staff)
+                        return User::whereIn('role', [User::ROLE_DIVISION_HEAD, User::ROLE_STAFF])
+                                   ->pluck('name', 'id');
+                    })
+                    ->hidden(fn () => !Auth::user()->isSuperAdmin() && !Auth::user()->isDivisionHead()), // Only visible to Super Admin and Division Head
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
@@ -278,7 +355,7 @@ class TicketResource extends Resource
                     ->hidden(fn ($record) => $record->status_id === 2 || !auth()->user()->isSuperAdmin() && !auth()->user()->isDivisionHead() && auth()->id() !== $record->user_id),
                 Tables\Actions\DeleteAction::make()
                     ->label('')
-                    ->hidden(fn ($record) => !auth()->user()->isSuperAdmin() && auth()->id() !== $record->user_id),
+                    ->hidden(fn ($record) => !auth()->user()->isSuperAdmin() && auth()->id() != $record->user_id),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -291,28 +368,47 @@ class TicketResource extends Resource
     protected static function getTableQuery(): Builder
     {
         $user = auth()->user();
-        // Super Admin account, return all records
-        if ($user->isSuperAdmin()) {
-            return static::getModel()::query();
-        }
-        // HRDO admin account: return tickets in their office OR tickets created by them
-        elseif ($user->isDivisionHead()) {
-            return static::getModel()::where(function ($query) use ($user) {
-                if ($user->office_id !== null) {
-                    $query->where('office_id', $user->office_id);
-                } else {
-                    $query->where('department_id', $user->department_id);
-                }
+        $query = static::getModel()::query();
 
-                // Also allow tickets created by the user themselves
-                $query->orWhere('user_id', $user->id);
+        // Super Admin: See all records
+        if ($user->isSuperAdmin()) {
+            return $query;
+        }
+
+        // Division Head: See tickets in their office (assigned or unassigned) OR tickets created by them
+        elseif ($user->isDivisionHead()) {
+            return $query->where(function (Builder $q) use ($user) {
+                // Tickets for their division/office (unassigned or assigned to staff in their division)
+                $q->where(function (Builder $inner) use ($user) {
+                    if ($user->office_id !== null) {
+                        $inner->where('office_id', $user->office_id);
+                    } else {
+                        // Fallback if Division Head's office_id is null, use department_id
+                        $inner->where('department_id', $user->department_id);
+                    }
+                });
+                // OR tickets created by the Division Head themselves
+                $q->orWhere('user_id', $user->id);
             });
         }
-        // Employee account: return tickets created by them
-        return static::getModel()::where(function ($query) use ($user) {
-            $query->where('user_id', $user->id);
-        });
+
+        // Staff: See tickets assigned to them OR tickets created by them
+        elseif ($user->isStaff()) {
+            return $query->where(function (Builder $q) use ($user) {
+                $q->where('assigned_to_user_id', $user->id) // Assigned to this staff
+                  ->orWhere('user_id', $user->id); // Created by this staff
+            });
+        }
+
+        // Employee: See only tickets created by them
+        elseif ($user->isEmployee()) {
+            return $query->where('user_id', $user->id);
+        }
+
+        // Default: If somehow an unknown role, return empty
+        return $query->whereRaw('0=1');
     }
+
 
 
     public static function getRelations(): array

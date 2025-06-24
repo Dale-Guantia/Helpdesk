@@ -10,6 +10,16 @@ class EditProblemCategory extends EditRecord
 {
     protected static string $resource = ProblemCategoryResource::class;
 
+    protected function getRedirectUrl(): string
+    {
+        return $this->previousUrl ?? $this->getResource()::getUrl('index');
+    }
+
+    protected function getSavedNotificationTitle(): ?string
+    {
+        return 'Issue Successfully Updated!';
+    }
+
     protected function getHeaderActions(): array
     {
         return [

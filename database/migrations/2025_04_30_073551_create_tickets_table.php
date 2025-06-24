@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('reference_id')->unique();
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
-            $table->foreignId('department_id')->nullable()->constrained('departments')->onDelete('cascade')->nullable();
+            $table->foreignId('department_id')->nullable()->constrained('departments')->onDelete('cascade');
             $table->foreignId('office_id')->nullable()->constrained('offices')->onDelete('cascade');
             $table->foreignId('problem_category_id')->nullable()->constrained('problem_categories')->onDelete('cascade');
             $table->string('custom_problem_category')->nullable();
@@ -30,6 +30,7 @@ return new class extends Migration
             $table->timestamps();
             $table->timestamp('resolved_at')->nullable();
             $table->foreignId('resolved_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('assigned_to_user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->softDeletes();
         });
     }

@@ -10,6 +10,16 @@ class EditOffice extends EditRecord
 {
     protected static string $resource = OfficeResource::class;
 
+    protected function getRedirectUrl(): string
+    {
+        return $this->previousUrl ?? $this->getResource()::getUrl('index');
+    }
+
+    protected function getSavedNotificationTitle(): ?string
+    {
+        return 'Division Successfully Updated!';
+    }
+
     protected function getHeaderActions(): array
     {
         return [

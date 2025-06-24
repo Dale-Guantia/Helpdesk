@@ -5,10 +5,21 @@ namespace App\Filament\Resources\DepartmentResource\Pages;
 use App\Filament\Resources\DepartmentResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Notifications\Notification;
 
 class EditDepartment extends EditRecord
 {
     protected static string $resource = DepartmentResource::class;
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->previousUrl ?? $this->getResource()::getUrl('index');
+    }
+
+    protected function getSavedNotificationTitle(): ?string
+    {
+        return 'Department Successfully Updated!';
+    }
 
     protected function getHeaderActions(): array
     {
