@@ -27,24 +27,31 @@ class CommentsRelationManager extends RelationManager
                 Card::make()->schema([
                     Forms\Components\Textarea::make('comment'),
                     Forms\Components\FileUpload::make('attachment')
-                    ->multiple()
-                    ->preserveFilenames()
-                    ->openable()
-                    ->downloadable()
-                    ->directory('attachments/' . date('m-y'))
-                    ->maxSize(25000)
-                    ->columnSpanFull()
-                    ->acceptedFileTypes([
-                        'image/jpeg',
-                        'image/png',
-                        'application/pdf',
-                        'application/msword',
-                        'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
-                        'application/vnd.ms-excel',
-                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
-                        'application/zip',
-                        'text/plain',
-                    ]),
+                        ->multiple()
+                        ->preserveFilenames()
+                        ->reorderable()
+                        ->openable()
+                        ->downloadable()
+                        ->directory('attachments/' . date('m-y'))
+                        ->maxSize(25000)
+                        ->rules([
+                            'mimes:jpeg,png,pdf,doc,docx,xls,xlsx,zip,txt,mp4', // List all allowed extensions directly
+                        ])
+                        ->acceptedFileTypes([
+                            'image/jpeg',
+                            'image/png',
+                            'application/pdf',
+                            'application/msword',
+                            'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+                            'application/vnd.ms-excel',
+                            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
+                            'application/zip',
+                            'text/plain',
+                            'video/mp4',
+                        ])
+                        ->validationMessages([
+                            'mimes' => 'Sorry, but this file type is not supported. Please upload one of the following: JPEG, PNG, PDF, Word Document, Excel Spreadsheet, ZIP, or Text File.',
+                        ])
                 ])
             ]);
     }

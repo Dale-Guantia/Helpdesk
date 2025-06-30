@@ -41,18 +41,12 @@ class Column extends ApexChartWidget
                 ->options(
                     Department::pluck('department_name', 'id')->toArray()
                 ),
-            DatePicker::make('date_start')
-                ->default('2025-01-01'),
-            DatePicker::make('date_end')
-                ->default('2025-12-31')
         ];
     }
 
     protected function getOptions(): array
     {
         $departmentId = $this->filterFormData['department'] ?? 1;
-        $dateStart = $this->filterFormData['date_start'];
-        $dateEnd = $this->filterFormData['date_end'];
 
         // Get the department name
         $departmentName = Department::find($departmentId)?->department_name ?? 'Unknown Department';
@@ -66,13 +60,10 @@ class Column extends ApexChartWidget
         }
 
         // Get all offices under selected department
-        $offices = Office::withCount(['tickets' => function ($query) use ($dateStart, $dateEnd) {
-            $query->when($dateStart && $dateEnd, function ($q) use ($dateStart, $dateEnd) {
-                $q->whereBetween('created_at', [$dateStart, $dateEnd]);
-            });
-        }])
-        ->where('department_id', $departmentId)
-        ->get();
+        // Get all offices under selected department
+        $offices = Office::withCount(['tickets'])
+            ->where('department_id', $departmentId)
+            ->get();
 
         return [
             'chart' => [

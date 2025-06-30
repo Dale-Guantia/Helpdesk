@@ -54,6 +54,9 @@ class TicketResource extends Resource
                                     ->downloadable()
                                     ->directory('attachments/' . date('m-y'))
                                     ->maxSize(25000)
+                                    ->rules([
+                                        'mimes:jpeg,png,pdf,doc,docx,xls,xlsx,zip,txt,mp4', // List all allowed extensions directly
+                                    ])
                                     ->acceptedFileTypes([
                                         'image/jpeg',
                                         'image/png',
@@ -64,7 +67,11 @@ class TicketResource extends Resource
                                         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
                                         'application/zip',
                                         'text/plain',
-                                    ]),
+                                        'video/mp4',
+                                    ])
+                                    ->validationMessages([
+                                        'mimes' => 'Sorry, but this file type is not supported. Please upload one of the following: JPEG, PNG, PDF, Word Document, Excel Spreadsheet, ZIP, or Text File.',
+                                    ])
                             ])->columnSpan(2),
 
                         Forms\Components\Section::make()
@@ -182,24 +189,49 @@ class TicketResource extends Resource
                                         return $query->pluck('name', 'id');
                                     })
                                     ->hidden(fn () => !Auth::user()->isSuperAdmin() && !Auth::user()->isDivisionHead())
-                                    ->afterStateUpdated(function ($state, Forms\Set $set, $livewire) {
-                                        if ($livewire instanceof CreateRecord) {
+                                    ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get, $livewire) {
+                                        if ($livewire instanceof \Filament\Resources\Pages\CreateRecord) {
                                             $set('status_id', !empty($state) ? 1 : 3);
+                                        }
+                                        else if ($livewire instanceof \Filament\Resources\Pages\EditRecord) {
+                                            // Get the current status_id to prevent unnecessary changes if already resolved
+                                            $currentStatusId = $get('status_id');
+
+                                            // Assuming status ID 2 is 'Resolved' (from your ViewTicket code)
+                                            // We only want to auto-change if the ticket is NOT already Resolved
+                                            if ($currentStatusId !== 2) { // '2' is the ID for 'Resolved' status
+                                                // If an agent is assigned (state is not empty/null)
+                                                if (!empty($state)) {
+                                                    $set('status_id', 1); // Set to 'Pending' (or your 'Assigned' status ID)
+                                                } else {
+                                                    // If assigned_to_user_id is unassigned (state is empty/null)
+                                                    $set('status_id', 3); // Set to 'Unassigned'
+                                                }
+                                            }
                                         }
                                     }),
                                 Forms\Components\Select::make('status_id')
                                     ->label('Status')
+                                    ->live()
                                     ->relationship('status', 'status_name')
                                     ->default(3) // Default to Unassigned
-                                    ->disabled(function ($livewire) { // Removed $get as it's not directly needed here
+                                    ->disabled(function ($livewire, $record = null) {
                                         $currentUser = Auth::user();
-                                        // If it's a "create" page, disable for everyone
-                                        if ($livewire instanceof \Filament\Resources\Pages\CreateRecord) {
-                                            return true; // Always disabled when creating
-                                        }
+                                            // If it's a "create" page, disable for everyone
+                                            if ($livewire instanceof \Filament\Resources\Pages\CreateRecord) {
+                                                return true; // Always disabled when creating
+                                            }
 
-                                        // If it's an "edit" page, enable only for agents
-                                        if ($livewire instanceof \Filament\Resources\Pages\EditRecord) {
+                                            // If it's an "edit" page, enable only for agents
+                                            if ($livewire instanceof \Filament\Resources\Pages\EditRecord) {
+                                                // Check if the current user is the ticket creator
+                                                $isTicketCreator = $record && $record->user_id === $currentUser->id;
+
+                                            // Ticket creators (who are not Super Admins) cannot edit status
+                                            if ($isTicketCreator) {
+                                                return true;
+                                            }
+
                                             return !$currentUser?->isAgent();
                                         }
 
