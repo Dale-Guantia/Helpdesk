@@ -36,13 +36,14 @@ class AdminPanelProvider extends PanelProvider
             ->path('ticketing')
             ->login(Login::class)
             ->registration(Register::class)
-            // ->emailVerification()
+            ->passwordReset()
+            ->emailVerification()
             ->brandName('HELP DESK')
             ->darkMode(false)
             ->sidebarCollapsibleOnDesktop()
             ->sidebarWidth('15rem')
             ->databaseNotifications(true)
-            ->databaseNotificationsPolling('30s')
+            ->databaseNotificationsPolling('20s')
             ->colors([
                 'danger' => Color::Red,
                 'gray' => Color::Zinc,

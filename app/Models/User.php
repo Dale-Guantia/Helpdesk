@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class User extends Authenticatable implements FilamentUser, HasAvatar //MustVerifyEmail
+class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, SoftDeletes;
@@ -25,7 +25,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar //MustVeri
     const ROLES = [
         self::ROLE_SUPER_ADMIN => 'Super Admin',
         self::ROLE_DIVISION_HEAD => 'Division Head',
-        self::ROLE_STAFF => 'Staff',
+        self::ROLE_STAFF => 'HRDO Staff',
         self::ROLE_EMPLOYEE => 'Employee',
     ];
 

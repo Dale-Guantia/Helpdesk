@@ -119,15 +119,15 @@ class UserResource extends Resource
                     ->formatStateUsing(fn ($state) => match ($state) {
                         1 => 'Super Admin',
                         2 => 'Division Head',
-                        3 => 'Staff',
-                        4 => 'Employee',
+                        3 => 'HRDO Staff',
+                        4 => 'Guest',
                     })
                     ->badge() // Optional: to show it as a badge style
                     ->color(fn ($state) => match ($state) {
                         1 => 'warning',  // Yellow for Super Admin
                         2 => 'primary',     // Blue for Division Head
-                        3 => 'success',  // Green for Staff
-                        4 => 'gray',  // Gray for Employee
+                        3 => 'info',  // Purple for HRDO Staff
+                        4 => 'gray',  // Gray for Guest
                     })
                     ->searchable()
                     ->sortable(),
@@ -138,6 +138,7 @@ class UserResource extends Resource
                     ->color(fn (bool $state): string => $state ? 'success' : 'danger'),
                 Tables\Columns\TextColumn::make('department.department_name')
                     ->label('Department')
+                    ->default('N/A')
                     ->limit(20)
                     ->searchable()
                     ->sortable(),

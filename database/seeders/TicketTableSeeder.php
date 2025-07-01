@@ -20,7 +20,7 @@ class TicketTableSeeder extends Seeder
             'office_id' => 1,
             'problem_category_id' => 1,
             'priority_id' => 1,
-            'status_id' => 1,
+            'status_id' => 3,
             'title' => 'Test title',
             'description' => 'Test message',
         ]);
@@ -31,7 +31,7 @@ class TicketTableSeeder extends Seeder
             'office_id' => 2,
             'problem_category_id' => 2,
             'priority_id' => 2,
-            'status_id' => 1,
+            'status_id' => 3,
             'title' => 'Test title 2',
             'description' => 'Test message 2',
         ]);

@@ -22,6 +22,7 @@ class UsersTableSeeder extends Seeder
             'office_id' => 1,
             'is_active' => 1,
             'role' => 1,
+            'email_verified_at' => '2025-06-30 15:30:10'
         ]);
         User::create([
             'name' => 'Division Head',
@@ -32,6 +33,7 @@ class UsersTableSeeder extends Seeder
             'office_id' => 2,
             'is_active' => 1,
             'role' => 2,
+            'email_verified_at' => '2025-06-30 15:30:10'
         ]);
         User::create([
             'name' => 'Staff',
@@ -42,16 +44,16 @@ class UsersTableSeeder extends Seeder
             'office_id' => 2,
             'is_active' => 1,
             'role' => 3,
+            'email_verified_at' => '2025-06-30 15:30:10'
         ]);
         User::create([
             'name' => 'Employee',
             'email' => 'employee@example.com',
             'phone' => '09123456787',
             'password' => bcrypt('12341234'),
-            'department_id' => 1,
-            'office_id' => 3,
             'is_active' => 1,
             'role' => 4,
+            'email_verified_at' => '2025-06-30 15:30:10'
         ]);
     }
 }
