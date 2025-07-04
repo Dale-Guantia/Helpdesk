@@ -25,7 +25,7 @@ class Column extends ApexChartWidget
      *
      * @var string|null
      */
-    protected static ?string $heading = 'Tickets per Department';
+    protected static ?string $heading = 'Tickets per Division';
 
     /**
      * Chart options (series, labels, types, size, animations...)
@@ -34,15 +34,15 @@ class Column extends ApexChartWidget
      * @return array
      */
 
-    protected function getFormSchema(): array
-    {
-        return [
-            Select::make('department')
-                ->options(
-                    Department::pluck('department_name', 'id')->toArray()
-                ),
-        ];
-    }
+    // protected function getFormSchema(): array
+    // {
+    //     return [
+    //         Select::make('department')
+    //             ->options(
+    //                 Department::pluck('department_name', 'id')->toArray()
+    //             ),
+    //     ];
+    // }
 
     protected function getOptions(): array
     {

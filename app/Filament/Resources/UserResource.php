@@ -11,6 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Support\Carbon;
 
 
 class UserResource extends Resource
@@ -94,7 +95,7 @@ class UserResource extends Resource
                         'boolean',
                         'nullable',
                     ]),
-            ]);
+                ]);
     }
 
     public static function table(Table $table): Table

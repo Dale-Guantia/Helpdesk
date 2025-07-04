@@ -26,7 +26,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
         self::ROLE_SUPER_ADMIN => 'Super Admin',
         self::ROLE_DIVISION_HEAD => 'Division Head',
         self::ROLE_STAFF => 'HRDO Staff',
-        self::ROLE_EMPLOYEE => 'Employee',
+        self::ROLE_EMPLOYEE => 'Guest',
     ];
 
     public function isSuperAdmin()
@@ -82,6 +82,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
         'created_at',
         'updated_at',
         'deleted_at',
+        'custom_fields',
     ];
 
     /**
@@ -104,6 +105,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'custom_fields' => 'array'
         ];
     }
 

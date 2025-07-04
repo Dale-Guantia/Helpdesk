@@ -87,12 +87,11 @@ class AdminPanelProvider extends PanelProvider
                     ->setSort(10)
                     ->shouldRegisterNavigation(false)
                     ->shouldShowDeleteAccountForm(false)
-                    ->shouldShowAvatarForm(
-                        value: true,
-                        directory: 'avatars', // image will be stored in 'storage/app/public/avatars
-                        rules: 'mimes:jpeg,png|max:1024'
-                    )
-                    ->shouldShowBrowserSessionsForm(false),
+                    // ->shouldShowAvatarForm()
+                    ->shouldShowBrowserSessionsForm(false)
+                    ->customProfileComponents([
+                        \App\Livewire\CustomProfileComponent::class,
+                    ]),
                 FilamentApexChartsPlugin::make(),
                 AuthUIEnhancerPlugin::make()
                     ->formPanelPosition('left')
