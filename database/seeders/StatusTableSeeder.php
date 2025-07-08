@@ -15,15 +15,19 @@ class StatusTableSeeder extends Seeder
     {
         Status::create([
             'status_name' => 'Pending',
+            'badge_color' => 'warning',
         ]);
         Status::create([
             'status_name' => 'Resolved',
+            'badge_color' => 'success',
         ]);
         Status::create([
             'status_name' => 'Unassigned',
+            'badge_color' => 'gray',
         ]);
         Status::create([
             'status_name' => 'Reopened',
+            'badge_color' => 'primary',
         ]);
     }
 }

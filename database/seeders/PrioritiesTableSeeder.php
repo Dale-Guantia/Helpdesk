@@ -15,12 +15,15 @@ class PrioritiesTableSeeder extends Seeder
     {
         Priority::create([
             'priority_name' => 'High',
+            'badge_color' => 'danger',
         ]);
         Priority::create([
             'priority_name' => 'Medium',
+            'badge_color' => 'warning',
         ]);
         Priority::create([
             'priority_name' => 'Low',
+            'badge_color' => 'primary',
         ]);
     }
 }

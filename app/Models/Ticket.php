@@ -121,37 +121,18 @@ class Ticket extends Model
         static::created(function ($ticket) {
             $ticket->load('user'); // Load the creator of the ticket
 
+            $creatorUserId = $ticket->user_id; // Get the ID of the user who created the ticket
+
             // Notify Super Admins
+            // Fetch all Super Admins
             $superAdmins = User::where('role', User::ROLE_SUPER_ADMIN)->get();
+
             foreach ($superAdmins as $admin) {
-                Notification::make()
-                    ->title('New Ticket Created!')
-                    ->body("Ticket #{$ticket->reference_id} has been created.")
-                    ->icon('heroicon-o-information-circle')
-                    ->actions([
-                        Action::make('view')
-                            ->label('View Ticket')
-                            ->url(route('filament.ticketing.resources.tickets.view', ['record' => $ticket->id]))
-                            ->button()
-                            ->openUrlInNewTab(false),
-                    ])
-                    ->sendToDatabase($admin);
-                    // ->broadcast($recipient);
-            }
-
-            // Notify Division Heads of the relevant office/department for new unassigned tickets
-            // This assumes initial tickets become visible to DHs for assignment
-            if ($ticket->office_id || $ticket->department_id) {
-                $divisionHeads = User::where('role', User::ROLE_DIVISION_HEAD)
-                    ->where(function ($query) use ($ticket) {
-                        $query->when($ticket->office_id, fn($q) => $q->where('office_id', $ticket->office_id))
-                              ->when(!$ticket->office_id && $ticket->department_id, fn($q) => $q->where('department_id', $ticket->department_id));
-                    })->get();
-
-                foreach ($divisionHeads as $divisionHead) {
+                // Notify if the admin is NOT the creator of the ticket
+                if ($admin->id !== $creatorUserId) {
                     Notification::make()
                         ->title('New Ticket Created!')
-                        ->body("Ticket #{$ticket->reference_id} needs assignment in your division.")
+                        ->body("Ticket #{$ticket->reference_id} has been created.")
                         ->icon('heroicon-o-information-circle')
                         ->actions([
                             Action::make('view')
@@ -160,114 +141,152 @@ class Ticket extends Model
                                 ->button()
                                 ->openUrlInNewTab(false),
                         ])
-                        ->sendToDatabase($divisionHead);
+                        ->sendToDatabase($admin);
                 }
             }
 
-            // Notify the creator (employee)
-            if ($ticket->user && $ticket->user->isEmployee()) {
-                Notification::make()
-                    ->title('Your Ticket Was Created!')
-                    ->body("Ticket #{$ticket->reference_id} has been successfully created.")
-                    ->icon('heroicon-o-information-circle')
-                    ->actions([
-                        Action::make('view')
-                            ->label('View Ticket')
-                            ->url(route('filament.ticketing.resources.tickets.view', ['record' => $ticket->id]))
-                            ->button(),
-                    ])
-                    ->sendToDatabase($ticket->user);
+            // Notify Division Heads of the relevant office/department for new unassigned tickets
+            if ($ticket->office_id || $ticket->department_id) {
+                $divisionHeads = User::where('role', User::ROLE_DIVISION_HEAD)
+                    ->where(function ($query) use ($ticket) {
+                        $query->when($ticket->office_id, fn($q) => $q->where('office_id', $ticket->office_id))
+                            ->when(!$ticket->office_id && $ticket->department_id, fn($q) => $q->where('department_id', $ticket->department_id));
+                    })->get();
+
+                foreach ($divisionHeads as $divisionHead) {
+                    // Notify if the Division Head is NOT the creator AND their division_id matches
+                    // We already filtered by division_id in the query, so just check creator here.
+                    if ($divisionHead->id !== $creatorUserId) {
+                        Notification::make()
+                            ->title('New Ticket Created!')
+                            ->body("Ticket #{$ticket->reference_id} needs assignment in your division.")
+                            ->icon('heroicon-o-information-circle')
+                            ->actions([
+                                Action::make('view')
+                                    ->label('View Ticket')
+                                    ->url(route('filament.ticketing.resources.tickets.view', ['record' => $ticket->id]))
+                                    ->button()
+                                    ->openUrlInNewTab(false),
+                            ])
+                            ->sendToDatabase($divisionHead);
+                    }
+                }
             }
         });
 
         // --- NOTIFICATION LOGIC FOR UPDATED TICKETS ---
         static::updated(function ($ticket) {
-            // Check if 'assigned_to_user_id' was changed
-            $wasAssigned = $ticket->getOriginal('assigned_to_user_id') === null && $ticket->assigned_to_user_id !== null;
-            $assignmentChanged = $ticket->isDirty('assigned_to_user_id') && $ticket->assigned_to_user_id !== null;
-
+            // Prevent double notification if it was just created (already handled by static::created)
             if ($ticket->wasRecentlyCreated) {
-                return; // Prevent double notification from 'created'
+                return;
             }
 
-            $ticket->load('user'); // Load the creator
-            $ticket->load('assignedToUser'); // Load the newly assigned user
+            // Determine if the 'assigned_to_user_id' field specifically changed
+            $assignmentChanged = $ticket->isDirty('assigned_to_user_id') && $ticket->assigned_to_user_id !== null;
+            $oldAssignedToUserId = $ticket->getOriginal('assigned_to_user_id');
 
-            // Notify Super Admins about any update (they see everything)
-            $superAdmins = User::where('role', User::ROLE_SUPER_ADMIN)->get();
-            foreach ($superAdmins as $admin) {
+            // Load relationships needed for notification logic
+            $ticket->load('user'); // Creator of the ticket
+            $ticket->load('assignedToUser'); // Currently assigned user
+
+            // --- Define a helper for common notification structure ---
+            $sendTicketUpdateNotification = function (
+                $recipient,
+                string $title,
+                string $body,
+                ?string $icon = 'heroicon-o-information-circle',
+                string $viewActionLabel = 'View Ticket'
+            ) use ($ticket) {
                 Notification::make()
-                    ->title('Ticket Updated!')
-                    ->body("Ticket #{$ticket->reference_id} has been updated.")
-                    ->icon('heroicon-o-information-circle')
+                    ->title($title)
+                    ->body($body)
+                    ->icon($icon)
                     ->actions([
                         Action::make('view')
-                            ->label('View Ticket')
+                            ->label($viewActionLabel)
                             ->url(route('filament.ticketing.resources.tickets.view', ['record' => $ticket->id]))
                             ->button()
                             ->openUrlInNewTab(false),
                     ])
-                    ->sendToDatabase($admin);
-                    // ->broadcast($recipient);
+                    ->sendToDatabase($recipient);
+            };
+
+            // Get the user who performed the update (assuming they are authenticated)
+            $updater = auth()->user();
+
+            // 1. Notify Super Admin: Only if their CREATED ticket has been updated.
+            if ($ticket->user_id === $updater?->id && $updater?->isSuperAdmin()) {
+                $sendTicketUpdateNotification(
+                    $updater,
+                    'Your Ticket Was Updated!',
+                    "Your ticket #{$ticket->reference_id} has been updated or received a new reply."
+                );
             }
 
-            // Notify Division Heads of the relevant office/department about updates
-            // (Only if it's in their division and not explicitly about an assignment to staff)
-            if ($ticket->office_id || $ticket->department_id) {
-                $divisionHeads = User::where('role', User::ROLE_DIVISION_HEAD)
-                    ->where(function ($query) use ($ticket) {
-                        $query->when($ticket->office_id, fn($q) => $q->where('office_id', $ticket->office_id))
-                              ->when(!$ticket->office_id && $ticket->department_id, fn($q) => $q->where('department_id', $ticket->department_id));
-                    })->get();
+            // 2. Notify Division Head: Only if their CREATED ticket has been updated.
+            // And ensure they are a Division Head and the creator.
+            if ($ticket->user_id === $updater?->id && $updater?->isDivisionHead()) {
+                $sendTicketUpdateNotification(
+                    $updater,
+                    'Your Ticket Was Updated!',
+                    "Your ticket #{$ticket->reference_id} has been updated or received a new reply."
+                );
+            }
 
-                foreach ($divisionHeads as $divisionHead) {
-                    Notification::make()
-                        ->title('Ticket Updated!')
-                        ->body("Ticket #{$ticket->reference_id} in your division has been updated.")
-                        ->icon('heroicon-o-information-circle')
-                        ->actions([
-                            Action::make('view')
-                                ->label('View Ticket')
-                                ->url(route('filament.ticketing.resources.tickets.view', ['record' => $ticket->id]))
-                                ->button()
-                                ->openUrlInNewTab(false),
-                        ])
-                        ->sendToDatabase($divisionHead);
+            // 3. Notify Staff:
+            // a. If a new ticket is assigned to them by a Division Head (assignmentChanged is true)
+            // b. If there are other changes to an assigned ticket (and they are the assigned staff)
+            if ($ticket->assignedToUser && $ticket->assignedToUser->isStaff()) {
+                if ($assignmentChanged) {
+                    // Notify the new assignee (staff) about the assignment
+                    $sendTicketUpdateNotification(
+                        $ticket->assignedToUser,
+                        'New Ticket Assignment!',
+                        "Ticket #{$ticket->reference_id} has been assigned to you.",
+                        'heroicon-o-bell',
+                        'View Assigned Ticket'
+                    );
+
+                    // If there was an old assignee, notify them it was re-assigned (optional, but good practice)
+                    if ($oldAssignedToUserId && $oldAssignedToUserId !== $ticket->assigned_to_user_id) {
+                         $oldAssignee = User::find($oldAssignedToUserId);
+                         if ($oldAssignee && $oldAssignee->isStaff()) {
+                             $sendTicketUpdateNotification(
+                                 $oldAssignee,
+                                 'Ticket Re-assigned!',
+                                 "Ticket #{$ticket->reference_id} has been re-assigned from you.",
+                                 'heroicon-o-x-circle',
+                                 'View Ticket'
+                             );
+                         }
+                    }
+
+                } else {
+                    // Notify existing assigned staff if the ticket changes and they are not the updater
+                    // We only notify if the update was NOT performed by the assigned staff themselves,
+                    // otherwise, they already know about their own changes.
+                    if ($ticket->assignedToUser->id !== $updater?->id) {
+                         $sendTicketUpdateNotification(
+                             $ticket->assignedToUser,
+                             'Assigned Ticket Updated!',
+                             "The ticket #{$ticket->reference_id} assigned to you has been updated or received a new reply.",
+                             'heroicon-o-information-circle'
+                         );
+                    }
                 }
             }
-
-
-            // Notify the newly assigned staff member
-            if ($assignmentChanged) {
-                if ($ticket->assignedToUser && $ticket->assignedToUser->isStaff()) {
-                    Notification::make()
-                        ->title('New Ticket Assignment!')
-                        ->body("Ticket #{$ticket->reference_id} has been assigned to you.")
-                        ->icon('heroicon-o-bell')
-                        ->actions([
-                            Action::make('view')
-                                ->label('View Assigned Ticket')
-                                ->url(route('filament.ticketing.resources.tickets.view', ['record' => $ticket->id]))
-                                ->button(),
-                        ])
-                        ->sendToDatabase($ticket->assignedToUser);
-                }
-            }
-
-            // Notify the creator (employee) about updates to their ticket
+            // 4. Notify Employee: Only notify them every time there is an update on their own created tickets.
+            // This applies if they are the creator AND their role is Employee (and not caught by SA/DH above if their role allows)
             if ($ticket->user && $ticket->user->isEmployee()) {
-                Notification::make()
-                    ->title('Your Ticket Was Updated!')
-                    ->body("Ticket #{$ticket->reference_id} has been updated.")
-                    ->icon('heroicon-o-information-circle')
-                    ->actions([
-                        Action::make('view')
-                            ->label('View Update')
-                            ->url(route('filament.ticketing.resources.tickets.view', ['record' => $ticket->id]))
-                            ->button(),
-                    ])
-                    ->sendToDatabase($ticket->user);
-                    // ->broadcast($ticket->user);
+                if (!$ticket->user->isSuperAdmin() && !$ticket->user->isDivisionHead()) {
+                     $sendTicketUpdateNotification(
+                         $ticket->user,
+                         'Your Ticket Was Updated!',
+                         "Your ticket #{$ticket->reference_id} has been updated or received a new reply.",
+                         'heroicon-o-information-circle',
+                         'View Update'
+                     );
+                }
             }
         });
     }

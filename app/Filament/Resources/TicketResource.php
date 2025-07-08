@@ -299,22 +299,13 @@ class TicketResource extends Resource
                 Tables\Columns\TextColumn::make('priority.priority_name')
                     ->label('Priority Level')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'High' => 'danger',
-                        'Medium' => 'warning',
-                        'Low' => 'primary',
-                    })
+                    ->color(fn ($record): string => $record->priority->badge_color ?? 'secondary')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status.status_name')
                     ->label('Status')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'Pending' => 'warning',
-                        'Resolved' => 'success',
-                        'Unassigned' => 'gray',
-                        'Reopened' => 'primary'
-                    })
+                    ->color(fn ($record): string => $record->status->badge_color ?? 'secondary')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')

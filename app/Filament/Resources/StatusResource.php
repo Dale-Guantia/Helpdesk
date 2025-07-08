@@ -40,13 +40,7 @@ class StatusResource extends Resource
                 Tables\Columns\TextColumn::make('status_name')
                     ->label('Status Name')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'Pending' => 'warning',
-                        'Resolved' => 'success',
-                        'Unassigned' => 'gray',
-                        'Reopened' => 'primary',
-                        default => 'info',
-                    })
+                    ->color(fn ($record): string => $record->badge_color ?? 'secondary')
                     ->searchable()
                     ->sortable(),
             ])

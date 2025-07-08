@@ -64,7 +64,7 @@ class CustomProfileComponent extends Component implements HasForms
             ->schema([
                 Section::make('Office Assignment')
                     ->aside()
-                    ->description('Your Department and division assignment')
+                    ->description('Your department and division assignment.')
                     ->schema([
                         Forms\Components\TextInput::make('department_id')
                             ->label('Department')

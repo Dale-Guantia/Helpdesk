@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('statuses', function (Blueprint $table) {
             $table->id();
             $table->string('status_name');
+            $table->string('badge_color')->nullable();
             $table->timestamps();
         });
     }

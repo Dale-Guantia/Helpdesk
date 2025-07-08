@@ -40,12 +40,12 @@ class UserResource extends Resource
                     ->email()
                     ->maxLength(255)
                     ->prefixIcon('heroicon-m-envelope'),
-                Forms\Components\TextInput::make('phone')
-                    ->label('Phone Number')
-                    ->tel()
-                    ->maxLength(11)
-                    ->minLength(10)
-                    ->prefixIcon('heroicon-m-phone'),
+                // Forms\Components\TextInput::make('phone')
+                //     ->label('Phone Number')
+                //     ->tel()
+                //     ->maxLength(11)
+                //     ->minLength(10)
+                //     ->prefixIcon('heroicon-m-phone'),
                 Forms\Components\Select::make('department_id')
                     ->relationship('department', 'department_name')
                     ->prefixIcon('heroicon-m-building-office-2')
@@ -54,7 +54,7 @@ class UserResource extends Resource
                 Forms\Components\Select::make('office_id')
                     ->label('Division')
                     ->relationship('office', 'office_name')
-                    ->prefixIcon('heroicon-m-building-office-2')
+                    ->prefixIcon('heroicon-m-building-office')
                     ->disabled(fn (callable $get) => !$get('department_id'))
                     ->options(function (callable $get) {
                         $department_id = $get('department_id');
@@ -66,10 +66,6 @@ class UserResource extends Resource
                             ->pluck('office_name', 'id')
                             ->toArray();
                     }),
-                Forms\Components\Select::make('role')
-                    ->options(User::ROLES)
-                    ->required()
-                    ->prefixIcon('heroicon-m-users'),
                 Forms\Components\TextInput::make('password')
                     ->password()
                     ->confirmed()
@@ -83,6 +79,10 @@ class UserResource extends Resource
                     ->revealable()
                     ->visible(fn ($record) => $record === null)
                     ->prefixIcon('heroicon-m-lock-closed'),
+                Forms\Components\Select::make('role')
+                    ->options(User::ROLES)
+                    ->required()
+                    ->prefixIcon('heroicon-m-users'),
                 Forms\Components\Toggle::make('is_active')
                     ->label('Activate/Deactivate User')
                     ->default(true)
@@ -108,7 +108,7 @@ class UserResource extends Resource
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Name')
+                    ->label('Full name')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('email')
@@ -164,11 +164,9 @@ class UserResource extends Resource
                     ]),
                 SelectFilter::make('department_id')
                     ->label('Department')
-                    ->multiple()
                     ->relationship('department', 'department_name'),
                 SelectFilter::make('office_id')
                     ->label('Division')
-                    ->multiple()
                     ->relationship('office', 'office_name'),
             ])
             ->actions([

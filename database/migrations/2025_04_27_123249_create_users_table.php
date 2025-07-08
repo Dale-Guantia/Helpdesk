@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('phone')->nullable();
+            // $table->string('phone')->nullable();
             $table->foreignId('department_id')->nullable()->constrained('departments')->onDelete('cascade');
             $table->foreignId('office_id')->nullable()->constrained('offices')->onDelete('cascade');
             $table->boolean('is_active')->default(true);

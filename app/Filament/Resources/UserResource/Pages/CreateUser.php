@@ -3,16 +3,25 @@
 namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Filament\Notifications\Notification;
 
 class CreateUser extends CreateRecord
 {
     protected static string $resource = UserResource::class;
 
     protected static bool $canCreateAnother = false;
+
+    protected function getCreatedNotification(): ?Notification
+    {
+        return Notification::make()
+            ->success()
+            ->title('User Created!')
+            ->body("New user has been added to the system.");
+    }
+
 
     protected function getRedirectUrl(): string
     {

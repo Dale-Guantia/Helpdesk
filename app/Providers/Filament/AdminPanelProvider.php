@@ -46,11 +46,12 @@ class AdminPanelProvider extends PanelProvider
             ->databaseNotificationsPolling('20s')
             ->colors([
                 'danger' => Color::Red,
-                'gray' => Color::Zinc,
+                'gray' => Color::Gray,
                 'info' => Color::Purple,
                 'primary' => Color::hex('#118bf0'),
                 'success' => Color::Green,
                 'warning' => Color::Amber,
+                'secondary' => Color::Indigo,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')

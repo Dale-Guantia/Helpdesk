@@ -11,7 +11,7 @@ use Filament\Forms\Components\Card;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\Carbon;
-use App\Models\Comment;
+use Filament\Tables\Actions\DeleteAction;
 
 
 class CommentsRelationManager extends RelationManager
@@ -107,6 +107,7 @@ class CommentsRelationManager extends RelationManager
                     ->modalHeading('Edit Comment'),
                 Tables\Actions\DeleteAction::make()
                     ->label('')
+                    ->modalHeading('Delete Comment')
                     ->hidden(fn ($record) => !auth()->user()->isSuperAdmin() && auth()->id() !== $record->user_id),
             ])
             ->bulkActions([])

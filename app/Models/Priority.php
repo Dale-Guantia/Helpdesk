@@ -21,5 +21,6 @@ class Priority extends Model
         'priority_name',
         'created_at',
         'updated_at',
+        'badge_color',
     ];
 }

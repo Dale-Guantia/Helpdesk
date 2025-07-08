@@ -28,10 +28,13 @@ class PriorityResource extends Resource
                 Forms\Components\TextInput::make('priority_name')
                 ->required()
                 ->maxLength(255),
+                Forms\Components\ColorPicker::make('badge_color')
+                    ->label('Select Badge Color')
+                    ->helperText('This color will be used to display the badge in the UI.')
             ]);
     }
 
-    public static function table(Table $table): Table
+        public static function table(Table $table): Table
     {
         return $table
             ->columns([
@@ -42,12 +45,7 @@ class PriorityResource extends Resource
                 Tables\Columns\TextColumn::make('priority_name')
                     ->label('Priority Name')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'High' => 'danger',
-                        'Medium' => 'warning',
-                        'Low' => 'primary',
-                        default => 'info',
-                    })
+                    ->color(fn ($record): string => $record->badge_color ?? 'secondary')
                     ->searchable()
                     ->sortable(),
             ])
