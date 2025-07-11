@@ -7,7 +7,6 @@ use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Carbon;
 use App\Models\User;
 
 
@@ -81,33 +80,59 @@ class EditTicket extends EditRecord
     }
 
 
-    public static function canEdit(Model $record): bool
-    {
-        $user = Auth::user();
+    // public static function canEdit(Model $record): bool
+    // {
+    //     $user = Auth::user();
 
-        // Allow editing if the ticket is NOT resolved (status_id !== 2)
-        // This now includes 'Pending', 'Unassigned', 'Reopened' (ID 4)
-        if ($record->status_id !== 2) {
-            return true;
-        }
+    //     if (!$user) {
+    //         return false;
+    //     }
 
-        // If it *is* resolved (status_id === 2), only allow editing if the current user is an admin/staff
-        // The ticket creator can *only* reopen it via the custom action, not directly edit when resolved.
-        if ($user && $user->isSuperAdmin()) {
-            return true;
-        }
+    //     $record->loadMissing(['user', 'assignedToUser', 'status']);
 
-        // By default, if resolved and not an admin/staff, cannot edit
-        return false;
-    }
+    //     // If it *is* resolved (status_id === 2), only allow editing if the current user is an admin/staff
+    //     // The ticket creator can *only* reopen it via the custom action, not directly edit when resolved.
+    //     if ($user && $user->isSuperAdmin()) {
+    //         return true;
+    //     }
 
-    protected function authorizeAccess(): void
-    {
-        if (!static::canEdit($this->record)) {
-            abort(403, 'You are not authorized to edit this resolved ticket.');
-        }
+    //     // Return false/not allow editing if the ticket is resolved (status_id === 2)
+    //     // This now includes 'Pending', 'Unassigned', 'Reopened' (ID 4)
+    //     if ($record->status_id === 2) {
+    //         return false;
+    //     }
 
-        parent::authorizeAccess();
-    }
+
+    //     if ($user->isEmployee()) { // Check for employee role or no assigned roles
+    //         return $record->user_id === $user->id; // Only creator can edit
+    //     }
+
+    //     $departmentAndDivisionMatch = (
+    //         $record->department_id === $user->department_id &&
+    //         $record->office_id === $user->office_id
+    //     );
+
+    //     // Division Head: Can edit if the department_id and office_id match.
+    //     if ($user->isDivisionHead()) {
+    //         return $departmentAndDivisionMatch;
+    //     }
+
+    //     // HRDO Staff: Can edit if department_id and office_id match AND ticket was assigned to them.
+    //     if ($user->isStaff()) { // Assuming 'isStaff()' covers HRDO Staff role
+    //         return $departmentAndDivisionMatch && ($record->assigned_to_user_id === $user->id);
+    //     }
+
+    //     // By default, if resolved and not an admin/staff, cannot edit
+    //     return false;
+    // }
+
+    // protected function authorizeAccess(): void
+    // {
+    //     if (!static::canEdit($this->record)) {
+    //         abort(403, 'You are not authorized to view/edit this ticket.');
+    //     }
+
+    //     parent::authorizeAccess();
+    // }
 
 }

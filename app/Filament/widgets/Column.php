@@ -60,7 +60,6 @@ class Column extends ApexChartWidget
         }
 
         // Get all offices under selected department
-        // Get all offices under selected department
         $offices = Office::withCount(['tickets'])
             ->where('department_id', $departmentId)
             ->get();

@@ -12,6 +12,7 @@ use Filament\Infolists\Components\ViewEntry;
 use App\Filament\Actions\ReopenTicketAction;
 use Illuminate\Support\Facades\Auth;
 use Filament\Infolists\Components\Grid;
+use App\Models\User;
 
 class ViewTicket extends ViewRecord
 {
@@ -89,20 +90,11 @@ class ViewTicket extends ViewRecord
                                             Components\TextEntry::make('priority.priority_name')
                                                 ->label('Priority Level')
                                                 ->badge()
-                                                ->color(fn (string $state): string => match ($state) {
-                                                    'High' => 'danger',
-                                                    'Medium' => 'warning',
-                                                    'Low' => 'primary',
-                                                }),
+                                                ->color(fn ($record): string => $record->priority->badge_color ?? 'secondary'),
                                             Components\TextEntry::make('status.status_name')
                                                 ->label('Status')
                                                 ->badge()
-                                                ->color(fn (string $state): string => match ($state) {
-                                                    'Pending' => 'warning',
-                                                    'Resolved' => 'success',
-                                                    'Unassigned' => 'gray',
-                                                    'Reopened' => 'primary'
-                                                }),
+                                                ->color(fn ($record): string => $record->status->badge_color ?? 'secondary'),
                                             Components\TextEntry::make('created_at')->dateTime('m/d/y - h:i A')->label('Created at'),
                                             Components\TextEntry::make('updated_at')->dateTime('m/d/y - h:i A')->label('Updated at'),
                                         ]), // This section takes 3 out of 12 columns
@@ -111,5 +103,4 @@ class ViewTicket extends ViewRecord
                     ->columns(12), // total columns for grid system
             ]);
     }
-
 }

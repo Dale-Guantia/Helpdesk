@@ -51,7 +51,7 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::hex('#118bf0'),
                 'success' => Color::Green,
                 'warning' => Color::Amber,
-                'secondary' => Color::Indigo,
+                'secondary' => Color::Zinc,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')

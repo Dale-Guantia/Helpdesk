@@ -28,9 +28,6 @@ class PriorityResource extends Resource
                 Forms\Components\TextInput::make('priority_name')
                 ->required()
                 ->maxLength(255),
-                Forms\Components\ColorPicker::make('badge_color')
-                    ->label('Select Badge Color')
-                    ->helperText('This color will be used to display the badge in the UI.')
             ]);
     }
 

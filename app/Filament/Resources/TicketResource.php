@@ -5,6 +5,8 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\TicketResource\Pages;
 use App\Models\Ticket;
 use App\Models\User;
+use App\Models\Status;
+use App\Models\Priority;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -29,6 +31,8 @@ class TicketResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $currentUser = Auth::user();
+
         return $form
             ->schema([
                 Forms\Components\Hidden::make('user_id')
@@ -57,18 +61,6 @@ class TicketResource extends Resource
                                     ->rules([
                                         'mimes:jpeg,png,pdf,doc,docx,xls,xlsx,zip,txt,mp4', // List all allowed extensions directly
                                     ])
-                                    ->acceptedFileTypes([
-                                        'image/jpeg',
-                                        'image/png',
-                                        'application/pdf',
-                                        'application/msword',
-                                        'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
-                                        'application/vnd.ms-excel',
-                                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
-                                        'application/zip',
-                                        'text/plain',
-                                        'video/mp4',
-                                    ])
                                     ->validationMessages([
                                         'mimes' => 'Sorry, but this file type is not supported. Please upload one of the following: JPEG, PNG, PDF, Word Document, Excel Spreadsheet, ZIP, or Text File.',
                                     ])
@@ -78,36 +70,41 @@ class TicketResource extends Resource
                             ->schema([
                                 Forms\Components\Select::make('department_id')
                                     ->label('Department of concern')
+                                    ->live()
+                                    ->required()
                                     ->placeholder('Select a Department')
                                     ->relationship('department', 'department_name')
                                     ->default(1),
                                 Forms\Components\Select::make('office_id')
                                     ->label('Division of concern')
+                                    ->placeholder('Select a Division')
                                     ->live()
-                                    ->disabled(fn (callable $get) => !$get('department_id'))
-                                    ->options(function (callable $get, $livewire) {
+                                    ->required()
+                                    ->disabled(fn (Forms\Get $get) => !$get('department_id'))
+                                    ->relationship('office', 'office_name', function ($query, Forms\Get $get, $livewire) use ($currentUser) {
                                         $department_id = $get('department_id');
-                                        $currentUser = Auth::user();
 
+                                        // If no department is selected, ensure no offices are returned
                                         if (empty($department_id)) {
-                                            return ['' => 'Select Department First'];
+                                            return $query->whereRaw('1 = 0'); // Returns an empty query
                                         }
+                                        // Base query: offices belonging to the selected department
+                                        $query->where('department_id', $department_id);
 
-                                        $query = Office::where('department_id', $department_id);
-
-                                        if ($livewire instanceof CreateRecord) { // This `CreateRecord` needs a `use` statement
-                                            if ($currentUser->isSuperAdmin() || $currentUser->isDivisionHead() || $currentUser->isStaff()) {
+                                        // Add conditional logic specific to user roles and form type (CreateRecord)
+                                        if ($livewire instanceof \Filament\Resources\Pages\CreateRecord) {
+                                            if ($currentUser->isAgent()) {
                                                 if ($currentUser->office_id && Office::where('id', $currentUser->office_id)->where('department_id', $department_id)->exists()) {
                                                     $query->where('id', '!=', $currentUser->office_id);
                                                 }
                                             }
                                         }
-                                        $division = $query->pluck('office_name', 'id')->toArray();
-                                        return $division ?: ['' => 'No Division Available'];
+                                        return $query; // Return the modified query
                                     }),
                                 Forms\Components\Select::make('problem_category_id')
                                     ->label('Issue Category')
                                     ->live()
+                                    ->required()
                                     ->options(function (Forms\Get $get) {
                                         $office_id = $get('office_id');
                                         $department_id = $get('department_id');
@@ -155,56 +152,49 @@ class TicketResource extends Resource
                                     ->requiredIf('problem_category_id', 'other'),
                                 Forms\Components\Select::make('priority_id')
                                     ->label('Priority Level')
+                                    ->required()
                                     ->default(3)
                                     ->relationship('priority', 'priority_name'),
                                 Forms\Components\Select::make('assigned_to_user_id')
                                     ->label('Assign To')
-                                    ->relationship('assignedToUser', 'name')
                                     ->placeholder('Unassigned')
-                                    ->searchable()
                                     ->live()
-                                    ->preload()
-                                    ->options(function (Forms\Get $get) {
-                                        $currentUser = Auth::user();
-                                        $query = User::query();
-
+                                    ->default(null) // Assuming unassigned by default
+                                    ->relationship('assignedToUser', 'name', function ($query, Forms\Get $get) use ($currentUser) {
+                                        $selectedOfficeId = $get('office_id');
+                                        // Base query: Staff, Division Head, Super Admin roles
                                         $query->whereIn('role', [User::ROLE_STAFF, User::ROLE_DIVISION_HEAD, User::ROLE_SUPER_ADMIN]);
 
-                                        $selectedOfficeId = $get('office_id');
-
+                                        if (empty($selectedOfficeId)) {
+                                            return $query->whereRaw('1 = 0'); // Returns an empty result set
+                                        }
+                                        // Filter by office_id if selected (for Super Admin)
                                         if ($currentUser->isSuperAdmin()) {
                                             if ($selectedOfficeId) {
                                                 $query->where('office_id', $selectedOfficeId);
                                             }
-                                        } elseif ($currentUser->isDivisionHead()) {
-
-                                            $query->where('office_id', $currentUser->office_id);
-
-                                            if ($selectedOfficeId && $selectedOfficeId != $currentUser->office_id) {
-                                                $query->where('office_id', $selectedOfficeId);
-                                            }
                                         }
+                                        // For Division Heads, restrict to their own office
+                                        elseif ($currentUser->isDivisionHead()) {
+                                            $query->where('office_id', $currentUser->office_id);
+                                        }
+                                        // Exclude the current user from being assigned to themselves
                                         $query->where('id', '!=', $currentUser->id);
 
-                                        return $query->pluck('name', 'id');
+                                        return $query;
                                     })
-                                    ->hidden(fn () => !Auth::user()->isSuperAdmin() && !Auth::user()->isDivisionHead())
+                                    ->preload()
+                                    // Hide if not Super Admin or Division Head
+                                    ->hidden(fn () => !$currentUser->isSuperAdmin() && !$currentUser->isDivisionHead())
                                     ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get, $livewire) {
                                         if ($livewire instanceof \Filament\Resources\Pages\CreateRecord) {
-                                            $set('status_id', !empty($state) ? 1 : 3);
-                                        }
-                                        else if ($livewire instanceof \Filament\Resources\Pages\EditRecord) {
-                                            // Get the current status_id to prevent unnecessary changes if already resolved
+                                            $set('status_id', !empty($state) ? 1 : 3); // 1: Assigned/Pending, 3: Unassigned
+                                        } else if ($livewire instanceof \Filament\Resources\Pages\EditRecord) {
                                             $currentStatusId = $get('status_id');
-
-                                            // Assuming status ID 2 is 'Resolved' (from your ViewTicket code)
-                                            // We only want to auto-change if the ticket is NOT already Resolved
                                             if ($currentStatusId !== 2) { // '2' is the ID for 'Resolved' status
-                                                // If an agent is assigned (state is not empty/null)
                                                 if (!empty($state)) {
                                                     $set('status_id', 1); // Set to 'Pending' (or your 'Assigned' status ID)
                                                 } else {
-                                                    // If assigned_to_user_id is unassigned (state is empty/null)
                                                     $set('status_id', 3); // Set to 'Unassigned'
                                                 }
                                             }
@@ -234,10 +224,9 @@ class TicketResource extends Resource
 
                                             return !$currentUser?->isAgent();
                                         }
-
                                         return true; // Default to disabled if context is unknown
                                     })
-                                    ->dehydrated(true),
+                                    ->dehydrated(),
                         ])->columnSpan(1)
                     ])->columns(3),
             ]);
@@ -328,11 +317,7 @@ class TicketResource extends Resource
             ->filters([
                 SelectFilter::make('status')
                     ->multiple()
-                    ->options([
-                        'Pending' => 'Pending',
-                        'Resolved' => 'Resolved',
-                        'Unassigned' => 'Unassigned',
-                    ])
+                    ->options(Status::pluck('status_name', 'status_name'))
                     ->query(function ($query, array $data) {
                         $values = $data['values'] ?? [];
                         if (count($values)) {
@@ -343,11 +328,7 @@ class TicketResource extends Resource
                     }),
                 SelectFilter::make('priority')
                     ->multiple()
-                    ->options([
-                        'High' => 'High',
-                        'Medium' => 'Medium',
-                        'Low' => 'Low',
-                    ])
+                    ->options(Priority::pluck('priority_name', 'priority_name'))
                     ->query(function ($query, array $data) {
                         $values = $data['values'] ?? [];
                         if (count($values)) {
@@ -356,7 +337,6 @@ class TicketResource extends Resource
                             });
                         }
                     }),
-                 // --- NEW FILTER FOR ASSIGNED STAFF ---
                 SelectFilter::make('assigned_to_user_id')
                     ->label('Assigned To')
                     ->relationship('assignedToUser', 'name')
@@ -431,8 +411,6 @@ class TicketResource extends Resource
         // Default: If somehow an unknown role, return empty
         return $query->whereRaw('0=1');
     }
-
-
 
     public static function getRelations(): array
     {

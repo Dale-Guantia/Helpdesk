@@ -214,23 +214,19 @@ class Ticket extends Model
             // Get the user who performed the update (assuming they are authenticated)
             $updater = auth()->user();
 
-            // 1. Notify Super Admin: Only if their CREATED ticket has been updated.
-            if ($ticket->user_id === $updater?->id && $updater?->isSuperAdmin()) {
-                $sendTicketUpdateNotification(
-                    $updater,
-                    'Your Ticket Was Updated!',
-                    "Your ticket #{$ticket->reference_id} has been updated or received a new reply."
-                );
-            }
-
-            // 2. Notify Division Head: Only if their CREATED ticket has been updated.
-            // And ensure they are a Division Head and the creator.
-            if ($ticket->user_id === $updater?->id && $updater?->isDivisionHead()) {
-                $sendTicketUpdateNotification(
-                    $updater,
-                    'Your Ticket Was Updated!',
-                    "Your ticket #{$ticket->reference_id} has been updated or received a new reply."
-                );
+            if ($ticket->user) { // Ensure the ticket has a creator
+                if ($ticket->user->id !== $updater->id) { // This is the key change: Notifying if updater is *NOT* the creator
+                    // Now, check the role of the ticket creator
+                    if ($ticket->user->isAgent() || $ticket->user->isEmployee()) {
+                        $sendTicketUpdateNotification(
+                            $ticket->user,
+                            'Your Ticket Was Updated!',
+                            "Your ticket #{$ticket->reference_id} has been updated or received a new reply.",
+                            'heroicon-o-arrow-path',
+                            'View Ticket',
+                        );
+                    }
+                }
             }
 
             // 3. Notify Staff:
@@ -273,19 +269,6 @@ class Ticket extends Model
                              'heroicon-o-information-circle'
                          );
                     }
-                }
-            }
-            // 4. Notify Employee: Only notify them every time there is an update on their own created tickets.
-            // This applies if they are the creator AND their role is Employee (and not caught by SA/DH above if their role allows)
-            if ($ticket->user && $ticket->user->isEmployee()) {
-                if (!$ticket->user->isSuperAdmin() && !$ticket->user->isDivisionHead()) {
-                     $sendTicketUpdateNotification(
-                         $ticket->user,
-                         'Your Ticket Was Updated!',
-                         "Your ticket #{$ticket->reference_id} has been updated or received a new reply.",
-                         'heroicon-o-information-circle',
-                         'View Update'
-                     );
                 }
             }
         });

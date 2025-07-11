@@ -62,9 +62,9 @@ class CustomProfileComponent extends Component implements HasForms
 
         return $form
             ->schema([
-                Section::make('Office Assignment')
+                Section::make('Office and Role Assignment')
                     ->aside()
-                    ->description('Your department and division assignment.')
+                    ->description('Your department,division, and role assignment.')
                     ->schema([
                         Forms\Components\TextInput::make('department_id')
                             ->label('Department')
@@ -73,6 +73,10 @@ class CustomProfileComponent extends Component implements HasForms
                         Forms\Components\TextInput::make('office_name')
                             ->label('Division')
                             ->default($officeName)
+                            ->disabled(),
+                        Forms\Components\TextInput::make('role_name')
+                            ->label('User Role')
+                            ->default(auth()->user()?->role_name ?? 'N/A')
                             ->disabled(),
                     ])
                     ->hidden($hideOfficeAssignment),

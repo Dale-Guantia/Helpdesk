@@ -5,13 +5,13 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
 use App\Models\Office;
+use App\Models\Department;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Filters\SelectFilter;
-use Illuminate\Support\Carbon;
 
 
 class UserResource extends Resource
@@ -53,19 +53,16 @@ class UserResource extends Resource
                     ->reactive(),
                 Forms\Components\Select::make('office_id')
                     ->label('Division')
-                    ->relationship('office', 'office_name')
-                    ->prefixIcon('heroicon-m-building-office')
-                    ->disabled(fn (callable $get) => !$get('department_id'))
-                    ->options(function (callable $get) {
-                        $department_id = $get('department_id');
-
-                        if (!$department_id) {
-                            return [];
+                    ->relationship('office', 'office_name', function (Forms\Get $get, Forms\Components\Select $component) {
+                        $departmentId = $get('department_id');
+                        if (!$departmentId) {
+                            return $component->getRelationship()->getRelated();
                         }
-                        return Office::where('department_id', $department_id)
-                            ->pluck('office_name', 'id')
-                            ->toArray();
-                    }),
+                        return $component->getRelationship()->getRelated()->where('department_id', $departmentId);
+                    })
+                    ->prefixIcon('heroicon-m-building-office')
+                    ->required()
+                    ->disabled(fn (Forms\Get $get) => !filled($get('department_id'))),
                 Forms\Components\TextInput::make('password')
                     ->password()
                     ->confirmed()
@@ -113,6 +110,7 @@ class UserResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('email')
                     ->label('Email')
+                    ->copyable()
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('role')
@@ -157,17 +155,34 @@ class UserResource extends Resource
                     ->options(User::ROLES),
                 SelectFilter::make('is_active')
                     ->label('Active Status')
-                    ->placeholder('')
                     ->options([
                         1 => 'Active',
                         0 => 'Inactive',
                     ]),
                 SelectFilter::make('department_id')
                     ->label('Department')
-                    ->relationship('department', 'department_name'),
+                    ->multiple()
+                    ->options(Department::pluck('department_name', 'department_name'))
+                    ->query(function ($query, array $data) {
+                        $values = $data['values'] ?? [];
+                        if (count($values)) {
+                            $query->whereHas('department', function ($q) use ($values) {
+                                $q->whereIn('department_name', $values);
+                            });
+                        }
+                    }),
                 SelectFilter::make('office_id')
                     ->label('Division')
-                    ->relationship('office', 'office_name'),
+                    ->multiple()
+                    ->options(Office::pluck('office_name', 'office_name'))
+                    ->query(function ($query, array $data) {
+                        $values = $data['values'] ?? [];
+                        if (count($values)) {
+                            $query->whereHas('office', function ($q) use ($values) {
+                                $q->whereIn('office_name', $values);
+                            });
+                        }
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()

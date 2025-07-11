@@ -8,9 +8,7 @@ use Filament\Actions\Action;
 use App\Livewire;
 use Carbon\Carbon;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Form;
 use Filament\Forms\Get;
-// use Filament\Notifications\Notification; // You can remove this use statement if no notifications are used here
 
 class Reports extends Page
 {
@@ -72,7 +70,7 @@ class Reports extends Page
 
     public function getDefaultTableSortDirection(): ?string
     {
-        return 'desc'; // sort highest to lowest
+        return 'desc';
     }
 
     public static function canAccess(): bool

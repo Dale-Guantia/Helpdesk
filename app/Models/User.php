@@ -58,6 +58,11 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
         ]);
     }
 
+    public function getRoleNameAttribute(): string
+    {
+        return self::ROLES[$this->role] ?? 'Unknown Role';
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
         return $this->isSuperAdmin() || $this->isDivisionHead() || $this->isStaff() || $this->isEmployee() || $this->is_active === 0;

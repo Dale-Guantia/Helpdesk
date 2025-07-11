@@ -21,7 +21,31 @@ class TicketPolicy
      */
     public function view(User $user, Ticket $ticket): bool
     {
-        return $user->isSuperAdmin() || $user->isDivisionHead() || $user->isStaff() || $user->isEmployee();
+        if ($user && $user->isSuperAdmin()) {
+            return true;
+        }
+
+        if ($user->isEmployee()) { // Check for employee role or no assigned roles
+            return $ticket->user_id === $user->id; // Only creator can edit
+        }
+
+        $departmentAndDivisionMatch = (
+            $ticket->department_id === $user->department_id &&
+            $ticket->office_id === $user->office_id
+        );
+
+        // Division Head: Can edit if the department_id and office_id match.
+        if ($user->isDivisionHead()) {
+            return $departmentAndDivisionMatch;
+        }
+
+        // HRDO Staff: Can edit if department_id and office_id match AND ticket was assigned to them.
+        if ($user->isStaff()) { // Assuming 'isStaff()' covers HRDO Staff role
+            return $departmentAndDivisionMatch && ($ticket->assigned_to_user_id === $user->id);
+        }
+
+        // By default, if resolved and not an admin/staff, cannot edit
+        return false;
     }
 
     /**
@@ -37,7 +61,36 @@ class TicketPolicy
      */
     public function update(User $user, Ticket $ticket): bool
     {
-        return $user->isSuperAdmin() || $user->isDivisionHead() || $user->isStaff() || $user->isEmployee();
+       if ($user && $user->isSuperAdmin()) {
+            return true;
+        }
+
+        // Return false/not allow editing if the ticket is resolved (status_id === 2)
+        if ($ticket->status_id === 2) {
+            return false;
+        }
+
+        if ($user->isEmployee()) { // Check for employee role or no assigned roles
+            return $ticket->user_id === $user->id; // Only creator can edit
+        }
+
+        $departmentAndDivisionMatch = (
+            $ticket->department_id === $user->department_id &&
+            $ticket->office_id === $user->office_id
+        );
+
+        // Division Head: Can edit if the department_id and office_id match.
+        if ($user->isDivisionHead()) {
+            return $departmentAndDivisionMatch;
+        }
+
+        // HRDO Staff: Can edit if department_id and office_id match AND ticket was assigned to them.
+        if ($user->isStaff()) { // Assuming 'isStaff()' covers HRDO Staff role
+            return $departmentAndDivisionMatch && ($ticket->assigned_to_user_id === $user->id);
+        }
+
+        // By default, if resolved and not an admin/staff, cannot edit
+        return false;
     }
 
     /**

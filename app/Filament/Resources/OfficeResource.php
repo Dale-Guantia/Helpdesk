@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\OfficeResource\Pages;
+use App\Models\Department;
 use App\Models\Office;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -77,7 +78,15 @@ class OfficeResource extends Resource
                 SelectFilter::make('department_id')
                     ->label('Department')
                     ->multiple()
-                    ->relationship('department', 'department_name'),
+                    ->options(Department::pluck('department_name', 'department_name'))
+                    ->query(function ($query, array $data) {
+                        $values = $data['values'] ?? [];
+                        if (count($values)) {
+                            $query->whereHas('department', function ($q) use ($values) {
+                                $q->whereIn('department_name', $values);
+                            });
+                        }
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()

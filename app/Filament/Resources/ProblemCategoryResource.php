@@ -50,51 +50,31 @@ class ProblemCategoryResource extends Resource
         return $form
             ->schema([
                     Forms\Components\Select::make('department_id')
-                    ->label('Department')
-                    ->reactive()
-                    ->relationship('department', 'department_name')
-                    ->prefixIcon('heroicon-m-building-office-2')
-                    ->options(function () {
-                        $user = auth()->user();
-                        // Admin can select all offices
-                        if ($user->isSuperAdmin()) {
-                            return Department::all()->pluck('department_name', 'id');
-                        }
-                        // Non-admin: only their own office
-                        return Department::where('id', $user->department_id)->pluck('department_name', 'id');
-                    })
-                    ->default(auth()->user()->isSuperAdmin() ? null : auth()->user()->department_id)
-                    ->disabled(!auth()->user()->isSuperAdmin()) // disable for non-admins
-                    ->dehydrated()
-                    ->required(),
-                Forms\Components\Select::make('office_id')
-                    ->label('Division')
-                    ->relationship('office', 'office_name')
-                    ->prefixIcon('heroicon-m-building-office-2')
-                    ->options(function (callable $get) {
-                        $department_id = $get('department_id');
-                        $user = auth()->user();
-                        // Admin can select all offices
-                        if ($user->isSuperAdmin()) {
-                            if (!$department_id) {
-                                return [];
-                            }
-                            return Office::where('department_id', $department_id)
-                                ->pluck('office_name', 'id')
-                                ->toArray();
-                        }
-                        // Non-admin: only their own office
-                        return Office::where('id', $user->office_id)->pluck('office_name', 'id');
-                    })
-                    ->default(auth()->user()->isSuperAdmin() ? null : auth()->user()->office_id)
-                    ->dehydrated()
-                    ->disabled(fn (callable $get) =>
-                        !auth()->user()->isSuperAdmin() || !$get('department_id')
-                    ), // disable for non-admins or if department is not selected
-                Forms\Components\TextInput::make('category_name')
-                    ->label('Issue Description')
-                    ->required()
-                    ->maxLength(255),
+                        ->label('Department')
+                        ->live()
+                        ->required()
+                        ->default(auth()->user()->isSuperAdmin() ? null : auth()->user()->department_id)
+                        ->relationship('department', 'department_name')
+                        ->prefixIcon('heroicon-m-building-office-2')
+                        ->disabled(fn () => !auth()->user()->isSuperAdmin())
+                        ->dehydrated(),
+                    Forms\Components\Select::make('office_id')
+                        ->label('Division')
+                        ->required()
+                        ->default(auth()->user()->isSuperAdmin() ? null : auth()->user()->office_id)
+                        ->relationship('office', 'office_name', function ($query, \Filament\Forms\Get $get) {
+                            $department_id = $get('department_id');
+                            return $query->where('department_id', $department_id);
+                        })
+                        ->prefixIcon('heroicon-m-building-office-2')
+                        ->disabled(fn (\Filament\Forms\Get $get) =>
+                            !auth()->user()->isSuperAdmin() || !$get('department_id')
+                        )
+                        ->dehydrated(),
+                    Forms\Components\TextInput::make('category_name')
+                        ->label('Issue Description')
+                        ->required()
+                        ->maxLength(255),
             ]);
     }
 
@@ -128,11 +108,27 @@ class ProblemCategoryResource extends Resource
                  SelectFilter::make('department_id')
                     ->label('Department')
                     ->multiple()
-                    ->relationship('department', 'department_name'),
+                    ->options(Department::pluck('department_name', 'department_name'))
+                    ->query(function ($query, array $data) {
+                        $values = $data['values'] ?? [];
+                        if (count($values)) {
+                            $query->whereHas('department', function ($q) use ($values) {
+                                $q->whereIn('department_name', $values);
+                            });
+                        }
+                    }),
                 SelectFilter::make('office_id')
                     ->label('Division')
                     ->multiple()
-                    ->relationship('office', 'office_name'),
+                    ->options(Office::pluck('office_name', 'office_name'))
+                    ->query(function ($query, array $data) {
+                        $values = $data['values'] ?? [];
+                        if (count($values)) {
+                            $query->whereHas('office', function ($q) use ($values) {
+                                $q->whereIn('office_name', $values);
+                            });
+                        }
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
