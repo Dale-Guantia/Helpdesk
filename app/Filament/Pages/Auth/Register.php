@@ -21,6 +21,7 @@ class Register extends BaseRegister
                 $this->makeForm()
                     ->schema([
                         $this->getNameFormComponent(),
+                        $this->getUsernameFormComponent(),
                         $this->getEmailFormComponent(),
                         // $this->getPhoneComponent(),
                         $this->getPasswordFormComponent(),
@@ -41,6 +42,14 @@ class Register extends BaseRegister
             ->required()
             ->maxLength(255)
             ->autofocus();
+    }
+
+    protected function getUsernameFormComponent(): Component
+    {
+        return TextInput::make('username')
+            ->label('Username')
+            ->required()
+            ->maxLength(255);
     }
 
     // protected function getPhoneComponent(): Component

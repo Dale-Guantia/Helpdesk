@@ -15,6 +15,7 @@ class UsersTableSeeder extends Seeder
     {
         User::create([
             'name' => 'Super Admin',
+            'username' => 'superadmin',
             'email' => 'superadmin@example.com',
             'password' => bcrypt('12341234'),
             'department_id' => 1,
@@ -25,6 +26,7 @@ class UsersTableSeeder extends Seeder
         ]);
         User::create([
             'name' => 'Division Head',
+            'username' => 'divisionhead',
             'email' => 'divisionhead@example.com',
             'password' => bcrypt('12341234'),
             'department_id' => 1,
@@ -35,6 +37,7 @@ class UsersTableSeeder extends Seeder
         ]);
         User::create([
             'name' => 'HRDO Staff',
+            'username' => 'hrdostaff',
             'email' => 'hrdostaff@example.com',
             'password' => bcrypt('12341234'),
             'department_id' => 1,
@@ -45,6 +48,7 @@ class UsersTableSeeder extends Seeder
         ]);
         User::create([
             'name' => 'Guest',
+            'username' => 'guest',
             'email' => 'guest@example.com',
             'password' => bcrypt('12341234'),
             'is_active' => 1,

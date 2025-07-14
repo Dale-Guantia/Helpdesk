@@ -35,6 +35,10 @@ class UserResource extends Resource
                     ->required()
                     ->maxLength(255)
                     ->prefixIcon('heroicon-m-user'),
+                Forms\Components\TextInput::make('username')
+                    ->required()
+                    ->maxLength(255)
+                    ->prefixIcon('heroicon-m-user'),
                 Forms\Components\TextInput::make('email')
                     ->required()
                     ->email()
@@ -63,6 +67,10 @@ class UserResource extends Resource
                     ->prefixIcon('heroicon-m-building-office')
                     ->required()
                     ->disabled(fn (Forms\Get $get) => !filled($get('department_id'))),
+                Forms\Components\Select::make('role')
+                    ->options(User::ROLES)
+                    ->required()
+                    ->prefixIcon('heroicon-m-users'),
                 Forms\Components\TextInput::make('password')
                     ->password()
                     ->confirmed()
@@ -76,10 +84,6 @@ class UserResource extends Resource
                     ->revealable()
                     ->visible(fn ($record) => $record === null)
                     ->prefixIcon('heroicon-m-lock-closed'),
-                Forms\Components\Select::make('role')
-                    ->options(User::ROLES)
-                    ->required()
-                    ->prefixIcon('heroicon-m-users'),
                 Forms\Components\Toggle::make('is_active')
                     ->label('Activate/Deactivate User')
                     ->default(true)
