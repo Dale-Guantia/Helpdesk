@@ -43,9 +43,66 @@ class TicketResource extends Resource
                     ->schema([
                         Forms\Components\Section::make()
                             ->schema([
-                                Forms\Components\TextInput::make('title')
+                                Forms\Components\Select::make('problem_category_id')
+                                    ->label('Issue Category')
+                                    ->live()
                                     ->required()
-                                    ->maxLength(255),
+                                    ->placeholder('Select an Issue Category')
+                                    ->options(function (Forms\Get $get): array {
+                                        $departmentId = $get('department_id');
+                                        $officeId = $get('office_id');
+
+                                        if (empty($departmentId)) {
+                                            return [];
+                                        }
+
+                                        $query = ProblemCategory::query();
+
+                                        if (!empty($officeId)) {
+                                            $query->where('office_id', $officeId);
+                                        } else {
+                                            $query->where('department_id', $departmentId);
+                                        }
+
+                                        $categories = $query->pluck('category_name', 'id')->toArray();
+
+                                        $categories['other'] = 'Other';
+
+                                        return $categories;
+                                    })
+                                    ->dehydrated(fn ($state) => $state !== 'other')
+                                    ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get) {
+                                        // This function runs when problem_category_id changes
+
+                                        // Clear custom_problem_category if not 'other'
+                                        if ($state !== 'other') {
+                                            $set('custom_problem_category', null);
+                                        }
+
+                                        // Handle auto-setting office_id based on selected category
+                                        if ($state === 'other') {
+                                            // If 'other' is selected, clear office_id to allow manual selection or leave null
+                                            $set('office_id', null);
+                                            // You might also want to explicitly enable the office_id if it was disabled
+                                            // by a previous problem_category selection, though the disabled() logic should handle this.
+                                        } else {
+                                            // If a specific problem category is selected
+                                            $problemCategory = ProblemCategory::find($state);
+
+                                            if ($problemCategory && $problemCategory->office_id) {
+                                                // If the problem category has an associated office, set it
+                                                $set('office_id', $problemCategory->office_id);
+                                            } else {
+                                                $set('office_id', null);
+                                            }
+                                        }
+                                    }),
+                                Forms\Components\TextInput::make('custom_problem_category')
+                                    ->label('If other, please specify')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->visible(fn (Forms\Get $get) => $get('problem_category_id') === 'other')
+                                    ->requiredIf('problem_category_id', 'other'),
                                 Forms\Components\Textarea::make('description')
                                     ->label('Message')
                                     ->required()
@@ -70,91 +127,59 @@ class TicketResource extends Resource
                             ->schema([
                                 Forms\Components\Select::make('department_id')
                                     ->label('Department of concern')
-                                    ->live()
-                                    ->required()
                                     ->placeholder('Select a Department')
+                                    ->live() // Essential for reactivity
+                                    ->required()
                                     ->relationship('department', 'department_name')
-                                    ->default(1),
+                                    ->default(1) // Keep your default if desired
+                                    ->afterStateUpdated(function (Forms\Set $set) {
+                                        $set('problem_category_id', null);
+                                        $set('office_id', null);
+                                        $set('custom_problem_category', null);
+                                    }),
                                 Forms\Components\Select::make('office_id')
                                     ->label('Division of concern')
                                     ->placeholder('Select a Division')
                                     ->live()
-                                    ->required()
-                                    ->disabled(fn (Forms\Get $get) => !$get('department_id'))
-                                    ->relationship('office', 'office_name', function ($query, Forms\Get $get, $livewire) use ($currentUser) {
-                                        $department_id = $get('department_id');
-
-                                        // If no department is selected, ensure no offices are returned
-                                        if (empty($department_id)) {
-                                            return $query->whereRaw('1 = 0'); // Returns an empty query
-                                        }
-                                        // Base query: offices belonging to the selected department
-                                        $query->where('department_id', $department_id);
-
-                                        // Add conditional logic specific to user roles and form type (CreateRecord)
-                                        if ($livewire instanceof \Filament\Resources\Pages\CreateRecord) {
-                                            if ($currentUser->isAgent()) {
-                                                if ($currentUser->office_id && Office::where('id', $currentUser->office_id)->where('department_id', $department_id)->exists()) {
-                                                    $query->where('id', '!=', $currentUser->office_id);
-                                                }
-                                            }
-                                        }
-                                        return $query; // Return the modified query
-                                    }),
-                                Forms\Components\Select::make('problem_category_id')
-                                    ->label('Issue Category')
-                                    ->live()
-                                    ->required()
-                                    ->options(function (Forms\Get $get) {
-                                        $office_id = $get('office_id');
-                                        $department_id = $get('department_id');
-
-                                        if (!$department_id) {
-                                            return []; // Cannot select issue without department
-                                        }
-
-                                        $hasDivisions = Office::where('department_id', $department_id)->exists();
-
-                                        if ($hasDivisions) {
-                                            if (!$office_id) {
-                                                return []; // If department has divisions, must select office first
-                                            }
-                                            $issues = ProblemCategory::where('office_id', $office_id)
-                                                ->pluck('category_name', 'id')
-                                                ->toArray();
-                                        } else {
-                                            // If department has no divisions, get issues directly under department (where office_id is null)
-                                            $issues = ProblemCategory::whereNull('office_id')
-                                                ->where('department_id', $department_id)
-                                                ->pluck('category_name', 'id')
-                                                ->toArray();
-                                        }
-
-                                        // Always add 'Other' option
-                                        $issues['other'] = 'Other';
-
-                                        return $issues ?: ['' => 'No Issue Category Available'];
-                                    })
+                                    // Disabled if no department or if a category with a pre-set office_id is selected
                                     ->disabled(function (Forms\Get $get) {
-                                        $department_id = $get('department_id');
-                                        $office_id = $get('office_id');
-                                        $hasDivisions = Office::where('department_id', $department_id)->exists();
+                                        $departmentId = $get('department_id');
+                                        $problemCategoryId = $get('problem_category_id');
 
-                                        // Disable if no department is selected OR
-                                        // if department has divisions but no office is selected
-                                        return !$department_id || ($hasDivisions && !$office_id);
+                                        // If no department is selected, always disable
+                                        if (empty($departmentId)) {
+                                            return true;
+                                        }
+
+                                        // If 'other' problem category is selected, allow user to pick office (so not disabled)
+                                        if ($problemCategoryId === 'other') {
+                                            return false;
+                                        }
+
+                                        // Check if the selected problem category has an associated office_id
+                                        // and if that office_id matches the currently selected office_id.
+                                        // If it does, disable the field because it's auto-selected.
+                                        $problemCategory = ProblemCategory::find($problemCategoryId);
+                                        if ($problemCategory && $problemCategory->office_id) {
+                                            return true; // Disable, as it's automatically filled
+                                        }
+
+                                        // Otherwise, allow selection
+                                        return false;
                                     })
-                                    ->dehydrated(fn ($state) => $state !== 'other'),
-                                Forms\Components\TextInput::make('custom_problem_category')
-                                    ->label('If other, please specify')
-                                    ->required()
-                                    ->visible(fn (Forms\Get $get) => $get('problem_category_id') === 'other')
-                                    ->requiredIf('problem_category_id', 'other'),
+                                    ->relationship('office', 'office_name', function ($query, Forms\Get $get) {
+                                        $departmentId = $get('department_id');
+                                        // Filter offices by the selected department
+                                        if ($departmentId) {
+                                            return $query->where('department_id', $departmentId);
+                                        }
+                                        return $query->whereRaw('1 = 0'); // No options if no department
+                                    })
+                                    ->dehydrated(),
                                 Forms\Components\Select::make('priority_id')
                                     ->label('Priority Level')
-                                    ->required()
-                                    ->default(3)
-                                    ->relationship('priority', 'priority_name'),
+                                    ->relationship('priority', 'priority_name')
+                                    ->hidden(fn () => !$currentUser->isSuperAdmin() && !$currentUser->isDivisionHead()),
                                 Forms\Components\Select::make('assigned_to_user_id')
                                     ->label('Assign To')
                                     ->placeholder('Unassigned')
@@ -241,12 +266,6 @@ class TicketResource extends Resource
                     ->label('Ticket ID')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('title')
-                    ->label('Title')
-                    ->limit(20)
-                    ->tooltip(fn ($record) => $record->title)
-                    ->searchable()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Created by')
                     ->translateLabel()
@@ -287,6 +306,7 @@ class TicketResource extends Resource
                     }),
                 Tables\Columns\TextColumn::make('priority.priority_name')
                     ->label('Priority Level')
+                    ->default('N/A')
                     ->badge()
                     ->color(fn ($record): string => $record->priority->badge_color ?? 'secondary')
                     ->searchable()

@@ -21,7 +21,6 @@ class TicketTableSeeder extends Seeder
             'problem_category_id' => 1,
             'priority_id' => 1,
             'status_id' => 3,
-            'title' => 'Test title',
             'description' => 'Test message',
         ]);
         Ticket::create([
@@ -32,7 +31,6 @@ class TicketTableSeeder extends Seeder
             'problem_category_id' => 2,
             'priority_id' => 2,
             'status_id' => 3,
-            'title' => 'Test title 2',
             'description' => 'Test message 2',
         ]);
         Ticket::create([
@@ -41,7 +39,6 @@ class TicketTableSeeder extends Seeder
             'department_id' => 1,
             'priority_id' => 3,
             'status_id' => 3,
-            'title' => 'Test title 3',
             'description' => 'Test message 3',
         ]);
     }
