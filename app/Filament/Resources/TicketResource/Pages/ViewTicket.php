@@ -52,7 +52,6 @@ class ViewTicket extends ViewRecord
                         Components\Section::make('Ticket Details')
                             ->schema([
                                 Components\TextEntry::make('reference_id')->label('Reference ID'),
-                                Components\TextEntry::make('title')->label('Title'),
                                 Components\TextEntry::make('description')->label('Message'),
                                 ViewEntry::make('attachment')
                                     ->label('Attachments:')
@@ -90,6 +89,7 @@ class ViewTicket extends ViewRecord
                                             Components\TextEntry::make('priority.priority_name')
                                                 ->label('Priority Level')
                                                 ->badge()
+                                                ->default('N/A')
                                                 ->color(fn ($record): string => $record->priority->badge_color ?? 'secondary'),
                                             Components\TextEntry::make('status.status_name')
                                                 ->label('Status')

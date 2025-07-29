@@ -38,7 +38,7 @@ class AdminPanelProvider extends PanelProvider
             ->registration(Register::class)
             ->passwordReset()
             ->emailVerification()
-            ->brandName('HELP DESK')
+            ->brandName('EMPLOYEE CARE')
             ->darkMode(false)
             ->sidebarCollapsibleOnDesktop()
             ->sidebarWidth('15rem')
