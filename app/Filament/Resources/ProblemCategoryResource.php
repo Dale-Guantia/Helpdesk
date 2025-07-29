@@ -87,20 +87,20 @@ class ProblemCategoryResource extends Resource
                     ->label('Issue ID')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('department.department_name')
-                    ->label('Department')
-                    ->limit(20)
-                    ->searchable()
-                    ->sortable(),
+                // Tables\Columns\TextColumn::make('department.department_name')
+                //     ->label('Department')
+                //     ->limit(20)
+                //     ->searchable()
+                //     ->sortable(),
                 Tables\Columns\TextColumn::make('office.office_name')
                     ->label('Division')
                     ->default('N/A')
-                    ->limit(20)
+                    // ->limit(20)
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('category_name')
                     ->label('Issue Description')
-                    ->limit(20)
+                    // `->limit(20)`
                     ->searchable()
                     ->sortable(),
             ])
