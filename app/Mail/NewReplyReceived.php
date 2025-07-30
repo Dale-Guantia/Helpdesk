@@ -42,7 +42,7 @@ class NewReplyReceived extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.new-reply',
+            markdown: 'emails.tickets.new-reply',
         );
     }
 }

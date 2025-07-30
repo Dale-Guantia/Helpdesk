@@ -18,7 +18,7 @@ class ReopenTicketAction extends Action
             ->color('warning')
             ->visible(function (Ticket $record): bool {
                 // Ensure it's the creator and the ticket is resolved (status_id = 2)
-                return auth()->id() === $record->user_id && $record->status_id === 2;
+                return auth()->id() === $record->user_id && $record->status_id === Ticket::STATUS_PENDING;
             })
             ->action(function (Ticket $record) {
 
@@ -33,7 +33,7 @@ class ReopenTicketAction extends Action
                 }
 
                 // IMPORTANT CHANGE: Set status_id to 4 for "Reopened"
-                $record->status_id = 4; // Use your new "Reopened" status ID
+                $record->status_id = Ticket::STATUS_REOPENED; // Use your new "Reopened" status ID
                 $record->resolved_at = null; // Clear resolved_at timestamp
                 $record->resolved_by = null; // Clear resolved_by when reopened
                 $record->save();

@@ -6,8 +6,10 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\DB;
 use Filament\Notifications\Livewire\DatabaseNotifications;
 use App\Models\User;
+use App\Models\Ticket;
 use App\Models\Comment;
 use App\Observers\CommentObserver;
+use App\Observers\TicketObserver;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -38,6 +40,7 @@ class AppServiceProvider extends ServiceProvider
         DB::statement("SET time_zone = '+08:00'");
         DatabaseNotifications::pollingInterval('20s');
         Comment::observe(CommentObserver::class);
+        Ticket::observe(TicketObserver::class);
         // FilamentAsset::register([
         //     Css::make('custom-stylesheet', __DIR__ . '/../../resources/css/custom.css')->loadedOnRequest(),
         //     Js::make('custom-filament-scripts', __DIR__ . '/../../resources/js/custom-filament-scripts.js'),

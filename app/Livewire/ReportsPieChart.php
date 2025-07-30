@@ -24,16 +24,6 @@ class ReportsPieChart extends ApexChartWidget
 
     protected static ?int $contentHeight = 330;
 
-    // protected function getFilters(): ?array
-    // {
-    //     return [
-    //         'today' => 'Today',
-    //         'week' => 'Last week',
-    //         'month' => 'Last month',
-    //         'year' => 'This year',
-    //     ];
-    // }
-
     /**
      * Chart options (series, labels, types, size, animations...)
      * https://apexcharts.com/docs/options

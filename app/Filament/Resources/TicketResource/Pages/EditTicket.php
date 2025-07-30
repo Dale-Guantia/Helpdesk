@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\TicketResource\Pages;
 
 use App\Filament\Resources\TicketResource;
+use App\Models\Ticket;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Auth;
@@ -41,7 +42,7 @@ class EditTicket extends EditRecord
         $currentStatus = $record->status_id;
 
         // If status was changed to "Resolved", add an auto-generated comment
-        if ($user && $user->isAgent() && $record->wasChanged('status_id') && $currentStatus == 2) {
+        if ($user && $user->isAgent() && $record->wasChanged('status_id') && $currentStatus == Ticket::STATUS_RESOLVED) {
             $user->increment('resolved_tickets_count');
             $record->resolved_at = now();
             $record->resolved_by = $user->id; // Set the user who resolved the ticket
@@ -54,7 +55,7 @@ class EditTicket extends EditRecord
 
         // If the ticket was resolved and is now changed to "reopened" status
         // This handles cases where an agent changes it from Resolved back to Pending or another status
-        if ($user && $user->isAgent() && $record->wasChanged('status_id') && $originalStatus == 2 && $currentStatus != 2) {
+        if ($user && $user->isAgent() && $record->wasChanged('status_id') && $originalStatus == Ticket::STATUS_RESOLVED && $currentStatus != Ticket::STATUS_RESOLVED) {
 
             $originalResolverId = $record->getOriginal('resolved_by');
 
@@ -78,61 +79,4 @@ class EditTicket extends EditRecord
             $record->saveQuietly();
         }
     }
-
-
-    // public static function canEdit(Model $record): bool
-    // {
-    //     $user = Auth::user();
-
-    //     if (!$user) {
-    //         return false;
-    //     }
-
-    //     $record->loadMissing(['user', 'assignedToUser', 'status']);
-
-    //     // If it *is* resolved (status_id === 2), only allow editing if the current user is an admin/staff
-    //     // The ticket creator can *only* reopen it via the custom action, not directly edit when resolved.
-    //     if ($user && $user->isSuperAdmin()) {
-    //         return true;
-    //     }
-
-    //     // Return false/not allow editing if the ticket is resolved (status_id === 2)
-    //     // This now includes 'Pending', 'Unassigned', 'Reopened' (ID 4)
-    //     if ($record->status_id === 2) {
-    //         return false;
-    //     }
-
-
-    //     if ($user->isEmployee()) { // Check for employee role or no assigned roles
-    //         return $record->user_id === $user->id; // Only creator can edit
-    //     }
-
-    //     $departmentAndDivisionMatch = (
-    //         $record->department_id === $user->department_id &&
-    //         $record->office_id === $user->office_id
-    //     );
-
-    //     // Division Head: Can edit if the department_id and office_id match.
-    //     if ($user->isDivisionHead()) {
-    //         return $departmentAndDivisionMatch;
-    //     }
-
-    //     // HRDO Staff: Can edit if department_id and office_id match AND ticket was assigned to them.
-    //     if ($user->isStaff()) { // Assuming 'isStaff()' covers HRDO Staff role
-    //         return $departmentAndDivisionMatch && ($record->assigned_to_user_id === $user->id);
-    //     }
-
-    //     // By default, if resolved and not an admin/staff, cannot edit
-    //     return false;
-    // }
-
-    // protected function authorizeAccess(): void
-    // {
-    //     if (!static::canEdit($this->record)) {
-    //         abort(403, 'You are not authorized to view/edit this ticket.');
-    //     }
-
-    //     parent::authorizeAccess();
-    // }
-
 }

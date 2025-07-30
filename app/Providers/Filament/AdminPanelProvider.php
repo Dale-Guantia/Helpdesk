@@ -38,7 +38,7 @@ class AdminPanelProvider extends PanelProvider
             ->registration(Register::class)
             ->passwordReset()
             ->emailVerification()
-            ->brandName('EMPLOYEE CARE')
+            ->brandName('Employee Care')
             ->darkMode(false)
             ->sidebarCollapsibleOnDesktop()
             ->sidebarWidth('15rem')

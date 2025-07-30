@@ -31,7 +31,7 @@ class ViewTicket extends ViewRecord
             ->label('Edit Ticket')
             ->visible(function (Ticket $record): bool {
                 $currentUser = auth()->user();
-                return $record->status_id !== 2 || ($currentUser && method_exists($currentUser, 'isSuperAdmin') && $currentUser->isSuperAdmin());
+                return $record->status_id !== Ticket::STATUS_RESOLVED || ($currentUser && method_exists($currentUser, 'isSuperAdmin') && $currentUser->isSuperAdmin());
             });
 
         $reopenAction = ReopenTicketAction::make('reopen_ticket');
@@ -91,10 +91,17 @@ class ViewTicket extends ViewRecord
                                                 ->badge()
                                                 ->default('N/A')
                                                 ->color(fn ($record): string => $record->priority->badge_color ?? 'secondary'),
-                                            Components\TextEntry::make('status.status_name')
+                                            Components\TextEntry::make('status_id')
                                                 ->label('Status')
                                                 ->badge()
-                                                ->color(fn ($record): string => $record->status->badge_color ?? 'secondary'),
+                                                ->formatStateUsing(fn (int $state): string => Ticket::STATUSES[$state] ?? 'Unknown')
+                                                ->color(fn (Ticket $record): string => match ($record->status_id) {
+                                                    Ticket::STATUS_PENDING => 'warning',
+                                                    Ticket::STATUS_RESOLVED => 'success',
+                                                    Ticket::STATUS_UNASSIGNED => 'gray',
+                                                    Ticket::STATUS_REOPENED => 'primary',
+                                                    default => 'secondary',
+                                                }),
                                             Components\TextEntry::make('created_at')->dateTime('m/d/y - h:i A')->label('Created at'),
                                             Components\TextEntry::make('updated_at')->dateTime('m/d/y - h:i A')->label('Updated at'),
                                         ]), // This section takes 3 out of 12 columns

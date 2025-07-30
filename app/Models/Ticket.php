@@ -19,6 +19,39 @@ class Ticket extends Model
      *
      * @return array<string, string>s
      */
+
+    const STATUS_PENDING = 1;
+    const STATUS_RESOLVED = 2;
+    const STATUS_UNASSIGNED = 3;
+    const STATUS_REOPENED = 4;
+    const STATUSES = [
+        self::STATUS_RESOLVED => 'Resolved',
+        self::STATUS_PENDING => 'Pending',
+        self::STATUS_UNASSIGNED => 'Unassigned',
+        self::STATUS_REOPENED => 'Reopened',
+    ];
+
+    public function isResolved()
+    {
+        return $this->role === self::STATUS_PENDING;
+    }
+
+    public function isPending()
+    {
+        return $this->role === self::STATUS_RESOLVED;
+    }
+
+    public function isUnassigned()
+    {
+        return $this->role === self::STATUS_UNASSIGNED;
+    }
+
+    public function isReopened()
+    {
+        return $this->role === self::STATUS_REOPENED;
+    }
+
+
     protected $table = 'tickets';
 
     protected $fillable = [
@@ -298,11 +331,6 @@ class Ticket extends Model
     public function priority()
     {
         return $this->belongsTo(Priority::class);
-    }
-
-    public function status()
-    {
-        return $this->belongsTo(Status::class, 'status_id');
     }
 
     public function problemCategory()

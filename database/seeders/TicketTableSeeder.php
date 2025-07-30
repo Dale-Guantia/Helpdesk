@@ -20,7 +20,7 @@ class TicketTableSeeder extends Seeder
             'office_id' => 1,
             'problem_category_id' => 1,
             'priority_id' => 1,
-            'status_id' => 3,
+            'status_id' => Ticket::STATUS_UNASSIGNED,
             'description' => 'Test message',
         ]);
         Ticket::create([
@@ -30,16 +30,8 @@ class TicketTableSeeder extends Seeder
             'office_id' => 2,
             'problem_category_id' => 2,
             'priority_id' => 2,
-            'status_id' => 3,
+            'status_id' => Ticket::STATUS_UNASSIGNED,
             'description' => 'Test message 2',
-        ]);
-        Ticket::create([
-            'user_id' => 4,
-            'reference_id' => '0003-052225',
-            'department_id' => 1,
-            'priority_id' => 3,
-            'status_id' => 3,
-            'description' => 'Test message 3',
         ]);
     }
 }

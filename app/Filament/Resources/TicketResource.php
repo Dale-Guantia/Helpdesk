@@ -5,7 +5,6 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\TicketResource\Pages;
 use App\Models\Ticket;
 use App\Models\User;
-use App\Models\Status;
 use App\Models\Priority;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -14,15 +13,27 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\TicketResource\RelationManagers;
-use App\Models\Office;
 use App\Models\ProblemCategory;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
+use Illuminate\Database\Eloquent\Model;
 
 
 class TicketResource extends Resource
 {
+    /**
+     * Define the URL to redirect to after a record is updated.
+     *
+     * @param Model|null $record The model instance that was updated.
+     * @return string The URL to redirect to.
+     */
+
+    public static function getRedirectUrl(?Model $record = null): string
+    {
+        return static::getUrl('view', ['record' => $record->id]);
+    }
+
     protected static ?string $model = Ticket::class;
 
     protected static ?int $navigationSort = 1;
@@ -70,6 +81,17 @@ class TicketResource extends Resource
 
                                         return $categories;
                                     })
+                                    ->disabled(function (?Model $record): bool {
+                                        if (!$record) {
+                                            return false;
+                                        }
+
+                                        $user = auth()->user();
+
+                                        $isCreator = $user->id === $record->user_id;
+
+                                        return !($isCreator || $user->isSuperAdmin() || $user->isDivisionHead());
+                                    })
                                     ->dehydrated(fn ($state) => $state !== 'other')
                                     ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get) {
                                         // This function runs when problem_category_id changes
@@ -106,7 +128,19 @@ class TicketResource extends Resource
                                 Forms\Components\Textarea::make('description')
                                     ->label('Message')
                                     ->required()
-                                    ->maxLength(65535),
+                                    ->maxLength(65535)
+                                    ->disabled(function (?Model $record): bool {
+                                        if (!$record) {
+                                            return false;
+                                        }
+
+                                        $user = auth()->user();
+
+                                        $isCreator = $user->id === $record->user_id;
+
+                                        return !($isCreator || $user->isSuperAdmin());
+                                    })
+                                    ->dehydrated(),
                                 Forms\Components\FileUpload::make('attachment')
                                     ->multiple()
                                     ->preserveFilenames()
@@ -132,11 +166,23 @@ class TicketResource extends Resource
                                     ->required()
                                     ->relationship('department', 'department_name')
                                     ->default(1) // Keep your default if desired
+                                    ->disabled(function (?Model $record): bool {
+                                        if (!$record) {
+                                            return false;
+                                        }
+
+                                        $user = auth()->user();
+
+                                        $isCreator = $user->id === $record->user_id;
+
+                                        return !($isCreator || $user->isSuperAdmin() || $user->isDivisionHead());
+                                    })
                                     ->afterStateUpdated(function (Forms\Set $set) {
                                         $set('problem_category_id', null);
                                         $set('office_id', null);
                                         $set('custom_problem_category', null);
-                                    }),
+                                    })
+                                    ->dehydrated(),
                                 Forms\Components\Select::make('office_id')
                                     ->label('Division of concern')
                                     ->placeholder('Select a Division')
@@ -213,14 +259,14 @@ class TicketResource extends Resource
                                     ->hidden(fn () => !$currentUser->isSuperAdmin() && !$currentUser->isDivisionHead())
                                     ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get, $livewire) {
                                         if ($livewire instanceof \Filament\Resources\Pages\CreateRecord) {
-                                            $set('status_id', !empty($state) ? 1 : 3); // 1: Assigned/Pending, 3: Unassigned
+                                            $set('status_id', !empty($state) ? Ticket::STATUS_PENDING : Ticket::STATUS_UNASSIGNED); // 1: Assigned/Pending, 3: Unassigned
                                         } else if ($livewire instanceof \Filament\Resources\Pages\EditRecord) {
                                             $currentStatusId = $get('status_id');
-                                            if ($currentStatusId !== 2) { // '2' is the ID for 'Resolved' status
+                                            if ($currentStatusId !== Ticket::STATUS_RESOLVED) { // '2' is the ID for 'Resolved' status
                                                 if (!empty($state)) {
-                                                    $set('status_id', 1); // Set to 'Pending' (or your 'Assigned' status ID)
+                                                    $set('status_id', Ticket::STATUS_PENDING); // Set to 'Pending' (or your 'Assigned' status ID)
                                                 } else {
-                                                    $set('status_id', 3); // Set to 'Unassigned'
+                                                    $set('status_id', Ticket::STATUS_UNASSIGNED); // Set to 'Unassigned'
                                                 }
                                             }
                                         }
@@ -228,7 +274,7 @@ class TicketResource extends Resource
                                 Forms\Components\Select::make('status_id')
                                     ->label('Status')
                                     ->live()
-                                    ->relationship('status', 'status_name')
+                                    ->options(Ticket::STATUSES)
                                     ->default(3) // Default to Unassigned
                                     ->disabled(function ($livewire, $record = null) {
                                         $currentUser = Auth::user();
@@ -251,7 +297,7 @@ class TicketResource extends Resource
                                         }
                                         return true; // Default to disabled if context is unknown
                                     })
-                                    ->dehydrated(),
+                                    ->dehydrated()
                         ])->columnSpan(1)
                     ])->columns(3),
             ]);
@@ -311,11 +357,17 @@ class TicketResource extends Resource
                     ->color(fn ($record): string => $record->priority->badge_color ?? 'secondary')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('status.status_name')
+                Tables\Columns\TextColumn::make('status_id')
                     ->label('Status')
                     ->badge()
-                    ->color(fn ($record): string => $record->status->badge_color ?? 'secondary')
-                    ->searchable()
+                    ->formatStateUsing(fn (int $state): string => Ticket::STATUSES[$state] ?? 'Unknown')
+                    ->color(fn (Ticket $record): string => match ($record->status_id) {
+                        Ticket::STATUS_PENDING => 'warning',
+                        Ticket::STATUS_RESOLVED => 'success',
+                        Ticket::STATUS_UNASSIGNED => 'gray',
+                        Ticket::STATUS_REOPENED => 'primary',
+                        default => 'secondary',
+                    })
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Created At')
@@ -335,15 +387,14 @@ class TicketResource extends Resource
                     }),
             ])
             ->filters([
-                SelectFilter::make('status')
+                SelectFilter::make('status_id')
+                    ->label('Status')
                     ->multiple()
-                    ->options(Status::pluck('status_name', 'status_name'))
+                    ->options(Ticket::STATUSES)
                     ->query(function ($query, array $data) {
-                        $values = $data['values'] ?? [];
-                        if (count($values)) {
-                            $query->whereHas('status', function ($q) use ($values) {
-                                $q->whereIn('status_name', $values);
-                            });
+                        $selectedStatusIds = $data['values'] ?? [];
+                        if (count($selectedStatusIds)) {
+                            $query->whereIn('status_id', $selectedStatusIds);
                         }
                     }),
                 SelectFilter::make('priority')
@@ -375,7 +426,7 @@ class TicketResource extends Resource
                     ->label(''),
                 Tables\Actions\EditAction::make()
                     ->label('')
-                    ->hidden(fn ($record) => $record->status_id === 2 || !auth()->user()->isSuperAdmin() && !auth()->user()->isDivisionHead() && auth()->id() !== $record->user_id),
+                    ->hidden(fn ($record) => $record->status_id === Ticket::STATUS_RESOLVED || !auth()->user()->isSuperAdmin() && !auth()->user()->isDivisionHead() && !auth()->user()->isStaff() && auth()->id() !== $record->user_id),
                 Tables\Actions\DeleteAction::make()
                     ->label('')
                     ->hidden(fn ($record) => !auth()->user()->isSuperAdmin() && auth()->id() != $record->user_id),
@@ -444,8 +495,8 @@ class TicketResource extends Resource
         return [
             'index' => Pages\ListTickets::route('/'),
             'create' => Pages\CreateTicket::route('/create'),
-            'edit' => Pages\EditTicket::route('/{record}/edit'),
             'view' => Pages\ViewTicket::route('/{record}'),
+            'edit' => Pages\EditTicket::route('/{record}/edit'),
         ];
     }
 }
