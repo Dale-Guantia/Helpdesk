@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\ProblemCategory;
 
@@ -54,6 +53,7 @@ class ProblemCategoryTableSeeder extends Seeder
             'Schedule for i-Face/Biometrics Registration',
             'Incident Report On i-Face/Biometric Malfunction',
             'Transfer of Leave Credits from Other Agency to LGU Pasig or Vice Versa',
+            'Terminal Leave Benefits',
         ];
         $claims_issues = [
             'Approval of Loan',
@@ -94,6 +94,10 @@ class ProblemCategoryTableSeeder extends Seeder
             'Status of Recruitment Request Form',
             'Status of Renewal/Non-Renewal of Employees',
             'Status of Update on Personal Information',
+            'Status of Update on Separated employees (Retired, Resigned, Dropped, terminated, for transfer, etc)',
+            'Access of status from Admin Div for Admin cases (list; view only)',
+            'Access of status from Admin Div for memos of Dropped, termination, Suspension',
+            'Access of status from Record Div  for receiving of Death Cert and resignation letter',
         ];
         $lnd_issues = [
             'ID request',
@@ -114,7 +118,6 @@ class ProblemCategoryTableSeeder extends Seeder
             'Request for Technical Assistance',
             'Technical Issues /Glitch During Submission',
             'Access of OPCR/DPCR/IPCR Issue',
-            'Tagging Issues',
         ];
         $it_issues = ['IT ISSUE'];
 

@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Ticket;
 
@@ -20,7 +19,7 @@ class TicketTableSeeder extends Seeder
             'office_id' => 1,
             'problem_category_id' => 1,
             'priority_id' => 1,
-            'status_id' => Ticket::STATUS_UNASSIGNED,
+            'status_id' => 3,
             'description' => 'Test message',
         ]);
         Ticket::create([
@@ -30,7 +29,7 @@ class TicketTableSeeder extends Seeder
             'office_id' => 2,
             'problem_category_id' => 2,
             'priority_id' => 2,
-            'status_id' => Ticket::STATUS_UNASSIGNED,
+            'status_id' => 3,
             'description' => 'Test message 2',
         ]);
     }

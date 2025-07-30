@@ -19,7 +19,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
-
 class TicketResource extends Resource
 {
     /**
@@ -58,7 +57,9 @@ class TicketResource extends Resource
                                     ->label('Issue Category')
                                     ->live()
                                     ->required()
+                                    ->searchable()
                                     ->placeholder('Select an Issue Category')
+                                    ->hidden(fn (Forms\Get $get) => $get('is_other'))
                                     ->options(function (Forms\Get $get): array {
                                         $departmentId = $get('department_id');
                                         $officeId = $get('office_id');
@@ -77,8 +78,6 @@ class TicketResource extends Resource
 
                                         $categories = $query->pluck('category_name', 'id')->toArray();
 
-                                        $categories['other'] = 'Other';
-
                                         return $categories;
                                     })
                                     ->disabled(function (?Model $record): bool {
@@ -94,37 +93,30 @@ class TicketResource extends Resource
                                     })
                                     ->dehydrated(fn ($state) => $state !== 'other')
                                     ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get) {
-                                        // This function runs when problem_category_id changes
+                                        $problemCategory = ProblemCategory::find($state);
 
-                                        // Clear custom_problem_category if not 'other'
-                                        if ($state !== 'other') {
-                                            $set('custom_problem_category', null);
-                                        }
-
-                                        // Handle auto-setting office_id based on selected category
-                                        if ($state === 'other') {
-                                            // If 'other' is selected, clear office_id to allow manual selection or leave null
-                                            $set('office_id', null);
-                                            // You might also want to explicitly enable the office_id if it was disabled
-                                            // by a previous problem_category selection, though the disabled() logic should handle this.
+                                        if ($problemCategory && $problemCategory->office_id) {
+                                            // If the problem category has an associated office, set it
+                                            $set('office_id', $problemCategory->office_id);
                                         } else {
-                                            // If a specific problem category is selected
-                                            $problemCategory = ProblemCategory::find($state);
-
-                                            if ($problemCategory && $problemCategory->office_id) {
-                                                // If the problem category has an associated office, set it
-                                                $set('office_id', $problemCategory->office_id);
-                                            } else {
-                                                $set('office_id', null);
-                                            }
+                                            $set('office_id', null);
                                         }
                                     }),
                                 Forms\Components\TextInput::make('custom_problem_category')
-                                    ->label('If other, please specify')
-                                    ->required()
-                                    ->maxLength(255)
-                                    ->visible(fn (Forms\Get $get) => $get('problem_category_id') === 'other')
-                                    ->requiredIf('problem_category_id', 'other'),
+                                    ->label('Custom Issue Category')
+                                    // Use visible() to show this field only when the 'is_other' checkbox IS checked
+                                    ->visible(fn (Forms\Get $get) => $get('is_other'))
+                                    // Make it required only when it's visible
+                                    ->required(fn (Forms\Get $get) => $get('is_other'))
+                                    ->maxLength(255),
+                                Forms\Components\Checkbox::make('is_other')
+                                    ->label('Specify a custom category')
+                                    ->live() // Makes the form update in real-time when toggled
+                                    ->afterStateUpdated(function (Forms\Set $set, $state) {
+                                        // Reset the other fields when the checkbox is toggled to prevent old data issues
+                                        $set('problem_category_id', null);
+                                        $set('custom_problem_category', null);
+                                    }),
                                 Forms\Components\Textarea::make('description')
                                     ->label('Message')
                                     ->required()

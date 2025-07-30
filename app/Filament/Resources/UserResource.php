@@ -201,19 +201,6 @@ class UserResource extends Resource
             ]);
     }
 
-    // protected static function getTableQuery(): Builder
-    // {
-    //     $user = auth()->user();
-
-    //     // If admin, return all records
-    //     if ($user->isSuperAdmin()) {
-    //         return static::getModel()::query();
-    //     }
-
-    //     // Otherwise filter by office_id
-    //     return static::getModel()::where('office_id', $user->office_id);
-    // }
-
     public static function getRelations(): array
     {
         return [

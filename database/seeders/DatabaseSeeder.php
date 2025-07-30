@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use App\Models\Priority;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -18,7 +17,6 @@ class DatabaseSeeder extends Seeder
             DepartmentTableSeeder::class,
             OfficeTableSeeder::class,
             UsersTableSeeder::class,
-            StatusTableSeeder::class,
             PrioritiesTableSeeder::class,
             ProblemCategoryTableSeeder::class,
             TicketTableSeeder::class,
