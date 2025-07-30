@@ -13,6 +13,7 @@ use App\Observers\TicketObserver;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Notifications\Messages\MailMessage;
+use App\Policies\UserPolicy;
 
 class AppServiceProvider extends ServiceProvider
 {

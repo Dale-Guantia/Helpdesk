@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('custom_problem_category')->nullable();
             $table->foreignId('priority_id')->nullable()->constrained('priorities')->onDelete('cascade');
             $table->foreignId('status_id')->nullable()->constrained('statuses')->onDelete('cascade');
+            $table->string('title');
             $table->text('description');
             $table->string('attachment')->nullable();
             // $table->string('guest_firstName')->nullable();

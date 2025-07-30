@@ -18,7 +18,7 @@ class OfficeTableSeeder extends Seeder
             'department_id' => 1,
         ]);
         Office::create([
-            'office_name' => 'ADMINISTRATION',
+            'office_name' => 'ADMINISTRATIVE',
             'department_id' => 1,
         ]);
         Office::create([
@@ -34,11 +34,15 @@ class OfficeTableSeeder extends Seeder
             'department_id' => 1,
         ]);
         Office::create([
-            'office_name' => 'APPOINTMENT',
+            'office_name' => 'RSP',
             'department_id' => 1,
         ]);
         Office::create([
             'office_name' => 'LEARNING AND DEVELOPMENT',
+            'department_id' => 1,
+        ]);
+        Office::create([
+            'office_name' => 'PERFORMANCE MANAGEMENT',
             'department_id' => 1,
         ]);
     }

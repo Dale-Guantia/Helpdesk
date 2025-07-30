@@ -35,12 +35,12 @@ class DepartmentResource extends Resource
                 Tables\Columns\TextColumn::make('id')
                     ->label('Department ID')
                     ->searchable()
-                    ->limit(30)
+                    // ->limit(30)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('department_name')
                     ->label('Department Name')
                     ->searchable()
-                    ->limit(30)
+                    // ->limit(30)
                     ->sortable(),
             ])
             ->filters([
