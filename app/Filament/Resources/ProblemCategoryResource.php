@@ -61,14 +61,15 @@ class ProblemCategoryResource extends Resource
                     Forms\Components\Select::make('office_id')
                         ->label('Division')
                         ->required()
-                        ->default(auth()->user()->isSuperAdmin() ? null : auth()->user()->office_id)
-                        ->relationship('office', 'office_name', function ($query, \Filament\Forms\Get $get) {
+                        ->default(fn () => auth()->user()->isSuperAdmin() || auth()->user()->isDepartmentHead() ? null : auth()->user()->office_id)
+                        ->relationship('office', 'office_name', function ($query, Forms\Get $get) {
                             $department_id = $get('department_id');
                             return $query->where('department_id', $department_id);
                         })
                         ->prefixIcon('heroicon-m-building-office-2')
                         ->disabled(fn (\Filament\Forms\Get $get) =>
-                            !auth()->user()->isSuperAdmin() || !$get('department_id')
+                            (!auth()->user()->isSuperAdmin() && !auth()->user()->isDepartmentHead())
+                            || !$get('department_id')
                         )
                         ->dehydrated(),
                     Forms\Components\TextInput::make('category_name')
@@ -81,7 +82,6 @@ class ProblemCategoryResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->query(static::getTableQuery())
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->label('Issue ID')
@@ -143,23 +143,21 @@ class ProblemCategoryResource extends Resource
             ]);
     }
 
-    protected static function getTableQuery(): Builder
+    public static function getEloquentQuery(): Builder
     {
         $user = auth()->user();
 
-        // Super admin sees all records
+        $query = parent::getEloquentQuery();
+
         if ($user->isSuperAdmin()) {
-            return static::getModel()::query();
+            return $query;
         }
-        // HRDO Division Head with office_id set: filter by office
-        elseif ($user->isDivisionHead() && $user->office_id !== null) {
-            return static::getModel()::where('office_id', $user->office_id);
-        }
-        else {
-            // HRDO Division Head without office_id or other roles: filter by department
-            return static::getModel()::where('department_id', $user->department_id);
+        elseif($user->isDepartmentHead()){
+            return $query->where('department_id', $user->department_id);
         }
 
+        return $query->where('department_id', $user->department_id)
+                    ->where('office_id', $user->office_id);
     }
 
     public static function getRelations(): array

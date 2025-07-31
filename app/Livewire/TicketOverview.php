@@ -27,7 +27,7 @@ class TicketOverview extends Component implements HasTable, HasForms
     public static function canAccess(): bool
     {
         $user = Auth::user();
-        return $user && ($user->isSuperAdmin() || $user->isDivisionHead());
+        return $user && ($user->isSuperAdmin() || $user->isDepartmentHead() || $user->isDivisionHead());
     }
 
     protected function getTableQuery(): Builder
@@ -37,16 +37,15 @@ class TicketOverview extends Component implements HasTable, HasForms
 
         $user = Auth::user();
 
-        if ($user && $user->isDivisionHead()) {
-
+        if ($user->isDivisionHead()) {
             $query->whereHas('office', function (Builder $officeQuery) use ($user) {
                 $officeQuery->where('id', $user->office_id);
             });
 
-        } else {
-
-            $query->whereHas('office', function (Builder $officeQuery) {
-                $officeQuery->where('department_id', 1);
+        }
+        elseif ($user->isDepartmentHead()) {
+            $query->whereHas('office', function (Builder $officeQuery) use ($user) {
+                $officeQuery->where('department_id', $user->department_id);
             });
         }
 

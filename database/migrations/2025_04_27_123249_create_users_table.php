@@ -27,7 +27,7 @@ return new class extends Migration
             $table->integer('resolved_tickets_count')->default(0);
             $table->rememberToken();
             $table->timestamps();
-            $table->softDeletes();
+            // $table->softDeletes();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

@@ -18,9 +18,20 @@ class UsersTableSeeder extends Seeder
             'email' => 'superadmin@example.com',
             'password' => bcrypt('12341234'),
             'department_id' => 1,
-            'office_id' => 1,
+            'office_id' => 2,
             'is_active' => 1,
             'role' => 1,
+            'email_verified_at' => '2025-06-30 15:30:10'
+        ]);
+        User::create([
+            'name' => 'Deaprtment Head',
+            'username' => 'departmenthead',
+            'email' => 'departmenthead@example.com',
+            'password' => bcrypt('12341234'),
+            'department_id' => 1,
+            'office_id' => 1,
+            'is_active' => 1,
+            'role' => 5,
             'email_verified_at' => '2025-06-30 15:30:10'
         ]);
         User::create([
@@ -29,7 +40,7 @@ class UsersTableSeeder extends Seeder
             'email' => 'ithead@example.com',
             'password' => bcrypt('12341234'),
             'department_id' => 1,
-            'office_id' => 1,
+            'office_id' => 2,
             'is_active' => 1,
             'role' => 2,
             'email_verified_at' => '2025-06-30 15:30:10'
@@ -40,7 +51,7 @@ class UsersTableSeeder extends Seeder
             'email' => 'adminhead@example.com',
             'password' => bcrypt('12341234'),
             'department_id' => 1,
-            'office_id' => 2,
+            'office_id' => 3,
             'is_active' => 1,
             'role' => 2,
             'email_verified_at' => '2025-06-30 15:30:10'
@@ -51,7 +62,7 @@ class UsersTableSeeder extends Seeder
             'email' => 'payrollhead@example.com',
             'password' => bcrypt('12341234'),
             'department_id' => 1,
-            'office_id' => 3,
+            'office_id' => 4,
             'is_active' => 1,
             'role' => 2,
             'email_verified_at' => '2025-06-30 15:30:10'
@@ -62,7 +73,7 @@ class UsersTableSeeder extends Seeder
             'email' => 'recordshead@example.com',
             'password' => bcrypt('12341234'),
             'department_id' => 1,
-            'office_id' => 4,
+            'office_id' => 5,
             'is_active' => 1,
             'role' => 2,
             'email_verified_at' => '2025-06-30 15:30:10'
@@ -73,7 +84,7 @@ class UsersTableSeeder extends Seeder
             'email' => 'claimshead@example.com',
             'password' => bcrypt('12341234'),
             'department_id' => 1,
-            'office_id' => 5,
+            'office_id' => 6,
             'is_active' => 1,
             'role' => 2,
             'email_verified_at' => '2025-06-30 15:30:10'
@@ -84,7 +95,7 @@ class UsersTableSeeder extends Seeder
             'email' => 'rsphead@example.com',
             'password' => bcrypt('12341234'),
             'department_id' => 1,
-            'office_id' => 6,
+            'office_id' => 7,
             'is_active' => 1,
             'role' => 2,
             'email_verified_at' => '2025-06-30 15:30:10'
@@ -95,7 +106,7 @@ class UsersTableSeeder extends Seeder
             'email' => 'lndhead@example.com',
             'password' => bcrypt('12341234'),
             'department_id' => 1,
-            'office_id' => 7,
+            'office_id' => 8,
             'is_active' => 1,
             'role' => 2,
             'email_verified_at' => '2025-06-30 15:30:10'
@@ -106,7 +117,7 @@ class UsersTableSeeder extends Seeder
             'email' => 'pmhead@example.com',
             'password' => bcrypt('12341234'),
             'department_id' => 1,
-            'office_id' => 8,
+            'office_id' => 9,
             'is_active' => 1,
             'role' => 2,
             'email_verified_at' => '2025-06-30 15:30:10'
@@ -117,7 +128,7 @@ class UsersTableSeeder extends Seeder
             'email' => 'hrdostaff@example.com',
             'password' => bcrypt('12341234'),
             'department_id' => 1,
-            'office_id' => 2,
+            'office_id' => 3,
             'is_active' => 1,
             'role' => 3,
             'email_verified_at' => '2025-06-30 15:30:10'

@@ -15,7 +15,9 @@
             {{-- Conditional H1 text based on user role --}}
             <h1 style="padding: 10px; font-weight: bold">
                 @if ($user->isSuperAdmin())
-                    Summary of Tickets by Division
+                    Summary of Tickets by Division (All Departments)
+                @elseif ($user->isDepartmentHead())
+                    Summary of Tickets ({{ ucwords(strtolower($user->department->department_name)) }} Department)
                 @elseif ($user->isDivisionHead())
                     Summary of Tickets ({{ ucwords(strtolower($user->office->office_name)) }} Division)
                 @endif

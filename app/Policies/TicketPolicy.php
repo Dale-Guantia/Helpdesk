@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Ticket;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class TicketPolicy
 {
@@ -13,7 +12,7 @@ class TicketPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isSuperAdmin() || $user->isDivisionHead() || $user->isStaff() || $user->isEmployee();
+        return $user->isSuperAdmin() || $user->isDepartmentHead() || $user->isDivisionHead() || $user->isStaff() || $user->isEmployee();
     }
 
     /**
@@ -25,7 +24,11 @@ class TicketPolicy
             return true;
         }
 
-        if ($user->isEmployee()) { // Check for employee role or no assigned roles
+        if ($user && $user->isDepartmentHead()) {
+            return $ticket->office_id === $user->office_id;
+        }
+
+        if ($user && $user->isEmployee()) { // Check for employee role or no assigned roles
             return $ticket->user_id === $user->id; // Only creator can edit
         }
 
@@ -35,12 +38,12 @@ class TicketPolicy
         );
 
         // Division Head: Can edit if the department_id and office_id match.
-        if ($user->isDivisionHead()) {
+        if ($user && $user->isDivisionHead()) {
             return $departmentAndDivisionMatch;
         }
 
         // HRDO Staff: Can edit if department_id and office_id match AND ticket was assigned to them.
-        if ($user->isStaff()) { // Assuming 'isStaff()' covers HRDO Staff role
+        if ($user && $user->isStaff()) { // Assuming 'isStaff()' covers HRDO Staff role
             return $departmentAndDivisionMatch && ($ticket->assigned_to_user_id === $user->id);
         }
 
@@ -53,7 +56,7 @@ class TicketPolicy
      */
     public function create(User $user): bool
     {
-        return $user->isSuperAdmin() || $user->isDivisionHead() || $user->isStaff() || $user->isEmployee();
+        return $user->isSuperAdmin() || $user->isDepartmentHead() || $user->isDivisionHead() || $user->isStaff() || $user->isEmployee();
     }
 
     /**
@@ -80,6 +83,11 @@ class TicketPolicy
         );
 
         // Division Head: Can edit if the department_id and office_id match.
+        if ($user->isDepartmentHead()) {
+            return $departmentAndDivisionMatch;
+        }
+
+        // Division Head: Can edit if the department_id and office_id match.
         if ($user->isDivisionHead()) {
             return $departmentAndDivisionMatch;
         }
@@ -98,7 +106,7 @@ class TicketPolicy
      */
     public function delete(User $user, Ticket $ticket): bool
     {
-        return $user->isSuperAdmin() || $user->isDivisionHead();
+        return $user->isSuperAdmin() || $user->isDepartmentHead() || $user->isDivisionHead();
     }
 
     /**

@@ -13,6 +13,10 @@ class OfficeTableSeeder extends Seeder
     public function run(): void
     {
         Office::create([
+            'office_name' => 'DEPARTMENT HEAD',
+            'department_id' => 1,
+        ]);
+        Office::create([
             'office_name' => 'INFORMATION TECHNOLOGY',
             'department_id' => 1,
         ]);

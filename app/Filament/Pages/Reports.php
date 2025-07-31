@@ -20,9 +20,7 @@ class Reports extends Page
     {
         $user = Auth::user();
 
-        if (!$user->isSuperAdmin()) {
-            return [];
-        } else {
+        if ($user->isSuperAdmin() || $user->isDepartmentHead()) {
             return [
                 Action::make('downloadReportWithDates')
                     ->label('Download Report')
@@ -57,6 +55,8 @@ class Reports extends Page
                     ->modalSubmitActionLabel('Generate Report')
                     ->modalCancelActionLabel('Cancel'),
             ];
+        } else {
+            return [];
         }
     }
 
@@ -77,6 +77,6 @@ class Reports extends Page
     {
         $user = Auth::user();
 
-        return $user && ($user->isSuperAdmin() || $user->isDivisionHead());
+        return $user && ($user->isSuperAdmin() || $user->isDepartmentHead() || $user->isDivisionHead());
     }
 }

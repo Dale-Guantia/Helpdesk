@@ -124,13 +124,15 @@ class UserResource extends Resource
                         2 => 'Division Head',
                         3 => 'HRDO Staff',
                         4 => 'Guest',
+                        5 => 'Department Head',
                     })
                     ->badge() // Optional: to show it as a badge style
                     ->color(fn ($state) => match ($state) {
                         1 => 'warning',  // Yellow for Super Admin
                         2 => 'primary',     // Blue for Division Head
-                        3 => 'info',  // Purple for HRDO Staff
+                        3 => 'secondary',  // Purple for HRDO Staff
                         4 => 'gray',  // Gray for Guest
+                        5 => 'info', // Green for Department Head
                     })
                     ->searchable()
                     ->sortable(),

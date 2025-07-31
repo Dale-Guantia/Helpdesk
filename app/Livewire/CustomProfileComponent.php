@@ -71,7 +71,7 @@ class CustomProfileComponent extends Component implements HasForms
                             ->default($departmentName)
                             ->disabled(),
                         Forms\Components\TextInput::make('office_name')
-                            ->label('Division')
+                            ->label('Division / Office')
                             ->default($officeName)
                             ->disabled(),
                         Forms\Components\TextInput::make('role_name')

@@ -23,7 +23,7 @@ class UserActivity extends Component implements HasTable, HasForms
     {
         $user = Auth::user();
 
-        return $user && ($user->isSuperAdmin() || $user->isDivisionHead());
+        return $user && ($user->isSuperAdmin() || $user->isDepartmentHead() || $user->isDivisionHead());
     }
 
     protected function getTableQuery()
@@ -34,12 +34,18 @@ class UserActivity extends Component implements HasTable, HasForms
             ->with(['department', 'office']); // eager load relationships
 
         // Restrict by office unless SuperAdmin
-        if (!$user->isSuperAdmin()) {
+        if ($user->isSuperAdmin()) {
+
+        }
+        elseif ($user->isDepartmentHead()) {
+            $query->where('department_id', $user->department_id);
+        }
+        else{
             $query->where('office_id', $user->office_id);
         }
 
         // Exclude users with role = 4 and only include department ID 1
-        $query->where('role', '!=', 4)
+        $query->where('role', '!=', USER::ROLE_EMPLOYEE)
             ->where('department_id', 1); // assuming 'department_id' is the correct column
 
         return $query;

@@ -13,7 +13,7 @@ class ProblemCategoryPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isSuperAdmin() || $user->isDivisionHead();
+        return $user->isSuperAdmin() || $user->isDepartmentHead() || $user->isDivisionHead();
     }
 
     /**
@@ -21,7 +21,7 @@ class ProblemCategoryPolicy
      */
     public function view(User $user, ProblemCategory $problemCategory): bool
     {
-        return $user->isSuperAdmin() || $user->isDivisionHead();
+        return $user->isSuperAdmin() || $user->isDepartmentHead() || $user->isDivisionHead();
     }
 
     /**
@@ -29,7 +29,7 @@ class ProblemCategoryPolicy
      */
     public function create(User $user): bool
     {
-        return $user->isSuperAdmin() || $user->isDivisionHead();
+        return $user->isSuperAdmin() || $user->isDepartmentHead() || $user->isDivisionHead();
     }
 
     /**
@@ -37,7 +37,7 @@ class ProblemCategoryPolicy
      */
     public function update(User $user, ProblemCategory $problemCategory): bool
     {
-        return $user->isSuperAdmin() || $user->isDivisionHead();
+        return $user->isSuperAdmin() || $user->isDepartmentHead() || $user->isDivisionHead();
     }
 
    /**
@@ -45,7 +45,7 @@ class ProblemCategoryPolicy
      */
     public function delete(User $user, ProblemCategory $problemCategory): bool
     {
-        return $user->isSuperAdmin();
+        return $user->isSuperAdmin()|| $user->isDepartmentHead() || $user->isDivisionHead();
     }
 
     /**

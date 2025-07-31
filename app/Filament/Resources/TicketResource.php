@@ -89,7 +89,7 @@ class TicketResource extends Resource
 
                                         $isCreator = $user->id === $record->user_id;
 
-                                        return !($isCreator || $user->isSuperAdmin() || $user->isDivisionHead());
+                                        return !($isCreator || $user->isSuperAdmin() || $user->isDepartmentHead() || $user->isDivisionHead());
                                     })
                                     ->dehydrated(fn ($state) => $state !== 'other')
                                     ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get) {
@@ -167,7 +167,7 @@ class TicketResource extends Resource
 
                                         $isCreator = $user->id === $record->user_id;
 
-                                        return !($isCreator || $user->isSuperAdmin() || $user->isDivisionHead());
+                                        return !($isCreator || $user->isSuperAdmin() || $user->isDepartmentHead() || $user->isDivisionHead());
                                     })
                                     ->afterStateUpdated(function (Forms\Set $set) {
                                         $set('problem_category_id', null);
@@ -217,7 +217,7 @@ class TicketResource extends Resource
                                 Forms\Components\Select::make('priority_id')
                                     ->label('Priority Level')
                                     ->relationship('priority', 'priority_name')
-                                    ->hidden(fn () => !$currentUser->isSuperAdmin() && !$currentUser->isDivisionHead()),
+                                    ->hidden(fn () => !$currentUser->isSuperAdmin() && !$currentUser->isDivisionHead() && !$currentUser->isDepartmentHead()),
                                 Forms\Components\Select::make('assigned_to_user_id')
                                     ->label('Assign To')
                                     ->placeholder('Unassigned')
@@ -226,21 +226,21 @@ class TicketResource extends Resource
                                     ->relationship('assignedToUser', 'name', function ($query, Forms\Get $get) use ($currentUser) {
                                         $selectedOfficeId = $get('office_id');
                                         // Base query: Staff, Division Head, Super Admin roles
-                                        $query->whereIn('role', [User::ROLE_STAFF, User::ROLE_DIVISION_HEAD, User::ROLE_SUPER_ADMIN]);
+                                        $query->whereIn('role', [User::ROLE_STAFF, User::ROLE_DIVISION_HEAD, User::ROLE_DEPT_HEAD]);
 
                                         if (empty($selectedOfficeId)) {
                                             return $query->whereRaw('1 = 0'); // Returns an empty result set
                                         }
-                                        // Filter by office_id if selected (for Super Admin)
-                                        if ($currentUser->isSuperAdmin()) {
+                                        // Filter by office_id if selected (for Super Admin and Division Head)
+                                        if ($currentUser->isSuperAdmin() || $currentUser->isDivisionHead() || $currentUser->isDepartmentHead()) {
                                             if ($selectedOfficeId) {
                                                 $query->where('office_id', $selectedOfficeId);
                                             }
                                         }
-                                        // For Division Heads, restrict to their own office
-                                        elseif ($currentUser->isDivisionHead()) {
-                                            $query->where('office_id', $currentUser->office_id);
-                                        }
+                                        // // For Division Heads, restrict to their own office
+                                        // elseif ($currentUser->isDivisionHead()) {
+                                        //     $query->where('office_id', $currentUser->office_id);
+                                        // }
                                         // Exclude the current user from being assigned to themselves
                                         $query->where('id', '!=', $currentUser->id);
 
@@ -248,7 +248,7 @@ class TicketResource extends Resource
                                     })
                                     ->preload()
                                     // Hide if not Super Admin or Division Head
-                                    ->hidden(fn () => !$currentUser->isSuperAdmin() && !$currentUser->isDivisionHead())
+                                    ->hidden(fn () => !$currentUser->isSuperAdmin() && !$currentUser->isDepartmentHead() && !$currentUser->isDivisionHead())
                                     ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get, $livewire) {
                                         if ($livewire instanceof \Filament\Resources\Pages\CreateRecord) {
                                             $set('status_id', !empty($state) ? Ticket::STATUS_PENDING : Ticket::STATUS_UNASSIGNED); // 1: Assigned/Pending, 3: Unassigned
@@ -403,25 +403,24 @@ class TicketResource extends Resource
                 SelectFilter::make('assigned_to_user_id')
                     ->label('Assigned To')
                     ->relationship('assignedToUser', 'name')
-                    ->placeholder('All')
                     ->default(null)
                     ->searchable()
                     ->options(function () {
                         // Only show agents (Super Admin, Division Head, Staff)
-                        return User::whereIn('role', [User::ROLE_DIVISION_HEAD, User::ROLE_STAFF])
+                        return User::whereIn('role', [User::ROLE_DEPT_HEAD, User::ROLE_DIVISION_HEAD, User::ROLE_STAFF])
                                    ->pluck('name', 'id');
                     })
-                    ->hidden(fn () => !Auth::user()->isSuperAdmin() && !Auth::user()->isDivisionHead()), // Only visible to Super Admin and Division Head
+                    ->hidden(fn () => !Auth::user()->isSuperAdmin() && !Auth::user()->isDepartmentHead() && !Auth::user()->isDivisionHead()),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
                     ->label(''),
                 Tables\Actions\EditAction::make()
                     ->label('')
-                    ->hidden(fn ($record) => $record->status_id === Ticket::STATUS_RESOLVED || !auth()->user()->isSuperAdmin() && !auth()->user()->isDivisionHead() && !auth()->user()->isStaff() && auth()->id() !== $record->user_id),
+                    ->hidden(fn ($record) => $record->status_id === Ticket::STATUS_RESOLVED || !auth()->user()->isAgent() && auth()->id() !== $record->user_id),
                 Tables\Actions\DeleteAction::make()
                     ->label('')
-                    ->hidden(fn ($record) => !auth()->user()->isSuperAdmin() && auth()->id() != $record->user_id),
+                    ->hidden(fn ($record) => !auth()->user()->isSuperAdmin() && !auth()->user()->isDepartmentHead() && auth()->id() != $record->user_id),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -441,8 +440,8 @@ class TicketResource extends Resource
             return $query;
         }
 
-        // Division Head: See tickets in their office (assigned or unassigned) OR tickets created by them
-        elseif ($user->isDivisionHead()) {
+        // Department and Division Head: See tickets in their office (assigned or unassigned) OR tickets created by them
+        elseif ($user->isDivisionHead() || $user->isDepartmentHead()) {
             return $query->where(function (Builder $q) use ($user) {
                 // Tickets for their division/office (unassigned or assigned to staff in their division)
                 $q->where(function (Builder $inner) use ($user) {

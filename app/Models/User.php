@@ -10,20 +10,22 @@ use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Support\Facades\Storage;
 use Filament\Panel;
-use Illuminate\Database\Eloquent\SoftDeletes;
+// use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, SoftDeletes;
+    use HasFactory, Notifiable; //SoftDeletes;
 
     const ROLE_SUPER_ADMIN = 1;
     const ROLE_DIVISION_HEAD = 2;
     const ROLE_STAFF = 3;
     const ROLE_EMPLOYEE = 4;
+    const ROLE_DEPT_HEAD = 5;
     const DEFAULT_ROLE = self::ROLE_EMPLOYEE;
     const ROLES = [
         self::ROLE_SUPER_ADMIN => 'Super Admin',
+        self::ROLE_DEPT_HEAD => 'Department Head',
         self::ROLE_DIVISION_HEAD => 'Division Head',
         self::ROLE_STAFF => 'HRDO Staff',
         self::ROLE_EMPLOYEE => 'Guest',
@@ -32,6 +34,11 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
     public function isSuperAdmin()
     {
         return $this->role === self::ROLE_SUPER_ADMIN;
+    }
+
+    public function isDepartmentHead()
+    {
+        return $this->role === self::ROLE_DEPT_HEAD;
     }
 
     public function isDivisionHead()
@@ -53,6 +60,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
     {
         return in_array($this->role, [
             self::ROLE_SUPER_ADMIN,
+            self::ROLE_DEPT_HEAD,
             self::ROLE_DIVISION_HEAD,
             self::ROLE_STAFF,
         ]);
@@ -65,7 +73,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->isSuperAdmin() || $this->isDivisionHead() || $this->isStaff() || $this->isEmployee() || $this->is_active === 0;
+        return $this->isSuperAdmin() || $this->isDepartmentHead() || $this->isDivisionHead() || $this->isStaff() || $this->isEmployee() || $this->is_active === 0;
     }
 
     /**
@@ -76,6 +84,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
 
     protected $fillable = [
         'name',
+        'username',
         'email',
         'password',
         'phone',
@@ -87,7 +96,6 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
         'avatar_url',
         'created_at',
         'updated_at',
-        'deleted_at',
         'custom_fields',
     ];
 
