@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use Filament\Panel;
 // use Illuminate\Database\Eloquent\SoftDeletes;
 
-class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerifyEmail
+class User extends Authenticatable implements FilamentUser, HasAvatar //MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable; //SoftDeletes;
@@ -123,6 +123,18 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
         ];
     }
 
+    public function getAvatarUrl()
+    {
+        // Check if the staff member has a profile picture
+        if ($this->avatar) {
+            return asset('storage/' . $this->avatar);
+        }
+
+        // If not, generate a placeholder avatar using ui-avatars
+        // You can customize the size, background color, and font
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=random&color=fff&font-size=0.35&length=3';
+    }
+
     public function department()
     {
         return $this->belongsTo(Department::class);
@@ -142,5 +154,15 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
     public function resolvedTickets()
     {
         return $this->hasMany(Ticket::class, 'resolved_by')->whereNotNull('resolved_at');
+    }
+
+    public function staff() //
+    {
+        return $this->belongsTo(Staff::class, 'staff_id');
+    }
+
+    public function surveys()
+    {
+        return $this->hasMany(Survey::class);
     }
 }

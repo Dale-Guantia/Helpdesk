@@ -11,6 +11,7 @@ use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Component;
+use Filament\Actions\Action;
 
 class Login extends BaseLogin
 {
@@ -97,5 +98,13 @@ class Login extends BaseLogin
         session()->regenerate();
 
         return app(LoginResponse::class);
+    }
+
+    public function registerAction(): Action
+    {
+        return Action::make('register')
+            ->link()
+            ->label('Go to Customer Satisfaction Survey Form')
+            ->url(route('survey.form'));
     }
 }

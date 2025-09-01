@@ -16,10 +16,10 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('username')->unique();
+            $table->string('emp_no')->nullable(); //Add ->unique() if needed
             $table->string('email')->unique();
-            // $table->string('phone')->nullable();
-            $table->foreignId('department_id')->nullable()->constrained('departments')->onDelete('cascade');
-            $table->foreignId('office_id')->nullable()->constrained('offices')->onDelete('cascade');
+            $table->foreignId('department_id')->nullable()->constrained('departments');
+            $table->foreignId('office_id')->nullable()->constrained('offices');
             $table->boolean('is_active')->default(true);
             $table->integer('role')->default(User::DEFAULT_ROLE);
             $table->timestamp('email_verified_at')->nullable();

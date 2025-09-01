@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
             $table->string('reference_id')->unique();
-            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
-            $table->foreignId('department_id')->nullable()->constrained('departments')->onDelete('cascade');
-            $table->foreignId('office_id')->nullable()->constrained('offices')->onDelete('cascade');
-            $table->foreignId('problem_category_id')->nullable()->constrained('problem_categories')->onDelete('cascade');
+            $table->foreignId('user_id')->nullable()->constrained('users');
+            $table->foreignId('department_id')->nullable()->constrained('departments');
+            $table->foreignId('office_id')->nullable()->constrained('offices');
+            $table->foreignId('problem_category_id')->nullable()->constrained('problem_categories');
             $table->string('custom_problem_category')->nullable();
-            $table->foreignId('priority_id')->nullable()->constrained('priorities')->onDelete('cascade');
+            $table->foreignId('priority_id')->nullable()->constrained('priorities');
             $table->unsignedBigInteger('status_id')->nullable();
             $table->text('description');
             $table->string('attachment')->nullable();
@@ -28,8 +28,8 @@ return new class extends Migration
             // $table->string('guest_lastName')->nullable();
             $table->timestamps();
             $table->timestamp('resolved_at')->nullable();
-            $table->foreignId('resolved_by')->nullable()->constrained('users')->onDelete('set null');
-            $table->foreignId('assigned_to_user_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('resolved_by')->nullable()->constrained('users');
+            $table->foreignId('assigned_to_user_id')->nullable()->constrained('users');
             $table->softDeletes();
         });
     }

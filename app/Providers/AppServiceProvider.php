@@ -38,7 +38,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        DB::statement("SET time_zone = '+08:00'");
+        // DB::statement("SET time_zone = '+08:00'");
         DatabaseNotifications::pollingInterval('20s');
         Comment::observe(CommentObserver::class);
         Ticket::observe(TicketObserver::class);

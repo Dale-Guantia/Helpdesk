@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('problem_categories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('department_id')->constrained('departments')->onDelete('cascade');
-            $table->foreignId('office_id')->nullable()->constrained('offices')->onDelete('cascade');
+            $table->foreignId('department_id')->constrained('departments');
+            $table->foreignId('office_id')->nullable()->constrained('offices');
             $table->string('category_name');
             $table->timestamps();
         });

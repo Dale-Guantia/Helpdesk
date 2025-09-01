@@ -7,13 +7,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 use Filament\Notifications\Notification;
 use Filament\Notifications\Actions\Action;
-use Illuminate\Database\Eloquent\SoftDeletes;
+// use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 
 class Ticket extends Model
 {
-    use HasFactory, Notifiable, softDeletes;
+    use HasFactory, Notifiable; //softDeletes;
     /**
      * The attributes that should be cast.
      *
