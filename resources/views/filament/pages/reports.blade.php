@@ -1,4 +1,5 @@
 <x-filament-panels::page>
+
     <div>
         <h2 style="padding: 10px; font-weight: bold">User Activity</h2>
         @livewire('user-activity')
@@ -27,4 +28,10 @@
         {{-- The Livewire component remains the same --}}
         @livewire('ticket-overview')
     </div>
+
+    <div>
+        <h2 style="padding: 10px; font-weight: bold">Survey Rating</h2>
+        @livewire('survey-rate-counter')
+    </div>
+
 </x-filament-panels::page>
