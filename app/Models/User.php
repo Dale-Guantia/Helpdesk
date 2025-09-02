@@ -156,11 +156,6 @@ class User extends Authenticatable implements FilamentUser, HasAvatar //MustVeri
         return $this->hasMany(Ticket::class, 'resolved_by')->whereNotNull('resolved_at');
     }
 
-    public function staff() //
-    {
-        return $this->belongsTo(Staff::class, 'staff_id');
-    }
-
     public function surveys()
     {
         return $this->hasMany(Survey::class);

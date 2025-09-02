@@ -6,6 +6,7 @@
     <title>Customer Satisfaction Survey</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <style>
         html, body {
             height: 100%;
@@ -68,6 +69,24 @@
         p {
             text-align: center;
         }
+
+        /* Container (the visible box) */
+        .select2-container .select2-selection--single {
+            height: 50px !important;     /* your desired height */
+            display: flex;
+            align-items: center;         /* vertically center text */
+            font-size: 16px;             /* optional: increase font */
+        }
+
+        /* The text inside */
+        .select2-container .select2-selection__rendered {
+            line-height: 48px !important; /* must match container height - 2px */
+        }
+
+        /* The arrow dropdown icon */
+        .select2-container .select2-selection__arrow {
+            height: 48px !important;    /* match container */
+        }
     </style>
 </head>
 <body>
@@ -121,7 +140,7 @@
                 <div class="carousel-item">
                     <div class="question-slide">
                         <h4 style="padding-bottom: 20px">Service/s Received/ Serbisyong Natanggap:</h4>
-                        <select name="problem_category_id" class="form-select" onchange="nextSlide()" style="height: 50px" required>
+                        <select id="serviceSelect" name="problem_category_id" class="form-select form-select-lg" required>
                             <option value="">Select a service...</option>
                             @foreach($services as $service)
                                 <option value="{{ $service->id }}">{{ $service->category_name }}</option>
@@ -248,6 +267,8 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
     const surveyCarouselEl = document.getElementById('surveyCarousel');
     const surveyCarousel = new bootstrap.Carousel(surveyCarouselEl, {
@@ -306,6 +327,15 @@
             setTimeout(() => successMsg.remove(), 500); // remove after fadeout
         }
     }, 5000);
+
+    $(document).ready(function() {
+    $('#serviceSelect').select2({
+        placeholder: "Select a service...",
+        width: '100%'
+    }).on('change', function () {
+        nextSlide(); // trigger your    function
+    });
+});
 </script>
 </body>
 </html>
