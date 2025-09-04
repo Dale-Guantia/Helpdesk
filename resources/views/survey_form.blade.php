@@ -152,7 +152,7 @@
 
                 <div class="carousel-item">
                     <div class="question-slide">
-                        <h4>RESPINSIVENESS (PAGTUGON)</h4>
+                        <h4>RESPONSIVENESS (PAGTUGON)</h4>
                         <p>Willingness to help, assist, and provide prompt service (Handang tumugon at magbigay nang mabilis na serbisyo)</p>
                         <div class="d-flex flex-wrap justify-content-center">
                             <label class="btn btn-outline-primary m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'responsiveness_rating', 'Very Dissatisfied')">

@@ -124,56 +124,56 @@ class ProblemCategoryTableSeeder extends Seeder
         foreach ($it_issues as $it_issue) {
             ProblemCategory::create([
                 'department_id' => 1,
-                'office_id' => 1,
+                'office_id' => 2,
                 'category_name' => $it_issue,
             ]);
         }
         foreach ($admin_issues as $admin_issue) {
             ProblemCategory::create([
                 'department_id' => 1,
-                'office_id' => 2,
+                'office_id' => 3,
                 'category_name' => $admin_issue,
             ]);
         }
         foreach ($payroll_issues as $payroll_issue) {
             ProblemCategory::create([
                 'department_id' => 1,
-                'office_id' => 3,
+                'office_id' => 4,
                 'category_name' => $payroll_issue,
             ]);
         }
         foreach ($records_issues as $records_issue) {
             ProblemCategory::create([
                 'department_id' => 1,
-                'office_id' => 4,
+                'office_id' => 5,
                 'category_name' => $records_issue,
             ]);
         }
         foreach ($claims_issues as $claims_issue) {
             ProblemCategory::create([
                 'department_id' => 1,
-                'office_id' => 5,
+                'office_id' => 6,
                 'category_name' => $claims_issue,
             ]);
         }
         foreach ($rsp_issues as $rsp_issue) {
             ProblemCategory::create([
                 'department_id' => 1,
-                'office_id' => 6,
+                'office_id' => 7,
                 'category_name' => $rsp_issue,
             ]);
         }
         foreach ($lnd_issues as $lnd_issue) {
             ProblemCategory::create([
                 'department_id' => 1,
-                'office_id' => 7,
+                'office_id' => 8,
                 'category_name' => $lnd_issue,
             ]);
         }
         foreach ($pm_issues as $pm_issue) {
             ProblemCategory::create([
                 'department_id' => 1,
-                'office_id' => 8,
+                'office_id' => 9,
                 'category_name' => $pm_issue,
             ]);
         }

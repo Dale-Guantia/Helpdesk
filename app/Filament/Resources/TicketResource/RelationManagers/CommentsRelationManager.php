@@ -108,7 +108,7 @@ class CommentsRelationManager extends RelationManager
                 Tables\Actions\DeleteAction::make()
                     ->label('')
                     ->modalHeading('Delete Comment')
-                    ->hidden(fn ($record) => !auth()->user()->isSuperAdmin() && auth()->id() !== $record->user_id),
+                    ->hidden(fn ($record) => !auth()->user()->isSuperAdmin()),
             ])
             ->bulkActions([])
             ->poll('10s');

@@ -123,9 +123,20 @@ class UsersTableSeeder extends Seeder
             'email_verified_at' => '2025-06-30 15:30:10'
         ]);
         User::create([
-            'name' => 'HRDO Staff',
-            'username' => 'hrdostaff',
-            'email' => 'hrdostaff@example.com',
+            'name' => 'RSP Staff',
+            'username' => 'rspstaff',
+            'email' => 'rspstaff@example.com',
+            'password' => bcrypt('12341234'),
+            'department_id' => 1,
+            'office_id' => 3,
+            'is_active' => 1,
+            'role' => 3,
+            'email_verified_at' => '2025-06-30 15:30:10'
+        ]);
+        User::create([
+            'name' => 'PAYROLL Staff',
+            'username' => 'payrollstaff',
+            'email' => 'payrollstaff@example.com',
             'password' => bcrypt('12341234'),
             'department_id' => 1,
             'office_id' => 3,
