@@ -125,14 +125,17 @@ class User extends Authenticatable implements FilamentUser, HasAvatar //MustVeri
 
     public function getAvatarUrl()
     {
-        // Check if the staff member has a profile picture
-        if ($this->avatar) {
-            return asset('storage/' . $this->avatar);
+        if ($this->avatar_url) {
+            return asset('storage/' . $this->avatar_url);
         }
 
-        // If not, generate a placeholder avatar using ui-avatars
-        // You can customize the size, background color, and font
         return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=random&color=fff&font-size=0.35&length=3';
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        $avatarColumn = config('filament-edit-profile.avatar_column', 'avatar_url');
+        return $this->$avatarColumn ? Storage::url($this->$avatarColumn) : null;
     }
 
     public function department()
@@ -143,12 +146,6 @@ class User extends Authenticatable implements FilamentUser, HasAvatar //MustVeri
     public function office()
     {
         return $this->belongsTo(Office::class);
-    }
-
-    public function getFilamentAvatarUrl(): ?string
-    {
-        $avatarColumn = config('filament-edit-profile.avatar_column', 'avatar_url');
-        return $this->$avatarColumn ? Storage::url($this->$avatarColumn) : null;
     }
 
     public function resolvedTickets()

@@ -12,14 +12,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
         $this->call([
             DepartmentTableSeeder::class,
             OfficeTableSeeder::class,
             UsersTableSeeder::class,
             PrioritiesTableSeeder::class,
             ProblemCategoryTableSeeder::class,
-            TicketTableSeeder::class,
+            // TicketTableSeeder::class,
         ]);
     }
 }

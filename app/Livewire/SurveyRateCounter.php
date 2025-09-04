@@ -3,7 +3,6 @@
 namespace App\Livewire;
 
 use App\Models\User;
-use App\Filament\Pages\SurveyRateBreakdown;
 use App\Models\Survey;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
@@ -13,26 +12,13 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Forms\Contracts\HasForms;
 use Livewire\Component;
 use Filament\Support\Contracts\TranslatableContentDriver;
-use Illuminate\Support\Facades\Auth;
-use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\Action;
-use Filament\Infolists\Infolist;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\TextEntry;
-
 
 class SurveyRateCounter extends Component implements HasTable, HasForms
 {
     use InteractsWithTable;
     use InteractsWithForms;
-
-    public static function canAccess(): bool
-    {
-        $user = Auth::user();
-
-        return $user && ($user->isSuperAdmin() || $user->isDepartmentHead() || $user->isDivisionHead());
-    }
 
     protected function getTableQuery(): Builder
     {

@@ -88,7 +88,10 @@ class AdminPanelProvider extends PanelProvider
                     ->setSort(10)
                     ->shouldRegisterNavigation(false)
                     ->shouldShowDeleteAccountForm(false)
-                    // ->shouldShowAvatarForm()
+                    ->shouldShowAvatarForm(
+                        value: true,
+                        directory: 'avatars',
+                    )
                     ->shouldShowBrowserSessionsForm(false)
                     ->customProfileComponents([
                         \App\Livewire\CustomProfileComponent::class,

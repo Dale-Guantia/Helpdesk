@@ -29,9 +29,13 @@
         @livewire('ticket-overview')
     </div>
 
-    <div>
-        <h2 style="padding: 10px; font-weight: bold">Survey Rating</h2>
-        @livewire('survey-rate-counter')
-    </div>
+    @auth
+        @if (auth()->user()->isSuperAdmin())
+            <div>
+                <h2 style="padding: 10px; font-weight: bold">Survey Rating</h2>
+                @livewire('survey-rate-counter')
+            </div>
+        @endif
+    @endauth
 
 </x-filament-panels::page>
