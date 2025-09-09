@@ -42,12 +42,7 @@ class AppServiceProvider extends ServiceProvider
         DatabaseNotifications::pollingInterval('20s');
         Comment::observe(CommentObserver::class);
         Ticket::observe(TicketObserver::class);
-        // FilamentAsset::register([
-        //     Css::make('custom-stylesheet', __DIR__ . '/../../resources/css/custom.css')->loadedOnRequest(),
-        //     Js::make('custom-filament-scripts', __DIR__ . '/../../resources/js/custom-filament-scripts.js'),
-        // ]);
         VerifyEmail::toMailUsing(function (object $notifiable, string $url) {
-            // dd('VerifyEmail customization is being registered!');
             return (new MailMessage)
                 ->subject('Welcome! Please Verify Your Email Address') // Your custom subject line
                 ->greeting('Hello ' . $notifiable->name . '!') // Example: Greet the user by name

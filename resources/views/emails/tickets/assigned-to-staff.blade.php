@@ -6,13 +6,14 @@ Dear {{ $staff->name }},
 A ticket has been assigned to you.
 
 **Ticket Reference ID:** {{ $ticket->reference_id }}
-**Title:** {{ $ticket->title }}
+<br>
 **Description:** {{ Str::limit($ticket->description, 150) }}
-**Creator:** {{ $ticket->creator->name ?? 'N/A' }}
-**Priority:** {{ $ticket->priority->name ?? 'N/A' }}
+<br>
+**Submitted by:** {{ $ticket->user->name ?? 'N/A' }}
+<br>
+**Priority:** {{ $ticket->priority->priority_name ?? 'N/A' }}
+<br>
 **Status:** {{ $ticket->status->name ?? 'N/A' }}
-**Department:** {{ $ticket->department->department_name ?? 'N/A' }}
-**Division:** {{ $ticket->office->office_name ?? 'N/A' }}
 
 <x-mail::button :url="url('/admin/tickets/' . $ticket->id)">
 View Ticket

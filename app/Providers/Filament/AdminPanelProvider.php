@@ -58,14 +58,14 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
             ])
-            // ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
-            ->widgets([
-                // Widgets\AccountWidget::class,
-                // Widgets\FilamentInfoWidget::class,
-                Widgets\Stats::class,
-                Widgets\Column::class,
-                Widgets\Pie::class,
-            ])
+            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
+            // ->widgets([
+            //     // Widgets\AccountWidget::class,
+            //     // Widgets\FilamentInfoWidget::class,
+            //     Widgets\Stats::class,
+            //     Widgets\Column::class,
+            //     Widgets\Pie::class,
+            // ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -111,7 +111,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->viteTheme('resources/css/filament/ticketing/theme.css')
             ->renderHook(
-                'panels::body.end', // Or another suitable hook
+                'panels::body.end',
                 fn () => view('components.filament-new-tab-listener'),
             );
     }

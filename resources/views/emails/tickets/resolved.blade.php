@@ -5,8 +5,10 @@ Dear {{ $ticket->creator->name ?? 'Ticket Creator' }},
 
 Your ticket #{{ $ticket->reference_id }} has been marked as "Resolved".
 
-**Description:** {{ Str::limit($ticket->description, 150) }}
+**Message:** {{ Str::limit($ticket->description, 150) }}
+<br>
 **Status:** {{ $ticket->status->name ?? 'N/A' }}
+<br>
 **Resolved By:** {{ $ticket->resolvedByUser->name ?? 'N/A' }}
 
 <x-mail::panel>

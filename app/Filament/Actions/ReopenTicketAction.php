@@ -17,8 +17,8 @@ class ReopenTicketAction extends Action
             ->icon('heroicon-o-arrow-path')
             ->color('warning')
             ->visible(function (Ticket $record): bool {
-                // Ensure it's the creator and the ticket is resolved (status_id = 2)
-                return auth()->id() === $record->user_id && $record->status_id === Ticket::STATUS_PENDING;
+                // Ensure it's the creator and the ticket is resolved
+                return auth()->id() === $record->user_id && $record->status_id === Ticket::STATUS_RESOLVED;
             })
             ->action(function (Ticket $record) {
 

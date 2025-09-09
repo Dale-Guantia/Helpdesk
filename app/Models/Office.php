@@ -38,4 +38,10 @@ class Office extends Model
     {
         return $this->hasMany(ProblemCategory::class, 'office_id');
     }
+
+    public function divisionHead()
+    {
+        // This assumes the users table has an `office_id` and `role` column.
+        return $this->hasOne(User::class, 'office_id')->where('role', User::ROLE_DIVISION_HEAD);
+    }
 }

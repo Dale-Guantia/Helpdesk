@@ -14,12 +14,20 @@
             padding: 0;
             background: #f8f9fa;
             font-family: 'Roboto', sans-serif;
+
+            /* New dynamic background properties */
+            background: #f8f9fa; /* Fallback color */
+            background-image: url("{{ asset('storage/logo/blue5.jpg') }}");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; /* This makes the background stay in place when scrolling */
+            background-repeat: no-repeat;
         }
         .container {
             background: transparent;
             min-height: 100vh;
         }
-        h2, h3, h6{
+        h2, h3, h6, p{
             text-align: center;
             padding: 0;
             margin: 0;
@@ -42,7 +50,7 @@
             display: none;
         }
         .question-slide {
-            padding: 100px;
+            padding: 60px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -153,7 +161,9 @@
                 <div class="carousel-item">
                     <div class="question-slide">
                         <h4>RESPONSIVENESS (PAGTUGON)</h4>
-                        <p>Willingness to help, assist, and provide prompt service (Handang tumugon at magbigay nang mabilis na serbisyo)</p>
+                        <p>Willingness to help, assist, and provide prompt service</p>
+                        <p>(Handang tumugon at magbigay nang mabilis na serbisyo)</p>
+                        <br>
                         <div class="d-flex flex-wrap justify-content-center">
                             <label class="btn btn-outline-primary m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'responsiveness_rating', 'Very Dissatisfied')">
                                 <input type="radio" name="responsiveness_rating" value="Very Dissatisfied" style="display:none;" required>
@@ -182,8 +192,10 @@
 
                 <div class="carousel-item">
                     <div class="question-slide">
-                        <h4>Timeliness (BILIS NG PAGTUGON)</h4>
-                        <p>Satisfaction with the timeliness of service/response to your needs (Kontento sa bilis ng serbisyo/pagtugon sa iyong pangangailangan)</p>
+                        <h4>TIMELINESS (BILIS NG PAGTUGON)</h4>
+                        <p>Satisfaction with the timeliness of service/response to your needs</p>
+                        <p>(Kontento sa bilis ng serbisyo/pagtugon sa iyong pangangailangan)</p>
+                        <br>
                         <div class="d-flex flex-wrap justify-content-center">
                             <label class="btn btn-outline-primary m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'timeliness_rating', 'Very Dissatisfied')">
                                 <input type="radio" name="timeliness_rating" value="Very Dissatisfied" style="display:none;" required>
@@ -212,8 +224,10 @@
 
                 <div class="carousel-item">
                     <div class="question-slide">
-                        <h4>Communication (PAKIKIPAG-USAP)</h4>
-                        <p>Act of keeping citizens informed in a language they can easily understand and delivered courteously (Paggamit ng wika na madaling maunawaan at naipahayag ng magalang)</p>
+                        <h4>COMMUNICATION (PAKIKIPAG-USAP)</h4>
+                        <p>Act of keeping citizens informed in a language they can easily understand and delivered courteously</p>
+                        <p>(Paggamit ng wika na madaling maunawaan at naipahayag ng magalang)</p>
+                        <br>
                         <div class="d-flex flex-wrap justify-content-center">
                             <label class="btn btn-outline-primary m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'communication_rating', 'Very Dissatisfied')">
                                 <input type="radio" name="communication_rating" value="Very Dissatisfied" style="display:none;" required>
@@ -242,8 +256,15 @@
 
                 <div class="carousel-item">
                     <div class="question-slide">
-                        <h4 style="padding-bottom: 20px">Additional comments or suggestions:</h4>
-                        <textarea name="suggestions" class="form-control" rows="3" ></textarea>
+                        <h4 style="padding-bottom: 20px">Scan the QR code to fill out the comments and suggestions form</h4>
+                        {{-- <textarea name="suggestions" class="form-control" rows="3" ></textarea> --}}
+
+                        <div class="qr-code-container d-flex justify-content-center">
+                            {!! QrCode::size(180)->backgroundColor(255, 255, 255, 0)->generate('https://forms.gle/Tvmm2WmjHGNqteUD9') !!}
+                        </div>
+
+                        <br>
+
                         <div class="mt-3">
                             <button type="button" class="btn btn-primary me-2" onclick="prevSlide()">Go Back</button>
                             <button type="button" class="btn btn-success" onclick="submitForm()">Submit</button>

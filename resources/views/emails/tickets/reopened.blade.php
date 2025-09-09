@@ -5,10 +5,12 @@ Dear {{ $reopenedToUser->name ?? 'User' }},
 
 Ticket #{{ $ticket->reference_id }} has been reopened by the creator.
 
-**Title:** {{ $ticket->title }}
-**Description:** {{ Str::limit($ticket->description, 150) }}
-**Current Status:** {{ $ticket->status->name ?? 'N/A' }}
-**Reopened By:** {{ $ticket->creator->name ?? 'Ticket Creator' }}
+**Message:** {{ Str::limit($ticket->description, 150) }}
+<br>
+**Current Status:** {{ $ticket->status->status_name ?? 'N/A' }}
+<br>
+**Reopened By:** {{ $ticket->user->name ?? 'Ticket Creator' }}
+<br>
 
 Please review the ticket and take necessary actions.
 

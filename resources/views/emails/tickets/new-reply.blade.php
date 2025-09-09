@@ -5,12 +5,10 @@ Hello **{{ $recipient->name }}**,
 
 A new reply has been posted on a ticket you are following.
 
-**Ticket Title:** *{{ $comment->ticket->title }}*
-
 ---
 
 <div style="margin-bottom: 16px;">
-    <strong>{{ $comment->user->name }}</strong> wrote:
+    <strong>{{ $comment->user->name }} wrote</strong>:
 </div>
 
 <x-mail::panel>
