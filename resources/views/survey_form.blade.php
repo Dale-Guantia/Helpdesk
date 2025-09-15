@@ -7,6 +7,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#0d6efd">
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
     <style>
         html, body {
             height: 100%;
@@ -277,13 +280,22 @@
     </form>
 
     <!-- Indicators -->
-    <div class="carousel-indicators">
+    {{-- <div class="carousel-indicators">
         <button type="button" data-bs-target="#surveyCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
         <button type="button" data-bs-target="#surveyCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
         <button type="button" data-bs-target="#surveyCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
         <button type="button" data-bs-target="#surveyCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
         <button type="button" data-bs-target="#surveyCarousel" data-bs-slide-to="4" aria-label="Slide 5"></button>
         <button type="button" data-bs-target="#surveyCarousel" data-bs-slide-to="5" aria-label="Slide 6"></button>
+    </div> --}}
+
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#surveyCarousel" class="active" aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#surveyCarousel" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#surveyCarousel" aria-label="Slide 3"></button>
+        <button type="button" data-bs-target="#surveyCarousel" aria-label="Slide 4"></button>
+        <button type="button" data-bs-target="#surveyCarousel" aria-label="Slide 5"></button>
+        <button type="button" data-bs-target="#surveyCarousel" aria-label="Slide 6"></button>
     </div>
 </div>
 
@@ -295,6 +307,24 @@
     const surveyCarousel = new bootstrap.Carousel(surveyCarouselEl, {
         touch: false,
         interval: false
+    });
+
+    function openFullscreen() {
+        const element = document.documentElement;
+
+        if (element.requestFullscreen) {
+            element.requestFullscreen();
+        } else if (element.mozRequestFullScreen) { /* Firefox */
+            element.mozRequestFullScreen();
+        } else if (element.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+            element.webkitRequestFullscreen();
+        } else if (element.msRequestFullscreen) { /* IE/Edge */
+            element.msRequestFullscreen();
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+        openFullscreen();
     });
 
     function nextSlide() {
@@ -357,6 +387,12 @@
         nextSlide(); // trigger your    function
     });
 });
+
+if ('serviceWorker' in navigator) {
+navigator.serviceWorker.register('/sw.js')
+    .then(reg => console.log("✅ Service Worker registered:", reg))
+    .catch(err => console.error("❌ SW registration failed:", err));
+}
 </script>
 </body>
 </html>
