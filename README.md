@@ -34,6 +34,11 @@ Note: Before running composer install, make sure the folder name Widgets under A
 composer install
 ```
 
+Install front-end dependencies:
+```bash
+npm install
+```
+
 Generate application key: 
 ```bash
 php artisan key:generate
