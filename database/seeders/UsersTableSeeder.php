@@ -128,7 +128,7 @@ class UsersTableSeeder extends Seeder
             'email' => 'rspstaff@example.com',
             'password' => bcrypt('12341234'),
             'department_id' => 1,
-            'office_id' => 3,
+            'office_id' => 7,
             'is_active' => 1,
             'role' => 3,
             'email_verified_at' => '2025-06-30 15:30:10'
@@ -139,7 +139,73 @@ class UsersTableSeeder extends Seeder
             'email' => 'payrollstaff@example.com',
             'password' => bcrypt('12341234'),
             'department_id' => 1,
+            'office_id' => 4,
+            'is_active' => 1,
+            'role' => 3,
+            'email_verified_at' => '2025-06-30 15:30:10'
+        ]);
+        User::create([
+            'name' => 'IT Staff',
+            'username' => 'itstaff',
+            'email' => 'itstaff@example.com',
+            'password' => bcrypt('12341234'),
+            'department_id' => 1,
+            'office_id' => 2,
+            'is_active' => 1,
+            'role' => 3,
+            'email_verified_at' => '2025-06-30 15:30:10'
+        ]);
+        User::create([
+            'name' => 'CLAIMS Staff',
+            'username' => 'claimsstaff',
+            'email' => 'claimsstaff@example.com',
+            'password' => bcrypt('12341234'),
+            'department_id' => 1,
+            'office_id' => 6,
+            'is_active' => 1,
+            'role' => 3,
+            'email_verified_at' => '2025-06-30 15:30:10'
+        ]);
+        User::create([
+            'name' => 'RECORDS Staff',
+            'username' => 'recorsstaff',
+            'email' => 'recorsstaff@example.com',
+            'password' => bcrypt('12341234'),
+            'department_id' => 1,
+            'office_id' => 5,
+            'is_active' => 1,
+            'role' => 3,
+            'email_verified_at' => '2025-06-30 15:30:10'
+        ]);
+        User::create([
+            'name' => 'ADMIN Staff',
+            'username' => 'adminstaff',
+            'email' => 'adminstaff@example.com',
+            'password' => bcrypt('12341234'),
+            'department_id' => 1,
             'office_id' => 3,
+            'is_active' => 1,
+            'role' => 3,
+            'email_verified_at' => '2025-06-30 15:30:10'
+        ]);
+        User::create([
+            'name' => 'L&D Staff',
+            'username' => 'lndstaff',
+            'email' => 'lndstaff@example.com',
+            'password' => bcrypt('12341234'),
+            'department_id' => 1,
+            'office_id' => 8,
+            'is_active' => 1,
+            'role' => 3,
+            'email_verified_at' => '2025-06-30 15:30:10'
+        ]);
+        User::create([
+            'name' => 'PERFORMANCE MANAGEMENT Staff',
+            'username' => 'pmstaff',
+            'email' => 'pmstaff@example.com',
+            'password' => bcrypt('12341234'),
+            'department_id' => 1,
+            'office_id' => 9,
             'is_active' => 1,
             'role' => 3,
             'email_verified_at' => '2025-06-30 15:30:10'

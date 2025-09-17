@@ -119,15 +119,15 @@ class ProblemCategoryTableSeeder extends Seeder
             'Technical Issues /Glitch During Submission',
             'Access of OPCR/DPCR/IPCR Issue',
         ];
-        $it_issues = ['IT ISSUE'];
+        // $it_issues = ['IT ISSUE'];
 
-        foreach ($it_issues as $it_issue) {
-            ProblemCategory::create([
-                'department_id' => 1,
-                'office_id' => 2,
-                'category_name' => $it_issue,
-            ]);
-        }
+        // foreach ($it_issues as $it_issue) {
+        //     ProblemCategory::create([
+        //         'department_id' => 1,
+        //         'office_id' => 2,
+        //         'category_name' => $it_issue,
+        //     ]);
+        // }
         foreach ($admin_issues as $admin_issue) {
             ProblemCategory::create([
                 'department_id' => 1,

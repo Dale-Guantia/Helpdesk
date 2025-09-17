@@ -53,7 +53,7 @@
             display: none;
         }
         .question-slide {
-            padding: 60px;
+            padding: 50px 10px 30px 10px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -98,6 +98,89 @@
         .select2-container .select2-selection__arrow {
             height: 48px !important;    /* match container */
         }
+
+        /* Add these new styles to your existing <style> block */
+        .staff-carousel-container {
+            position: relative;
+            width: 100%;
+            max-width: 90%; /* Adjust as needed, leaves space for arrows */
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+        }
+
+        .staff-scroll-panel {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory; /* Smooth snapping effect */
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+            scrollbar-width: none; /* Hide scrollbar for Firefox */
+        }
+
+        .staff-scroll-panel::-webkit-scrollbar {
+            display: none; /* Hide scrollbar for Chrome, Safari, and Opera */
+        }
+
+        .staff-item {
+            flex: 0 0 auto; /* Prevents items from shrinking */
+            margin: 20px;
+            scroll-snap-align: center; /* Center items when snapping */
+        }
+
+        .staff-avatar {
+            width: 150px;
+            height: 150px;
+            border: 3px solid transparent; /* Start with a transparent border */
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+
+        /* Style for the selected staff member's avatar */
+        .staff-avatar.selected {
+            border-color: #007bff; /* Highlight color */
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+        }
+
+        .scroll-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(255, 255, 255, 0.7);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .scroll-arrow svg {
+            width: 24px;
+            height: 24px;
+            fill: #333;
+        }
+
+        .scroll-arrow.left-arrow {
+            left: -50px; /* Position outside the container */
+        }
+
+        .scroll-arrow.right-arrow {
+            right: -50px; /* Position outside the container */
+        }
+
+        /* Responsive: Hide arrows on mobile where swipe is natural */
+        @media (max-width: 768px) {
+            .scroll-arrow {
+                display: none;
+            }
+            .staff-carousel-container {
+                max-width: 100%; /* Use full width on mobile */
+            }
+        }
     </style>
 </head>
 <body>
@@ -132,19 +215,32 @@
                 <div class="carousel-item active">
                     <div class="question-slide">
                         <h4 style="padding-bottom: 10px">Attended by/Inasikaso ni:</h4>
-                        <div class="d-flex flex-wrap justify-content-center">
-                            @foreach($staffs as $staff)
-                                <div class="text-center staff-item">
-                                    <label>
-                                        <input type="radio" name="user_id" value="{{ $staff->id }}" style="display:none;" required>
-                                        <img src="{{ $staff->getAvatarUrl() }}" class="rounded-circle staff-avatar" onclick="selectStaff(this, '{{ $staff->id }}')">
-                                    </label>
-                                    <br>
-                                    <span class="staff-name">{{ $staff->name }}</span>
+                            <div class="staff-carousel-container">
+                                <button type="button" class="scroll-arrow left-arrow" aria-label="Previous">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                                    </svg>
+                                </button>
+
+                                <div class="staff-scroll-panel">
+                                    @foreach($staffs as $staff)
+                                        <div class="text-center staff-item">
+                                            <label>
+                                                <input type="radio" name="user_id" value="{{ $staff->id }}" style="display:none;" required>
+                                                <img src="{{ $staff->getAvatarUrl() }}" class="rounded-circle staff-avatar">
+                                            </label>
+                                            <br>
+                                            <span class="staff-name">{{ $staff->name }}</span>
+                                        </div>
+                                    @endforeach
                                 </div>
-                            @endforeach
-                        </div>
-                        {{-- <button type="button" class="btn btn-secondary mt-3" onclick="prevSlide()" style="display:none;">Go Back</button> --}}
+
+                                <button type="button" class="scroll-arrow right-arrow" aria-label="Next">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                                    </svg>
+                                </button>
+                            </div>
                     </div>
                 </div>
 
@@ -309,22 +405,50 @@
         interval: false
     });
 
-    function openFullscreen() {
-        const element = document.documentElement;
+    // Add this new script to your existing <script> block
 
-        if (element.requestFullscreen) {
-            element.requestFullscreen();
-        } else if (element.mozRequestFullScreen) { /* Firefox */
-            element.mozRequestFullScreen();
-        } else if (element.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
-            element.webkitRequestFullscreen();
-        } else if (element.msRequestFullscreen) { /* IE/Edge */
-            element.msRequestFullscreen();
+    document.addEventListener('DOMContentLoaded', function () {
+        const panel = document.querySelector('.staff-scroll-panel');
+        const leftArrow = document.querySelector('.left-arrow');
+        const rightArrow = document.querySelector('.right-arrow');
+        const staffItems = document.querySelectorAll('.staff-item');
+
+        // --- Arrow Button Functionality ---
+        if (panel && leftArrow && rightArrow) {
+            const scrollAmount = staffItems.length > 0 ? staffItems[0].offsetWidth + 40 : 200; // 40 is for margin (20+20)
+
+            leftArrow.addEventListener('click', () => {
+                panel.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+            });
+
+            rightArrow.addEventListener('click', () => {
+                panel.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            });
         }
-    }
 
-    document.addEventListener('DOMContentLoaded', (event) => {
-        openFullscreen();
+        // --- Staff Selection and Highlighting ---
+        staffItems.forEach(item => {
+            const avatar = item.querySelector('.staff-avatar');
+            const radio = item.querySelector('input[type="radio"]');
+
+            avatar.addEventListener('click', () => {
+                // Remove 'selected' class from all other avatars
+                document.querySelectorAll('.staff-avatar.selected').forEach(selectedAvatar => {
+                    selectedAvatar.classList.remove('selected');
+                });
+
+                // Add 'selected' class to the clicked avatar
+                avatar.classList.add('selected');
+
+                // Check the corresponding radio button
+                radio.checked = true;
+
+                // Automatically move to the next slide after a short delay
+                setTimeout(() => {
+                    nextSlide();
+                }, 300); // 300ms delay
+            });
+        });
     });
 
     function nextSlide() {
