@@ -14,6 +14,7 @@ use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Notifications\Messages\MailMessage;
 use App\Policies\UserPolicy;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -51,6 +52,11 @@ class AppServiceProvider extends ServiceProvider
                 ->action('Verify My Email Address', $url) // The verification button
                 ->line('If you did not create an account, no further action is required.'); // Closing line
         });
+
+                // Add this condition
+        if ($this->app->environment('local')) {
+            URL::forceScheme('https');
+        }
 
         // ResetPassword::toMailUsing(function (object $notifiable, string $token) {
         //     // Construct the password reset URL
