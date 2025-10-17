@@ -35,7 +35,7 @@ class ProblemCategoryTableSeeder extends Seeder
             'Hazard Pay, Subsistence and Laundry Allowance',
             'Request for Certificate of Last Salary Received',
             'Request for Certificate of No Bonus/Benefits Received',
-            'Salary Underpayment/Overpayment',
+            'Salary Underpayment/ Overpayment',
             'Status of First Salary',
             'Terminal Leave Clearance',
             'Status of Special/Other Payroll',
@@ -116,18 +116,21 @@ class ProblemCategoryTableSeeder extends Seeder
             'Request to Edit Submitted OPCR/DPCR IPCR Targets/Accomplishments / Ratings',
             'Request to Submit OPCR/DPCR /IPCR for Newly Hired Employees',
             'Request for Technical Assistance',
-            'Technical Issues /Glitch During Submission',
+            'Technical Issues/Glitch During Submission',
             'Access of OPCR/DPCR/IPCR Issue',
         ];
-        // $it_issues = ['IT ISSUE'];
+        $it_issues = [
+            'Office assignment retagging',
+            'Password reset',
+        ];
 
-        // foreach ($it_issues as $it_issue) {
-        //     ProblemCategory::create([
-        //         'department_id' => 1,
-        //         'office_id' => 2,
-        //         'category_name' => $it_issue,
-        //     ]);
-        // }
+        foreach ($it_issues as $it_issue) {
+            ProblemCategory::create([
+                'department_id' => 1,
+                'office_id' => 2,
+                'category_name' => $it_issue,
+            ]);
+        }
         foreach ($admin_issues as $admin_issue) {
             ProblemCategory::create([
                 'department_id' => 1,

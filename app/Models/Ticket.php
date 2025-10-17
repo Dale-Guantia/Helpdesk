@@ -10,11 +10,12 @@ use Filament\Notifications\Actions\Action;
 // use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Ticket extends Model
 {
-    use HasFactory, Notifiable; //softDeletes;
+    use HasFactory, Notifiable, Prunable; //softDeletes;
     /**
      * The attributes that should be cast.
      *
@@ -50,6 +51,12 @@ class Ticket extends Model
     public function isReopened()
     {
         return $this->role === self::STATUS_REOPENED;
+    }
+
+    public function prunable()
+    {
+        // delete if created_at is older than 6 months
+        return static::where('created_at', '<', now()->subMonths(6));
     }
 
 

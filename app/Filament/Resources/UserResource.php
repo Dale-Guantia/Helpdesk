@@ -40,7 +40,6 @@ class UserResource extends Resource
                     ->maxLength(255)
                     ->prefixIcon('heroicon-m-user'),
                 Forms\Components\TextInput::make('email')
-                    ->required()
                     ->email()
                     ->maxLength(255)
                     ->prefixIcon('heroicon-m-envelope'),

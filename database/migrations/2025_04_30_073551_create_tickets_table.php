@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
             $table->string('reference_id')->unique();
-            $table->foreignId('user_id')->nullable()->constrained('users');
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->foreignId('department_id')->nullable()->constrained('departments');
             $table->foreignId('office_id')->nullable()->constrained('offices');
             $table->foreignId('problem_category_id')->nullable()->constrained('problem_categories');
@@ -22,7 +22,8 @@ return new class extends Migration
             $table->foreignId('priority_id')->nullable()->constrained('priorities');
             $table->unsignedBigInteger('status_id')->nullable();
             $table->text('description');
-            $table->string('attachment')->nullable();
+            $table->json('attachment')->nullable();
+            // $table->string('attachment')->nullable();
             // $table->string('guest_firstName')->nullable();
             // $table->string('guest_middleName')->nullable();
             // $table->string('guest_lastName')->nullable();

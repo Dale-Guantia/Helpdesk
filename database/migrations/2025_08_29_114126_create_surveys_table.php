@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('problem_category_id')->constrained('problem_categories');
-            $table->date('submission_date');
             $table->string('responsiveness_rating');
             $table->string('timeliness_rating');
             $table->string('communication_rating');

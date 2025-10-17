@@ -2,7 +2,6 @@
 
 return [
     'name' => env('APP_NAME', 'Employee Care'),
-
     'manifest' => [
         'name' => env('APP_NAME', 'Employee Care'),
         'short_name' => 'Employee Care',

@@ -18,6 +18,9 @@ use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Intervention\Image\Laravel\Facades\Image;
+use Illuminate\Support\Facades\Storage;
 
 class TicketResource extends Resource
 {
@@ -135,18 +138,30 @@ class TicketResource extends Resource
                                     ->dehydrated(),
                                 Forms\Components\FileUpload::make('attachment')
                                     ->multiple()
-                                    ->preserveFilenames()
+                                    ->directory('attachments/' . date('m-y'))
                                     ->reorderable()
                                     ->openable()
                                     ->downloadable()
-                                    ->directory('attachments/' . date('m-y'))
+                                    ->dehydrated(true)
                                     ->maxSize(25000)
                                     ->rules([
-                                        'mimes:jpeg,png,pdf,doc,docx,xls,xlsx,zip,txt,mp4', // List all allowed extensions directly
+                                        'mimes:jpeg,png,pdf,doc,docx,xls,xlsx,zip,txt,mp4,webp',
                                     ])
                                     ->validationMessages([
                                         'mimes' => 'Sorry, but this file type is not supported. Please upload one of the following: JPEG, PNG, PDF, Word Document, Excel Spreadsheet, ZIP, or Text File.',
                                     ])
+                                    ->saveUploadedFileUsing(function (TemporaryUploadedFile $file) {
+                                        // Compress only if it's an image
+                                        if (str_starts_with($file->getMimeType(), 'image/')) {
+                                            $image = Image::read($file->getRealPath());
+                                            $image->save($file->getRealPath(), 80);
+                                             $image->scaleDown(1920);
+                                        }
+
+                                        // Return a string path, not an array
+                                        return $file->store('attachments/' . date('m-y'), 'public');
+                                    })
+
                             ])->columnSpan(2),
 
                         Forms\Components\Section::make()

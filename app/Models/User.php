@@ -10,6 +10,7 @@ use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Support\Facades\Storage;
 use Filament\Panel;
+use Illuminate\Support\Facades\File;
 // use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable implements FilamentUser, HasAvatar //MustVerifyEmail
@@ -125,11 +126,31 @@ class User extends Authenticatable implements FilamentUser, HasAvatar //MustVeri
 
     public function getAvatarUrl()
     {
-        if ($this->avatar_url) {
+        if ($this->avatar_url && Storage::disk('public')->exists($this->avatar_url)) {
             return asset('storage/' . $this->avatar_url);
         }
 
-        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=random&color=fff&font-size=0.35&length=3';
+        // Fallback to UI Avatars API
+        $name_initials = urlencode($this->name);
+        return "https://ui-avatars.com/api/?name={$name_initials}&background=random&color=fff&font-size=0.35&length=3";
+    }
+
+    public function getAvatarWebpUrl()
+    {
+        if ($this->avatar_url) {
+            // Example: 'avatars/1.jpg' -> 'avatars/1.webp'
+            $webpPath = pathinfo($this->avatar_url, PATHINFO_DIRNAME) . '/'
+                        . pathinfo($this->avatar_url, PATHINFO_FILENAME)
+                        . '.webp';
+
+            // Only return a path if the WebP file actually exists in storage
+            if (Storage::disk('public')->exists($webpPath)) {
+                return asset('storage/' . $webpPath);
+            }
+        }
+
+        // Return an empty string or null if the WebP path is not valid/found.
+        return null;
     }
 
     public function getFilamentAvatarUrl(): ?string

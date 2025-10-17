@@ -7,10 +7,26 @@
         <thead class="border-b">
             <tr>
                 <th class="p-2 text-left font-bold"></th>
-                <th class="p-2 text-center font-bold">Very Dissatisfied</th>
-                <th class="p-2 text-center font-bold">Dissatisfied</th>
-                <th class="p-2 text-center font-bold">Satisfied</th>
-                <th class="p-2 text-center font-bold">Very Satisfied</th>
+                <th class="p-2 text-center font-bold">
+                    <x-filament::badge color="danger">
+                        Very Dissatisfied
+                    </x-filament::badge>
+                </th>
+                <th class="p-2 text-center font-bold">
+                    <x-filament::badge color="warning">
+                        Dissatisfied
+                    </x-filament::badge>
+                </th>
+                <th class="p-2 text-center font-bold">
+                    <x-filament::badge color="primary">
+                        Satisfied
+                    </x-filament::badge>
+                </th>
+                <th class="p-2 text-center font-bold">
+                    <x-filament::badge color="success">
+                        Very Satisfied
+                    </x-filament::badge>
+                </th>
             </tr>
         </thead>
         <tbody>

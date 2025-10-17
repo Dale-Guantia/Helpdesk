@@ -53,8 +53,8 @@ class AppServiceProvider extends ServiceProvider
                 ->line('If you did not create an account, no further action is required.'); // Closing line
         });
 
-                // Add this condition
-        if ($this->app->environment('local')) {
+        // Add this condition
+        if ($this->app->environment('production')) {
             URL::forceScheme('https');
         }
 

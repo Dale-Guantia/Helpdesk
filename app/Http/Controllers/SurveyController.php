@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Office;
 use App\Models\User;
 use App\Models\Survey;
 use App\Models\ProblemCategory;
@@ -12,9 +13,10 @@ class SurveyController extends Controller
 {
     public function showForm()
     {
+        $divisions = Office::where('department_id', 1)->get();
         $staffs = User::where('role', User::ROLE_STAFF)->get();
         $services = ProblemCategory::all();
-        return view('survey_form', compact('staffs', 'services'));
+        return view('survey_form', compact('divisions', 'staffs', 'services'));
     }
 
     public function submitForm(Request $request)
@@ -36,13 +38,12 @@ class SurveyController extends Controller
         Survey::create([
             'user_id' => $request->input('user_id'),
             'problem_category_id' => $request->input('problem_category_id'),
-            'submission_date' => now(),
             'responsiveness_rating' => $request->input('responsiveness_rating'),
             'timeliness_rating' => $request->input('timeliness_rating'),
             'communication_rating' => $request->input('communication_rating'),
             'suggestions' => $request->input('suggestions'),
         ]);
 
-        return redirect()->back()->with('success', 'Thank you for your feedback!');
+        return redirect()->to(url()->current() . '?thank_you=1')->with('success', 'Thank you for your feedback! Please scan the QR code for comments.');
     }
 }

@@ -40,52 +40,7 @@ class SurveyResource extends Resource
     {
         return $form
             ->schema([
-                // Forms\Components\Section::make('Survey Details') // Create the first section
-                //     ->description('Enter the basic details of the survey.')
-                //     ->schema([
-                //         DatePicker::make('submission_date')
-                //             ->required(),
-                //         Select::make('problem_category_id')
-                //             ->relationship('service', 'category_name')
-                //             ->required(),
-                //         Select::make('user_id')
-                //             ->label('Attended by')
-                //             ->relationship('staff', 'name')
-                //             ->searchable()
-                //             ->preload()
-                //             ->required(),
-                //         // Textarea::make('suggestions')
-                //         //     ->label('Suggestions (Optional)')
-                //         //     ->nullable(),
-                //     ])->columnSpan(1),
-                // Forms\Components\Section::make('Service Ratings') // Create the second section
-                //     ->description('Please rate the quality of service provided.')
-                //     ->schema([
-                //         Radio::make('responsiveness_rating')
-                //             ->label('RESPONSIVENESS')
-                //             ->options([
-                //                 'Very Dissatisfied' => 'Very Dissatisfied',
-                //                 'Dissatisfied' => 'Dissatisfied',
-                //                 'Satisfied' => 'Satisfied',
-                //                 'Very Satisfied' => 'Very Satisfied',
-                //             ]),
-                //         Radio::make('timeliness_rating')
-                //             ->label('TIMELINESS')
-                //             ->options([
-                //                 'Very Dissatisfied' => 'Very Dissatisfied',
-                //                 'Dissatisfied' => 'Dissatisfied',
-                //                 'Satisfied' => 'Satisfied',
-                //                 'Very Satisfied' => 'Very Satisfied',
-                //             ]),
-                //         Radio::make('communication_rating')
-                //             ->label('COMMUNICATION')
-                //             ->options([
-                //                 'Very Dissatisfied' => 'Very Dissatisfied',
-                //                 'Dissatisfied' => 'Dissatisfied',
-                //                 'Satisfied' => 'Satisfied',
-                //                 'Very Satisfied' => 'Very Satisfied',
-                //             ]),
-                //     ])->columnSpan(1),
+                //
             ]);
     }
 
@@ -95,9 +50,9 @@ class SurveyResource extends Resource
             ->schema([
                 Section::make('Survey Details')
                     ->schema([
-                        TextEntry::make('submission_date')
+                        TextEntry::make('created_at')
                             ->label('Submission Date')
-                            ->date(),
+                            ->dateTime('M d, Y - H:i:s'),
                         TextEntry::make('staff.name')
                             ->label('Staff Rated'),
                         TextEntry::make('service.category_name')
@@ -142,21 +97,43 @@ class SurveyResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('submission_date')
+                TextColumn::make('created_at')
                     ->date()
                     ->sortable(),
                 TextColumn::make('service.category_name')
                     ->label('Service')
+                    ->limit(30)
                     ->searchable(),
                 TextColumn::make('staff.name')
                     ->label('Staff Rated')
                     ->searchable(),
                 TextColumn::make('responsiveness_rating')
-                    ->label('Responsiveness'),
+                    ->label('Responsiveness')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'Very Dissatisfied' => 'danger',
+                        'Dissatisfied' => 'warning',
+                        'Satisfied' => 'primary',
+                        'Very Satisfied' => 'success',
+                    }),
                 TextColumn::make('timeliness_rating')
-                    ->label('Timeliness'),
+                    ->label('Timeliness')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'Very Dissatisfied' => 'danger',
+                        'Dissatisfied' => 'warning',
+                        'Satisfied' => 'primary',
+                        'Very Satisfied' => 'success',
+                    }),
                 TextColumn::make('communication_rating')
-                    ->label('Communication'),
+                    ->label('Communication')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'Very Dissatisfied' => 'danger',
+                        'Dissatisfied' => 'warning',
+                        'Satisfied' => 'primary',
+                        'Very Satisfied' => 'success',
+                    }),
             ])
             ->filters([
                 //
