@@ -14,7 +14,11 @@ class SurveyController extends Controller
     public function showForm()
     {
         $divisions = Office::where('department_id', 1)->get();
-        $staffs = User::where('role', User::ROLE_STAFF)->get();
+        $staffs = User::query()->where('role', User::ROLE_STAFF)
+        ->orWhere(function ($query) {
+            $query->where('role', User::ROLE_DIVISION_HEAD)
+                ->where('department_id', 1);
+        })->get();
         $services = ProblemCategory::all();
         return view('survey_form', compact('divisions', 'staffs', 'services'));
     }
@@ -44,6 +48,6 @@ class SurveyController extends Controller
             'suggestions' => $request->input('suggestions'),
         ]);
 
-        return redirect()->to(url()->current() . '?thank_you=1')->with('success', 'Thank you for your feedback! Please scan the QR code for comments.');
+        return redirect()->to(url()->current() . '?thank_you=1')->with('success', 'Thank you for your feedback!');
     }
 }

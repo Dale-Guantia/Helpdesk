@@ -417,7 +417,7 @@
                 {{-- SLIDE 2: Staff Selection --}}
                 <div class="carousel-item" id="staff-selection-slide">
                     <div class="question-slide">
-                        <h3 style="padding-bottom: 20px">Attended by/Inasikaso ni:</h3>
+                        <h3 style="padding: 50px">Attended by/Inasikaso ni:</h3>
                         <div class="staff-scroll-container">
                             <div class="staff-scroll-panel">
                                 @foreach($staffs as $staff)
@@ -439,7 +439,7 @@
 
                                         </label>
                                         <span class="staff-name">{{ $staff->name }}</span>
-                                        <span class="staff-nickname">"NICKNAME"</span>
+                                        <span class="staff-nickname">"{{ $staff->nickname }}"</span>
                                     </div>
                                 @endforeach
                             </div>
@@ -593,7 +593,7 @@
                         @endif
                         {{-- END SUCCESS MESSAGE --}}
 
-                        <h3 style="padding-bottom: 20px">Scan the QR code to fill out the comments and suggestions form</h3>
+                        <h3 style="padding: 50px">Scan the QR code to fill out the comments and suggestions form</h3>
 
                         <div class="qr-code-container d-flex justify-content-center">
                             {!! QrCode::size(350)->backgroundColor(255, 255, 255, 0)->generate('https://forms.gle/Tvmm2WmjHGNqteUD9') !!}

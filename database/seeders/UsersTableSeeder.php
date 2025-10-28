@@ -14,13 +14,14 @@ class UsersTableSeeder extends Seeder
     public function run(): void
     {
         $admin = [
+            // ['100561', 'Correa', 'Edwin', 'Bautista', '', 'EDWIN'],
             ['4422136', 'Mosqueda', 'Louise', 'Peñaranda', '', 'LOUISE'],
-            ['100561', 'Correa', 'Edwin', 'Bautista', '', 'EDWIN'],
             ['4420420', 'Dela Paz', 'Joana Leonisa', 'Pielago', '', 'JOANA'],
             ['101046', 'Rayos', 'Raoul Enrico', 'Victoria', '', 'ERICK'],
         ];
 
         $rsp = [
+            // ['100325', 'Rosas', 'Minerva', 'Villanueva', '', 'MINNIE'],
             ['4411012', 'Andrada', 'Jarbel', 'Barria', '', 'JABBY'],
             ['4412085', 'Romualdo', 'Katherine Joy', 'Angeles', '', 'KATH'],
             ['100673', 'Avis', 'Felicitas', 'Sumatra', '', 'JIGS'],
@@ -38,16 +39,15 @@ class UsersTableSeeder extends Seeder
             ['101409', 'Reyes', 'Mark Anthony', 'Pagsuyoin', '', 'MARK'],
             ['4420797', 'Roncales', 'Lareine', '', '', 'REINE'],
             ['3407430', 'Rosales', 'Braian', 'Galet', '', 'BRAIAN'],
-            ['100325', 'Rosas', 'Minerva', 'Villanueva', '', 'MINNIE'],
             ['4421880', 'Soriano', 'Judith', 'Bersamina', '', 'JUDITH'],
             ['4421662', 'Springael-De Castro', 'Nancy', 'Manalo', '', 'NANCY'],
             ['4414307', 'Villarete', 'John Carlo', 'Aspiras', '', 'JC']
         ];
 
         $claims = [
+            // ['1100255', 'Buenafe', 'Maria Luisa', 'Natividad', '', 'MALU'],
             ['405469', 'Alumno', 'Maria Corazon', 'Jose', '', 'SONG'],
             ['102549', 'Anglo', 'Evelyn', 'Morillo', '', 'PATCHIE'],
-            ['1100255', 'Buenafe', 'Maria Luisa', 'Natividad', '', 'MALU'],
             ['4414788', 'Chan', 'Raphael Benedict', 'Estanislao', '', 'ARBY'],
             ['103117', 'Leonidas', 'Sheila', 'Santos', '', 'LALA'],
             ['1902699', 'Mandreza', 'Nilgene', 'Cabalquinto', '', 'YHEN'],
@@ -57,6 +57,7 @@ class UsersTableSeeder extends Seeder
         ];
 
         $lnd = [
+            // ['408433', 'Tatco', 'Analiza', 'Vega', '', 'ANA'],
             ['4421526', 'Salandanan', 'Jerryme', 'Enriquez', '', 'JERRYME'],
             ['107799', 'Celso', 'Jackielou', 'Aliño', '', 'JECK'],
             ['4421690', 'De Asis', 'Daisy', 'Alonzo', '', 'DAISY'],
@@ -65,11 +66,11 @@ class UsersTableSeeder extends Seeder
             ['105522', 'Leonidas', 'Jayson', 'Isidro', '', 'JAYSON'],
             ['4421879', 'Macaldo', 'John Leslee', 'Manso', '', 'LESLEE'],
             ['4415247', 'Oprenario', 'Joemar', 'Castro', '', 'JOEMAR'],
-            ['408433', 'Tatco', 'Analiza', 'Vega', '', 'ANA'],
             ['4420421', 'Tomas', 'Princess', 'Tadeo', '', 'CESS']
         ];
 
         $payroll = [
+            // ['4417351', 'Flores', 'Robert Henry', 'Hipolito', '', 'HENRY'],
             ['4413893', 'Bepiñoso', 'Maureen', 'Marcelo', '', 'MAU'],
             ['4419382', 'Cruz', 'John Carlo', 'Castillon', '', 'CARLO'],
             ['4420864', 'San Buenaventura', 'Kaye Mari', 'Rodriguez', '', 'KAYE'],
@@ -78,10 +79,9 @@ class UsersTableSeeder extends Seeder
             ['3409491', 'Andal', 'Devina Blessilda', 'Javier', '', 'DEVINA'],
             ['901676', 'Avellano', 'Georgina', 'Talagsad', '', 'GINA'],
             ['4410833', 'Eco', 'Algie', 'Punzalan', '', 'ALGIE'],
-            ['4417351', 'Flores', 'Robert Henry', 'Hipolito', '', 'HENRY'],
             ['2006136', 'Magboo', 'John Lazaro', 'Macario', '', 'JOHN LAZARO'],
             ['2101227', 'Magsalin', 'Ronald', 'Adriano', '', 'MAGS'],
-            ['4413894', 'Padoga', 'Renardo', 'Oñipig', 'Jr', 'RENARDO'],
+            ['4413894', 'Padoga', 'Renardo', 'Oñipig', 'Jr', 'JR'],
             ['901670', 'Reyes', 'Lorna', 'Cruz', '', 'LORNA'],
             ['103116', 'Reyes', 'Rodalyn', 'Dela Cruz', '', 'DALYN'],
             ['102544', 'San Andres', 'Joseph', 'Magbitang', '', 'JOSEPH'],
@@ -89,6 +89,7 @@ class UsersTableSeeder extends Seeder
         ];
 
         $records = [
+            // ['100970', 'Santos', 'Haydie', 'Ventura', '', 'HAYDIE'],
             ['4419381', 'Deduyo', 'Manny', 'Opelanio', '', 'MANNY'],
             ['4411246', 'Estayani', 'Robert', 'Samar', '', 'BERT'],
             ['4421561', 'Adonis', 'Roderick', 'Cabus', '', 'ROD'],
@@ -98,8 +99,7 @@ class UsersTableSeeder extends Seeder
             ['3409488', 'Lirio', 'Aileen', 'Cuartero', '', 'AILEEN'],
             ['103115', 'Portuguez', 'Michael', 'Sandrino', '', 'MICHAEL'],
             ['102541', 'Ramos', 'Arturo', 'Cruz', 'II', 'SONNY'],
-            ['402224', 'Salandanan', 'Edilberto', 'Cruz', '', 'EBERT'],
-            ['100970', 'Santos', 'Haydie', 'Ventura', '', 'HAYDIE']
+            ['402224', 'Salandanan', 'Edilberto', 'Cruz', '', 'EBERT']
         ];
 
         $pm = [
@@ -125,7 +125,7 @@ class UsersTableSeeder extends Seeder
             'email_verified_at' => now()
         ]);
         User::create([
-            'emp_no' => '4415772',
+            // 'emp_no' => '',
             'name' => 'Deaprtment Head',
             'username' => 'departmenthead',
             'email' => 'departmenthead@example.com',
@@ -141,6 +141,7 @@ class UsersTableSeeder extends Seeder
             'name' => 'Edwin B. Correa',
             'username' => 'coreaedwin',
             'password' => bcrypt('12341234'),
+            'nickname' => 'EDWIN',
             'department_id' => 1,
             'office_id' => 3,
             'is_active' => 1,
@@ -152,6 +153,7 @@ class UsersTableSeeder extends Seeder
             'name' => 'Robert Henry H. Flores',
             'username' => 'floresroberthenry',
             'password' => bcrypt('12341234'),
+            'nickname' => 'HENRY',
             'department_id' => 1,
             'office_id' => 4,
             'is_active' => 1,
@@ -163,6 +165,7 @@ class UsersTableSeeder extends Seeder
             'name' => 'Haydie V. Santos',
             'username' => 'santoshaydie',
             'password' => bcrypt('12341234'),
+            'nickname' => 'HAYDIE',
             'department_id' => 1,
             'office_id' => 5,
             'is_active' => 1,
@@ -174,6 +177,7 @@ class UsersTableSeeder extends Seeder
             'name' => 'Maria Luisa N. Buenafe',
             'username' => 'buenafemarialuisa',
             'password' => bcrypt('12341234'),
+            'nickname' => 'MALU',
             'department_id' => 1,
             'office_id' => 6,
             'is_active' => 1,
@@ -185,6 +189,7 @@ class UsersTableSeeder extends Seeder
             'name' => 'Minerva V. Rosas',
             'username' => 'rosasminerva',
             'password' => bcrypt('12341234'),
+            'nickname' => 'MINNIE',
             'department_id' => 1,
             'office_id' => 7,
             'is_active' => 1,
@@ -196,6 +201,7 @@ class UsersTableSeeder extends Seeder
             'name' => 'Analiza V. Tatco',
             'username' => 'tatcoanaliza',
             'password' => bcrypt('12341234'),
+            'nickname' => 'ANA',
             'department_id' => 1,
             'office_id' => 8,
             'is_active' => 1,
@@ -245,7 +251,301 @@ class UsersTableSeeder extends Seeder
                 'password' => bcrypt('12341234'),
                 'nickname' => $nickname,
                 'department_id' => 1,
+                'office_id' => 3,
+                'is_active' => 1,
+                'role' => 3,
+                'email_verified_at' => now(),
+            ]);
+
+            $this->command->info("Created User ({$empNo}): {$fullName} | Username: {$username}");
+        }
+
+        foreach ($rsp as $userData) {
+            $empNo = $userData[0];
+            $lastName = $userData[1];
+            $firstNameFull = $userData[2];
+            $middleName = $userData[3];
+            $suffix = $userData[4];
+            $nickname = $userData[5];
+
+            $middleInitial = '';
+            if (!empty($middleName)) {
+                $middleInitial = Str::upper(substr($middleName, 0, 1)) . '.';
+            }
+
+            $nameParts = [
+                $firstNameFull,
+                !empty($middleInitial) ? $middleInitial : null, // Include middle initial if available
+                $lastName,
+                !empty($suffix) ? $suffix : null, // Include suffix if available
+            ];
+
+            $fullName = implode(' ', array_filter($nameParts));
+
+            $lastNameSlug = str_replace(' ', '', $lastName);
+            $firstNameSlug = str_replace(' ', '', $firstNameFull); // Use the full first name here
+            $username = Str::lower($lastNameSlug . $firstNameSlug);
+
+            User::create([
+                'emp_no' => $empNo,
+                'name' => $fullName,
+                'username' => $username,
+                'password' => bcrypt('12341234'),
+                'nickname' => $nickname,
+                'department_id' => 1,
                 'office_id' => 7,
+                'is_active' => 1,
+                'role' => 3,
+                'email_verified_at' => now(),
+            ]);
+
+            $this->command->info("Created User ({$empNo}): {$fullName} | Username: {$username}");
+        }
+
+        foreach ($claims as $userData) {
+            $empNo = $userData[0];
+            $lastName = $userData[1];
+            $firstNameFull = $userData[2];
+            $middleName = $userData[3];
+            $suffix = $userData[4];
+            $nickname = $userData[5];
+
+            $middleInitial = '';
+            if (!empty($middleName)) {
+                $middleInitial = Str::upper(substr($middleName, 0, 1)) . '.';
+            }
+
+            $nameParts = [
+                $firstNameFull,
+                !empty($middleInitial) ? $middleInitial : null, // Include middle initial if available
+                $lastName,
+                !empty($suffix) ? $suffix : null, // Include suffix if available
+            ];
+
+            $fullName = implode(' ', array_filter($nameParts));
+
+            $lastNameSlug = str_replace(' ', '', $lastName);
+            $firstNameSlug = str_replace(' ', '', $firstNameFull); // Use the full first name here
+            $username = Str::lower($lastNameSlug . $firstNameSlug);
+
+            User::create([
+                'emp_no' => $empNo,
+                'name' => $fullName,
+                'username' => $username,
+                'password' => bcrypt('12341234'),
+                'nickname' => $nickname,
+                'department_id' => 1,
+                'office_id' => 6,
+                'is_active' => 1,
+                'role' => 3,
+                'email_verified_at' => now(),
+            ]);
+
+            $this->command->info("Created User ({$empNo}): {$fullName} | Username: {$username}");
+        }
+
+        foreach ($lnd as $userData) {
+            $empNo = $userData[0];
+            $lastName = $userData[1];
+            $firstNameFull = $userData[2];
+            $middleName = $userData[3];
+            $suffix = $userData[4];
+            $nickname = $userData[5];
+
+            $middleInitial = '';
+            if (!empty($middleName)) {
+                $middleInitial = Str::upper(substr($middleName, 0, 1)) . '.';
+            }
+
+            $nameParts = [
+                $firstNameFull,
+                !empty($middleInitial) ? $middleInitial : null, // Include middle initial if available
+                $lastName,
+                !empty($suffix) ? $suffix : null, // Include suffix if available
+            ];
+
+            $fullName = implode(' ', array_filter($nameParts));
+
+            $lastNameSlug = str_replace(' ', '', $lastName);
+            $firstNameSlug = str_replace(' ', '', $firstNameFull); // Use the full first name here
+            $username = Str::lower($lastNameSlug . $firstNameSlug);
+
+            User::create([
+                'emp_no' => $empNo,
+                'name' => $fullName,
+                'username' => $username,
+                'password' => bcrypt('12341234'),
+                'nickname' => $nickname,
+                'department_id' => 1,
+                'office_id' => 8,
+                'is_active' => 1,
+                'role' => 3,
+                'email_verified_at' => now(),
+            ]);
+
+            $this->command->info("Created User ({$empNo}): {$fullName} | Username: {$username}");
+        }
+
+        foreach ($payroll as $userData) {
+            $empNo = $userData[0];
+            $lastName = $userData[1];
+            $firstNameFull = $userData[2];
+            $middleName = $userData[3];
+            $suffix = $userData[4];
+            $nickname = $userData[5];
+
+            $middleInitial = '';
+            if (!empty($middleName)) {
+                $middleInitial = Str::upper(substr($middleName, 0, 1)) . '.';
+            }
+
+            $nameParts = [
+                $firstNameFull,
+                !empty($middleInitial) ? $middleInitial : null, // Include middle initial if available
+                $lastName,
+                !empty($suffix) ? $suffix : null, // Include suffix if available
+            ];
+
+            $fullName = implode(' ', array_filter($nameParts));
+
+            $lastNameSlug = str_replace(' ', '', $lastName);
+            $firstNameSlug = str_replace(' ', '', $firstNameFull); // Use the full first name here
+            $username = Str::lower($lastNameSlug . $firstNameSlug);
+
+            User::create([
+                'emp_no' => $empNo,
+                'name' => $fullName,
+                'username' => $username,
+                'password' => bcrypt('12341234'),
+                'nickname' => $nickname,
+                'department_id' => 1,
+                'office_id' => 4,
+                'is_active' => 1,
+                'role' => 3,
+                'email_verified_at' => now(),
+            ]);
+
+            $this->command->info("Created User ({$empNo}): {$fullName} | Username: {$username}");
+        }
+
+        foreach ($records as $userData) {
+            $empNo = $userData[0];
+            $lastName = $userData[1];
+            $firstNameFull = $userData[2];
+            $middleName = $userData[3];
+            $suffix = $userData[4];
+            $nickname = $userData[5];
+
+            $middleInitial = '';
+            if (!empty($middleName)) {
+                $middleInitial = Str::upper(substr($middleName, 0, 1)) . '.';
+            }
+
+            $nameParts = [
+                $firstNameFull,
+                !empty($middleInitial) ? $middleInitial : null, // Include middle initial if available
+                $lastName,
+                !empty($suffix) ? $suffix : null, // Include suffix if available
+            ];
+
+            $fullName = implode(' ', array_filter($nameParts));
+
+            $lastNameSlug = str_replace(' ', '', $lastName);
+            $firstNameSlug = str_replace(' ', '', $firstNameFull); // Use the full first name here
+            $username = Str::lower($lastNameSlug . $firstNameSlug);
+
+            User::create([
+                'emp_no' => $empNo,
+                'name' => $fullName,
+                'username' => $username,
+                'password' => bcrypt('12341234'),
+                'nickname' => $nickname,
+                'department_id' => 1,
+                'office_id' => 5,
+                'is_active' => 1,
+                'role' => 3,
+                'email_verified_at' => now(),
+            ]);
+
+            $this->command->info("Created User ({$empNo}): {$fullName} | Username: {$username}");
+        }
+
+        foreach ($pm as $userData) {
+            $empNo = $userData[0];
+            $lastName = $userData[1];
+            $firstNameFull = $userData[2];
+            $middleName = $userData[3];
+            $suffix = $userData[4];
+            $nickname = $userData[5];
+
+            $middleInitial = '';
+            if (!empty($middleName)) {
+                $middleInitial = Str::upper(substr($middleName, 0, 1)) . '.';
+            }
+
+            $nameParts = [
+                $firstNameFull,
+                !empty($middleInitial) ? $middleInitial : null, // Include middle initial if available
+                $lastName,
+                !empty($suffix) ? $suffix : null, // Include suffix if available
+            ];
+
+            $fullName = implode(' ', array_filter($nameParts));
+
+            $lastNameSlug = str_replace(' ', '', $lastName);
+            $firstNameSlug = str_replace(' ', '', $firstNameFull); // Use the full first name here
+            $username = Str::lower($lastNameSlug . $firstNameSlug);
+
+            User::create([
+                'emp_no' => $empNo,
+                'name' => $fullName,
+                'username' => $username,
+                'password' => bcrypt('12341234'),
+                'nickname' => $nickname,
+                'department_id' => 1,
+                'office_id' => 9,
+                'is_active' => 1,
+                'role' => 3,
+                'email_verified_at' => now(),
+            ]);
+
+            $this->command->info("Created User ({$empNo}): {$fullName} | Username: {$username}");
+        }
+
+        foreach ($it as $userData) {
+            $empNo = $userData[0];
+            $lastName = $userData[1];
+            $firstNameFull = $userData[2];
+            $middleName = $userData[3];
+            $suffix = $userData[4];
+            $nickname = $userData[5];
+
+            $middleInitial = '';
+            if (!empty($middleName)) {
+                $middleInitial = Str::upper(substr($middleName, 0, 1)) . '.';
+            }
+
+            $nameParts = [
+                $firstNameFull,
+                !empty($middleInitial) ? $middleInitial : null, // Include middle initial if available
+                $lastName,
+                !empty($suffix) ? $suffix : null, // Include suffix if available
+            ];
+
+            $fullName = implode(' ', array_filter($nameParts));
+
+            $lastNameSlug = str_replace(' ', '', $lastName);
+            $firstNameSlug = str_replace(' ', '', $firstNameFull); // Use the full first name here
+            $username = Str::lower($lastNameSlug . $firstNameSlug);
+
+            User::create([
+                'emp_no' => $empNo,
+                'name' => $fullName,
+                'username' => $username,
+                'password' => bcrypt('12341234'),
+                'nickname' => $nickname,
+                'department_id' => 1,
+                'office_id' => 2,
                 'is_active' => 1,
                 'role' => 3,
                 'email_verified_at' => now(),

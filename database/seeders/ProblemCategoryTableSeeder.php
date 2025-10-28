@@ -120,8 +120,8 @@ class ProblemCategoryTableSeeder extends Seeder
             'Access of OPCR/DPCR/IPCR Issue',
         ];
         $it_issues = [
-            'Office assignment retagging',
-            'Password reset',
+            'Office assignment/Retagging',
+            'GEMS account password reset',
         ];
 
         foreach ($it_issues as $it_issue) {
