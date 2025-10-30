@@ -22,8 +22,11 @@ class SurveyRateCounter extends Component implements HasTable, HasForms
 
     protected function getTableQuery(): Builder
     {
-        return User::query()
-            ->where('role', User::ROLE_STAFF);
+        return User::query()->where('role', User::ROLE_STAFF)
+            ->orWhere(function ($query) {
+                $query->where('role', User::ROLE_DIVISION_HEAD)
+                    ->where('department_id', 1);
+            });
     }
 
     protected array $ratingCounts = [];

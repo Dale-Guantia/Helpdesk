@@ -5,379 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Satisfaction Survey</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
     @laravelPWA
-    <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            background: #f8f9fa;
-            font-family: 'Roboto', sans-serif;
-            background-image: url("{{ asset('storage/logo/blue5.jpg') }}");
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            background-repeat: no-repeat;
-        }
-
-        .container {
-            background: transparent;
-                min-height: 100vh;
-                padding: 1rem;
-        }
-
-        h1, h3, h5, p {
-            text-align: center;
-            padding: 0;
-            margin: 0;
-        }
-
-        p {
-            font-size: 2rem;
-        }
-
-        h2 {
-            padding-top: 50px;
-            font-weight: 700;
-        }
-
-        .center-logo-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            padding: 20px;
-            flex-wrap: wrap;
-        }
-
-        .center-logo-container img {
-            max-width: 300px;
-            width: 80%;
-            height: auto;
-        }
-
-        .carousel-item {
-            min-height: 400px;
-        }
-
-        .question-slide {
-            padding: 50px 10px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
-
-        .carousel-control-prev, .carousel-control-next {
-            display: none;
-        }
-
-        .carousel-indicators [data-bs-target] {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: #007bff;
-        }
-
-        .staff-carousel-container {
-            position: relative;
-            width: 100%;
-            max-width: 90%;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-        }
-
-        .emoji-icon {
-            font-size: 8rem;
-        }
-
-        .emoji-rating-text {
-            font-size: 1.4rem;
-            font-weight: 500;
-        }
-
-        .btn {
-            min-width: 120px;
-        }
-
-        .go-back-btn-large {
-            padding: 15px 40px !important; /* Larger padding for a bigger button */
-            font-size: 1.5rem !important; /* Larger font size for prominence */
-        }
-
-        .staff-scroll-container {
-            position: relative;
-            width: 100%;
-            max-width: 1500px;
-            margin: 0 auto;
-            overflow: visible; /* allow circular borders to be visible */
-            padding: 0; /* remove padding that can clip the avatar */
-        }
-
-        .staff-scroll-panel {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            justify-items: center;
-            align-items: start;
-            gap: 70px 50px;
-            overflow-y: scroll;
-            scroll-snap-type: y mandatory;
-            max-height: 400px;
-            /* padding: 0 20px; */
-            width: 100%;
-            overflow-x: visible;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-        }
-
-        /* Each "page" or full row block for snapping */
-        .staff-item {
-            text-align: center;
-            transition: transform 0.25s, box-shadow 0.25s;
-            scroll-snap-align: start;
-            display: inline-block;
-            cursor: pointer;
-            flex-shrink: 0;
-            min-width: 340px;
-            max-width: 340px;
-        }
-
-        /* Avatar style */
-        .staff-avatar {
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            object-fit: contain;
-            background: transparent;
-            border: 3px solid transparent;
-            cursor: pointer;
-        }
-
-        .staff-avatar.selected {
-            border-color: #007bff;
-            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
-        }
-
-        /* Name label */
-        .staff-name {
-            display: block;
-            font-weight: 300;
-            font-size: 1.5rem;
-        }
-
-        /* Nickname label */
-        .staff-nickname {
-            display: block;
-            font-weight: 1000;
-            font-size: 2rem;
-        }
-
-        /* Scrollbar design */
-        .staff-scroll-panel::-webkit-scrollbar {
-            width: 8px;
-        }
-        .staff-scroll-panel::-webkit-scrollbar-thumb {
-            background: #ccc;
-            border-radius: 4px;
-        }
-
-        .filter-btn {
-            opacity: 0.6;
-            transition: opacity 0.2s;
-        }
-
-        .filter-btn.active {
-            opacity: 1; /* Full opacity for the active button */
-            font-weight: bold; /* Make the text bold */
-            border: 2px solid #fff; /* Add a border to highlight */
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-        }
-
-        #service-grid {
-            margin: 20px auto;
-            max-width: 1000px; /* Adjust as needed */
-        }
-
-        .service-item {
-            width: 150px; /* Set a fixed width for alignment */
-            padding: 15px;
-            margin: 10px;
-            cursor: pointer;
-            border: 2px solid transparent; /* Default state */
-            border-radius: 8px;
-            transition: all 0.2s ease-in-out;
-        }
-
-        .service-icon-box {
-            background-color: #007bff; /* Primary color (Bootstrap blue) */
-            color: white;
-            width: 80px;
-            height: 80px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 10px;
-        }
-
-        .service-item.selected {
-            border: 2px solid #0056b3;
-            background-color: #e9ecef;
-        }
-
-        .service-name {
-            font-size: 1.3rem;
-            font-weight: 500;
-        }
-
-
-        .service-scroll-container {
-            /* Max width to maximize space (adjust 1000px as needed) */
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 10px; /* little padding on the sides */
-        }
-
-        .service-scroll-panel {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            justify-items: center; /* Center items within their grid cells */
-            align-items: start;
-            gap: 20px; /* Space between items */
-            overflow-y: auto;
-            max-height: 450px; /* Set a specific height to enforce vertical scroll */
-            padding: 10px;
-            margin: 0;
-            overflow-x: visible;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-        }
-
-        /* --- Service Item & Icon Styling --- */
-        .service-item {
-            width: 180px; /* Fixed width for consistent grid item size */
-            padding: 5px;
-            margin: 0; /* Remove horizontal margin for tighter packing */
-            cursor: pointer;
-            border: 2px solid transparent;
-            border-radius: 8px;
-            transition: all 0.2s ease-in-out;
-        }
-
-        .service-icon-box {
-            background-color: #007bff;
-            color: white;
-            width: 100px; /* Slightly smaller box for tighter grid */
-            height: 100px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 8px;
-            cursor: pointer;
-        }
-
-        /* CONTAINER: Set up the grid and center it */
-        .division-buttons-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            max-width: 1000px;
-            margin-left: auto;
-            margin-right: auto;
-            padding: 0 10px; /* Add slight padding on sides for responsiveness */
-        }
-
-        /* BUTTONS: Increase button size and ensure they fill their grid cell */
-        .division-buttons-grid .division-btn {
-            width: 100%;
-            padding: 15px 20px;
-            font-size: 1.3rem;
-            text-align: center;
-        }
-
-        /* --- Responsive Adjustments --- */
-        @media (max-width: 768px) {
-            .service-scroll-panel {
-                /* Allow for smaller columns on mobile */
-                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-                max-height: 300px; /* Smaller scroll area on mobile */
-            }
-            .service-item {
-                width: 120px;
-                margin: 10px;
-            }
-            .service-icon-box {
-                width: 60px;
-                height: 60px;
-            }
-            .service-icon-box i {
-                font-size: 2rem;
-            }
-            .service-name {
-                font-size: 0.8rem;
-            }
-            .staff-scroll-panel {
-                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-                gap: 20px 25px;
-                max-height: 360px;
-            }
-            .staff-avatar {
-                width: 110px;
-                height: 110px;
-            }
-            .question-slide {
-                padding: 20px 10px;
-            }
-            .center-logo-container img {
-                max-width: 220px;
-            }
-            h2 {
-                font-size: 1.4rem;
-            }
-            h4 {
-                font-size: 1.1rem;
-            }
-            .staff-carousel-container {
-                max-width: 100%;
-            }
-        }
-
-        /* ✅ Responsive Adjustments */
-        @media (max-width: 992px) {
-            .staff-avatar {
-                width: 100px;
-                height: 100px;
-            }
-            .emoji-icon {
-                font-size: 3.5rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            h2 {
-                font-size: 1.2rem;
-            }
-            h4, h6 {
-                font-size: 1rem;
-            }
-            p {
-                font-size: 0.9rem;
-            }
-            .emoji-icon {
-                font-size: 3rem;
-            }
-            .btn {
-                width: 100%;
-                margin-bottom: 10px;
-            }
-        }
-    </style>
 </head>
 <body>
 
@@ -399,16 +31,15 @@
                     <div class="question-slide">
                         <h3 style="padding-bottom: 10px">Select Division / Pumili ng Dibisyon:</h3>
                         <div class="filter-buttons division-buttons-grid">
-                            {{-- All your division buttons here --}}
-                            <button type="button" class="btn btn-primary mb-3 division-btn active" data-office-id="all">All Divisions</button>
-                            <button type="button" class="btn btn-primary mb-3 division-btn" data-office-id="2">Information Technology</button>
-                            <button type="button" class="btn btn-primary mb-3 division-btn" data-office-id="3">Administrative</button>
-                            <button type="button" class="btn btn-primary mb-3 division-btn" data-office-id="4">Payroll</button>
-                            <button type="button" class="btn btn-primary mb-3 division-btn" data-office-id="5">Records</button>
-                            <button type="button" class="btn btn-primary mb-3 division-btn" data-office-id="6">Claims and Benefits</button>
-                            <button type="button" class="btn btn-primary mb-3 division-btn" data-office-id="7">RSP</button>
-                            <button type="button" class="btn btn-primary mb-3 division-btn" data-office-id="8">Learning and Development</button>
-                            <button type="button" class="btn btn-primary mb-3 division-btn" data-office-id="9">Performance Management</button>
+                            <button type="button" class="btn btn-all mb-3 division-btn active" data-office-id="all">ALL DIVISIONS</button>
+                            <button type="button" class="btn btn-it mb-3 division-btn" data-office-id="2">INFORMATION TECHNOLOGY</button>
+                            <button type="button" class="btn btn-admin mb-3 division-btn" data-office-id="3">ADMINISTRATIVE</button>
+                            <button type="button" class="btn btn-payroll mb-3 division-btn" data-office-id="4">PAYROLL</button>
+                            <button type="button" class="btn btn-records mb-3 division-btn" data-office-id="5">RECORDS</button>
+                            <button type="button" class="btn btn-claims mb-3 division-btn" data-office-id="6">CLAIMS & BENEFITS</button>
+                            <button type="button" class="btn btn-rsp mb-3 division-btn" data-office-id="7">RSP</button>
+                            <button type="button" class="btn btn-ld mb-3 division-btn" data-office-id="8">LEARNING & DEVELOPMENT</button>
+                            <button type="button" class="btn btn-pm mb-3 division-btn" data-office-id="9">PERFORMANCE MANAGEMENT</button>
                         </div>
                     </div>
                 </div>
@@ -417,7 +48,7 @@
                 {{-- SLIDE 2: Staff Selection --}}
                 <div class="carousel-item" id="staff-selection-slide">
                     <div class="question-slide">
-                        <h3 style="padding: 50px">Attended by/Inasikaso ni:</h3>
+                        <h3 style="padding: 50px">Attended by / Inasikaso ni:</h3>
                         <div class="staff-scroll-container">
                             <div class="staff-scroll-panel">
                                 @foreach($staffs as $staff)
@@ -452,8 +83,7 @@
                 {{-- SLIDE 3: Service Selection --}}
                 <div class="carousel-item service-slide">
                     <div class="question-slide">
-                        <h3 style="padding-bottom: 20px">Service/s Received/ Serbisyong Natanggap:</h3>
-
+                        <h3 style="padding-bottom: 20px">Service Received / Serbisyong Natanggap:</h3>
                         <div class="service-scroll-container">
                             <div id="service-grid" class="service-scroll-panel">
                                 @foreach($services as $service)

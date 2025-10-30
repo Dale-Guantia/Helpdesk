@@ -150,7 +150,7 @@
     <h2 style="text-align: center;">Ticket Overview per Division</h2>
 
     @foreach($divisions as $division)
-        <h3 class="section-title">{{ ucwords(strtolower($division->office_name)) }}</h3>
+        <h3 class="section-title">{{ strtoupper($division->office_name) }}</h3>
         <table>
             <thead>
                 <tr>

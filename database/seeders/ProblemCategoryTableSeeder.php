@@ -94,10 +94,10 @@ class ProblemCategoryTableSeeder extends Seeder
             'Status of Recruitment Request Form',
             'Status of Renewal/Non-Renewal of Employees',
             'Status of Update on Personal Information',
-            'Status of Update on Separated employees (Retired, Resigned, Dropped, terminated, for transfer, etc)',
-            'Access of status from Admin Div for Admin cases (list; view only)',
+            'Status of Update on Separated employees',
+            'Access of status from Admin Div for Admin cases',
             'Access of status from Admin Div for memos of Dropped, termination, Suspension',
-            'Access of status from Record Div  for receiving of Death Cert and resignation letter',
+            'Access of status from Record Div for receiving of Death Cert and resignation letter',
         ];
         $lnd_issues = [
             'ID request',
@@ -113,7 +113,7 @@ class ProblemCategoryTableSeeder extends Seeder
             'OPCR/DPCR and IPCR Appeals',
             'Request for System Access Extension',
             'Log-In Credential Issues',
-            'Request to Edit Submitted OPCR/DPCR IPCR Targets/Accomplishments / Ratings',
+            'Request to Edit Submitted OPCR/DPCR IPCR Targets/Accomplishments/ Ratings',
             'Request to Submit OPCR/DPCR /IPCR for Newly Hired Employees',
             'Request for Technical Assistance',
             'Technical Issues/Glitch During Submission',
