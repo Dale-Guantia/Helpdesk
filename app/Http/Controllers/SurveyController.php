@@ -26,7 +26,6 @@ class SurveyController extends Controller
     public function submitForm(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            // 'submission_date' => 'required|date',
             'user_id' => 'required|exists:users,id',
             'problem_category_id' => 'required|exists:problem_categories,id',
             'responsiveness_rating' => 'required|string',

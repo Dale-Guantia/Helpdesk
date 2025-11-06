@@ -8,261 +8,678 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
     @laravelPWA
 </head>
 <body>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            color: #000;
+            font-family: "Bricolage Grotesque", sans-serif;
+        }
+        #background-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            min-width: 100%;
+            min-height: 100%;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+        .container {
+            min-height: 100vh;
+            padding: 1rem;
+            position: relative;
+            z-index: 10;
+        }
+        h1, h2, h3, h4, h5, p {
+            text-align: center;
+            padding: 0;
+            margin: 0;
+        }
+        h2 {
+            padding-top: 50px;
+            font-weight: 700;
+        }
+        h3 {
+            font-weight: 600;
+            font-size: 2.5rem;
+        }
+        p {
+            font-size: 2rem;
+        }
+        .center-logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            flex-wrap: wrap;
+        }
+        .center-logo-container img {
+            max-width: 300px;
+            width: 80%;
+            height: auto;
+        }
+        .carousel-item {
+            min-height: 400px;
+        }
+        .question-slide {
+            padding: 50px 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .carousel-control-prev, .carousel-control-next {
+            display: none;
+        }
+        .carousel-indicators [data-bs-target] {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #007bff;
+        }
+        .staff-carousel-container {
+            position: relative;
+            width: 100%;
+            max-width: 90%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+        }
+        .emoji-icon {
+            font-size: 12rem;
+        }
+        .emoji-rating-text {
+            margin-top: -35px;
+            font-size: 2rem;
+            font-weight: 500;
+            color: #333333;
+            transition: all 0.2s ease-in-out;
+        }
+        /* --- NEW RATING OPTION STYLES: This replaces the button look --- */
+        .rating-option {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            cursor: pointer;
+            padding: 10px;
+            transition: transform 0.2s ease-in-out;
+        }
+        .rating-option:hover {
+            transform: scale(1.1);
+        }
+        .rating-option.active {
+            transform: scale(1.15);
+        }
+        .rating-option.active .emoji-rating-text {
+            font-weight: 700;
+        }
+        .btn {
+            min-width: 120px;
+        }
+        .go-back-btn-large {
+            padding: 15px 40px !important; /* Larger padding for a bigger button */
+            font-size: 1.5rem !important; /* Larger font size for prominence */
+            border-radius: 12px;
+        }
+        .staff-scroll-container {
+            position: relative;
+            width: 100%;
+            max-width: 1500px;
+            margin: 0 auto;
+            overflow: visible; /* allow circular borders to be visible */
+            padding: 0; /* remove padding that can clip the avatar */
+        }
+        .staff-scroll-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            justify-items: center;
+            align-items: start;
+            gap: 70px 50px;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            max-height: 450px;
+            /* padding: 0 20px; */
+            width: 100%;
+            overflow-x: visible;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        /* Each "page" or full row block for snapping */
+        .staff-item {
+            text-align: center;
+            transition: transform 0.25s, box-shadow 0.25s;
+            scroll-snap-align: start;
+            display: inline-block;
+            cursor: pointer;
+            flex-shrink: 0;
+            min-width: 340px;
+            max-width: 340px;
+        }
+        /* Avatar style */
+        .staff-avatar {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            object-fit: contain;
+            background: transparent;
+            border: 3px solid transparent;
+            cursor: pointer;
+        }
+        .staff-avatar.selected {
+            border-color: #007bff;
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+        }
+        /* Name label */
+        .staff-name {
+            display: block;
+            font-weight: 500;
+            font-size: 1.5rem;
+        }
+        /* Nickname label */
+        .staff-nickname {
+            display: block;
+            font-weight: 1000;
+            font-size: 2.5rem;
+        }
+        /* Scrollbar design */
+        .staff-scroll-panel::-webkit-scrollbar {
+            width: 8px;
+        }
+        .staff-scroll-panel::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 4px;
+        }
+        .btn.btn-primary {
+            border-radius: 25px;
+        }
+        .filter-btn {
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+        .filter-btn.active {
+            opacity: 1; /* Full opacity for the active button */
+            font-weight: bold; /* Make the text bold */
+            border: 2px solid #fff; /* Add a border to highlight */
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+        .service-item {
+            width: 150px; /* Set a fixed width for alignment */
+            padding: 15px;
+            margin: 10px;
+            cursor: pointer;
+            border: 2px solid transparent; /* Default state */
+            border-radius: 8px;
+            transition: all 0.2s ease-in-out;
+        }
+        .service-icon-box {
+            background-color: #007bff; /* Primary color (Bootstrap blue) */
+            color: white;
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+        }
+        .service-item.selected {
+            border: 2px solid #0056b3;
+            background-color: #e9ecef;
+        }
+        .service-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        #service-grid {
+            margin: 20px auto;
+            max-width: 1600px; /* Adjust as needed */
+        }
+        .service-scroll-container {
+            /* Max width to maximize space (adjust 1000px as needed) */
+            width: 100%;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        .service-scroll-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            justify-items: center; /* Center items within their grid cells */
+            align-items: start;
+            gap: 30px; /* Space between items */
+            overflow-y: auto;
+            max-height: 450px; /* Set a specific height to enforce vertical scroll */
+            margin: 0;
+            overflow-x: visible;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        /* --- Service Item & Icon Styling --- */
+        .service-item {
+            width: 250px; /* Fixed width for consistent grid item size */
+            padding: 5px;
+            margin: 0; /* Remove horizontal margin for tighter packing */
+            cursor: pointer;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            transition: all 0.2s ease-in-out;
+        }
+        .service-icon-box {
+            background-color: #007bff;
+            color: white;
+            width: 100px; /* Slightly smaller box for tighter grid */
+            height: 100px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 8px;
+            cursor: pointer;
+        }
+        /* CONTAINER: Set up the grid and center it */
+        .division-buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0 10px; /* Add slight padding on sides for responsiveness */
+        }
+        .division-buttons-grid .division-btn {
+            width: 100%;
+            padding: 25px 30px;
+            font-size: 1.5rem;
+            text-align: center;
+            border-radius: 25px;
+        }
+        /* Base style overrides for custom buttons */
+        .division-buttons-grid .btn {
+            color: #000; /* Ensure text is white for contrast */
+            border: none;
+            font-weight: 600;
+            transition: background-color 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        /* Division 1: All Divisions (Neutral/Default) */
+        .division-buttons-grid .btn-all {
+            background-color: #57A2F8;
+            border: #000 2px solid;
+            /* text-shadow: #000 2px 3px 0px; */
+        }
+        /* Division 2: Information Technology */
+        .division-buttons-grid .btn-it {
+            background-color: #6b757d;
+            border: #000 2px solid;
+            /* text-shadow: #000 2px 3px 0px; */
+        }
+        /* Division 3: Administrative */
+        .division-buttons-grid .btn-admin {
+            background-color: #FF4949;
+            border: #000 2px solid;
+            /* text-shadow: #000 2px 3px 0px; */
+        }
+        /* Division 4: Payroll */
+        .division-buttons-grid .btn-payroll {
+            background-color: #50FFB6;
+            border: #000 2px solid;
+            /* text-shadow: #000 2px 3px 0px; */
+        }
+        /* Division 5: Records */
+        .division-buttons-grid .btn-records {
+            background-color: #D050FF;
+            border: #000 2px solid;
+            /* text-shadow: #000 2px 3px 0px; */
+        }
+        /* Division 6: Claims and Benefits */
+        .division-buttons-grid .btn-claims {
+            background-color: #FFE149;
+            border: #000 2px solid;
+            /* text-shadow: #000 2px 3px 0px; */
+        }
+        /* Division 7: RSP */
+        .division-buttons-grid .btn-rsp {
+            background-color: #FFAA49;
+            border: #000 2px solid;
+            /* text-shadow: #000 2px 3px 0px; */
+        }
+        /* Division 8: Learning and Development */
+        .division-buttons-grid .btn-ld {
+            background-color: #50F3FF;
+            border: #000 2px solid;
+            /* text-shadow: #000 2px 3px 0px; */
 
-<div class="container">
-    <div class="center-logo-container">
-        <image src="{{ asset('storage/logo/logo-with-seals.png') }}">
-    </div>
-    <h5>HUMAN RESOURCE DEVELOPMENT OFFICE</h5>
-    <h1>Customer Satisfaction Survey</h1>
+        }
+        /* Division 9: Performance Management */
+        .division-buttons-grid .btn-pm {
+            background-color: #8850FF;
+            border: #000 2px solid;
+            /* text-shadow: #000 2px 3px 0px; */
+        }
+        @media (max-width: 768px) {
+            .service-scroll-panel {
+                /* Allow for smaller columns on mobile */
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                max-height: 300px; /* Smaller scroll area on mobile */
+            }
+            .service-item {
+                width: 120px;
+                margin: 10px;
+            }
+            .service-icon-box {
+                width: 60px;
+                height: 60px;
+            }
+            .service-icon-box i {
+                font-size: 2rem;
+            }
+            .service-name {
+                font-size: 0.8rem;
+            }
+            .staff-scroll-panel {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 20px 25px;
+                max-height: 360px;
+            }
+            .staff-avatar {
+                width: 110px;
+                height: 110px;
+            }
+            .question-slide {
+                padding: 20px 10px;
+            }
+            .center-logo-container img {
+                max-width: 220px;
+            }
+            .staff-carousel-container {
+                max-width: 100%;
+            }
+        }
+        /* ✅ Responsive Adjustments */
+        @media (max-width: 992px) {
+            .staff-avatar {
+                width: 100px;
+                height: 100px;
+            }
+            .emoji-icon {
+                font-size: 3.5rem;
+            }
+        }
 
-    <form action="{{ route('survey.submit') }}" method="POST">
-        @csrf
+        @media (max-width: 480px) {
+            .emoji-icon {
+                font-size: 3rem;
+            }
+            .btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
 
-        <div id="surveyCarousel" class="carousel slide" data-bs-ride="false" data-bs-interval="false">
-            <div class="carousel-inner">
+    <video id="background-video" autoplay loop muted playsinline preload="auto">
+        <source src="{{ asset('storage/assets/blue.webm') }}" type="video/webm">
+        <source src="{{ asset('storage/assets/blue.mp4') }}" type="video/mp4">
+        <img src="{{ asset('storage/assets/blue.webp') }}" alt="Background" />
+        <img src="{{ asset('storage/assets/blue.jpg') }}" alt="Background" />
+        Your browser does not support the video tag.
+    </video>
 
-                {{-- SLIDE 1: Division Selection --}}
-                <div class="carousel-item active">
-                    <div class="question-slide">
-                        <h3 style="padding-bottom: 10px">Select Division / Pumili ng Dibisyon:</h3>
-                        <div class="filter-buttons division-buttons-grid">
-                            <button type="button" class="btn btn-all mb-3 division-btn active" data-office-id="all">ALL DIVISIONS</button>
-                            <button type="button" class="btn btn-it mb-3 division-btn" data-office-id="2">INFORMATION TECHNOLOGY</button>
-                            <button type="button" class="btn btn-admin mb-3 division-btn" data-office-id="3">ADMINISTRATIVE</button>
-                            <button type="button" class="btn btn-payroll mb-3 division-btn" data-office-id="4">PAYROLL</button>
-                            <button type="button" class="btn btn-records mb-3 division-btn" data-office-id="5">RECORDS</button>
-                            <button type="button" class="btn btn-claims mb-3 division-btn" data-office-id="6">CLAIMS & BENEFITS</button>
-                            <button type="button" class="btn btn-rsp mb-3 division-btn" data-office-id="7">RSP</button>
-                            <button type="button" class="btn btn-ld mb-3 division-btn" data-office-id="8">LEARNING & DEVELOPMENT</button>
-                            <button type="button" class="btn btn-pm mb-3 division-btn" data-office-id="9">PERFORMANCE MANAGEMENT</button>
-                        </div>
-                    </div>
-                </div>
-                {{-- END: SLIDE 1 --}}
-
-                {{-- SLIDE 2: Staff Selection --}}
-                <div class="carousel-item" id="staff-selection-slide">
-                    <div class="question-slide">
-                        <h3 style="padding: 50px">Attended by / Inasikaso ni:</h3>
-                        <div class="staff-scroll-container">
-                            <div class="staff-scroll-panel">
-                                @foreach($staffs as $staff)
-                                    <div class="text-center staff-item" data-office-id="{{ $staff->office_id }}">
-                                        <label>
-                                            <input type="radio" name="user_id" value="{{ $staff->id }}" id="staff-{{ $staff->id }}" data-office-id="{{ $staff->office_id }}" style="display:none;" required>
-
-                                            {{-- START: Optimized Image Loading --}}
-                                            <picture>
-                                                @if ($staff->getAvatarWebpUrl())
-                                                    <source srcset="{{ $staff->getAvatarWebpUrl() }}" type="image/webp">
-                                                @endif
-                                                <img src="{{ $staff->getAvatarUrl() }}"
-                                                    alt="{{ $staff->name }}'s profile picture"
-                                                    class="staff-avatar"
-                                                    loading="lazy">
-                                            </picture>
-                                            {{-- END: Optimized Image Loading --}}
-
-                                        </label>
-                                        <span class="staff-name">{{ $staff->name }}</span>
-                                        <span class="staff-nickname">"{{ $staff->nickname }}"</span>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                        <button type="button" class="btn btn-primary mt-3 go-back-btn-large" onclick="prevSlide()">Go Back</button>
-                    </div>
-                </div>
-                {{-- END: SLIDE 2 --}}
-
-                {{-- SLIDE 3: Service Selection --}}
-                <div class="carousel-item service-slide">
-                    <div class="question-slide">
-                        <h3 style="padding-bottom: 20px">Service Received / Serbisyong Natanggap:</h3>
-                        <div class="service-scroll-container">
-                            <div id="service-grid" class="service-scroll-panel">
-                                @foreach($services as $service)
-                                    <div class="service-item text-center" data-office-id="{{ $service->office_id }}" data-service-id="{{ $service->id }}" style="display: none;">
-                                        <label>
-                                            <input type="radio" name="problem_category_id" value="{{ $service->id }}" style="display:none;" required>
-                                            <div class="service-icon-box">
-                                                <x-heroicon-o-document-duplicate class="w-14 h-14 text-white-500" />
-                                                </div>
-                                            <span class="service-name">{{ $service->category_name }}</span>
-                                        </label>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                        <button type="button" class="btn btn-primary mt-3 go-back-btn-large" onclick="prevSlide()">Go Back</button>
-                    </div>
-                </div>
-                {{-- END: SLIDE 3 --}}
-
-                {{-- SLIDE 4: RESPONSIVENESS (Rating 1) --}}
-                <div class="carousel-item">
-                    <div class="question-slide">
-                        <h2>RESPONSIVENESS (PAGTUGON)</h2>
-                        <p>Willingness to help, assist, and provide prompt service.</p>
-                        <p>(Handang tumugon at magbigay nang mabilis na serbisyo.)</p>
-                        <br>
-                        <div class="d-flex flex-wrap justify-content-center">
-                            {{-- No 'true' parameter here, as it's NOT the last question --}}
-                            <label class="btn btn-outline-primary m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'responsiveness_rating', 'Very Dissatisfied')">
-                                <input type="radio" name="responsiveness_rating" value="Very Dissatisfied" style="display:none;" required>
-                                <span class="emoji-icon">😞</span>
-                                <span class="emoji-rating-text">Very Dissatisfied</span>
-                            </label>
-                            <label class="btn btn-outline-primary m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'responsiveness_rating', 'Dissatisfied')">
-                                <input type="radio" name="responsiveness_rating" value="Dissatisfied" style="display:none;">
-                                <span class="emoji-icon">🙁</span>
-                                <span class="emoji-rating-text">Dissatisfied</span>
-                            </label>
-                            <label class="btn btn-outline-primary m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'responsiveness_rating', 'Satisfied')">
-                                <input type="radio" name="responsiveness_rating" value="Satisfied" style="display:none;">
-                                <span class="emoji-icon">😊</span>
-                                <span class="emoji-rating-text">Satisfied</span>
-                            </label>
-                            <label class="btn btn-outline-primary m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'responsiveness_rating', 'Very Satisfied')">
-                                <input type="radio" name="responsiveness_rating" value="Very Satisfied" style="display:none;">
-                                <span class="emoji-icon">😁</span>
-                                <span class="emoji-rating-text">Very Satisfied</span>
-                            </label>
-                        </div>
-                        <button type="button" class="btn btn-primary mt-3 go-back-btn-large" onclick="prevSlide()">Go Back</button>
-                    </div>
-                </div>
-                {{-- END: SLIDE 4 --}}
-
-                {{-- SLIDE 5: TIMELINESS (Rating 2) --}}
-                <div class="carousel-item">
-                    <div class="question-slide">
-                        <h2>TIMELINESS (BILIS NG PAGTUGON)</h2>
-                        <p>Satisfaction with the timeliness of service/response to your needs.</p>
-                        <p>(Kontento sa bilis ng serbisyo/pagtugon sa iyong pangangailangan.)</p>
-                        <br>
-                        <div class="d-flex flex-wrap justify-content-center">
-                            {{-- No 'true' parameter here, as it's NOT the last question --}}
-                            <label class="btn btn-outline-primary m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'timeliness_rating', 'Very Dissatisfied')">
-                                <input type="radio" name="timeliness_rating" value="Very Dissatisfied" style="display:none;" required>
-                                <span class="emoji-icon">😞</span>
-                                <span class="emoji-rating-text">Very Dissatisfied</span>
-                            </label>
-                            <label class="btn btn-outline-primary m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'timeliness_rating', 'Dissatisfied')">
-                                <input type="radio" name="timeliness_rating" value="Dissatisfied" style="display:none;">
-                                <span class="emoji-icon">🙁</span>
-                                <span class="emoji-rating-text">Dissatisfied</span>
-                            </label>
-                            <label class="btn btn-outline-primary m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'timeliness_rating', 'Satisfied')">
-                                <input type="radio" name="timeliness_rating" value="Satisfied" style="display:none;">
-                                <span class="emoji-icon">😊</span>
-                                <span class="emoji-rating-text">Satisfied</span>
-                            </label>
-                            <label class="btn btn-outline-primary m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'timeliness_rating', 'Very Satisfied')">
-                                <input type="radio" name="timeliness_rating" value="Very Satisfied" style="display:none;">
-                                <span class="emoji-icon">😁</span>
-                                <span class="emoji-rating-text">Very Satisfied</span>
-                            </label>
-                        </div>
-                        <button type="button" class="btn btn-primary mt-3 go-back-btn-large" onclick="prevSlide()">Go Back</button>
-                    </div>
-                </div>
-                {{-- END: SLIDE 5 --}}
-
-                {{-- SLIDE 6: COMMUNICATION (Rating 3) - LAST RATING SLIDE --}}
-                <div class="carousel-item">
-                    <div class="question-slide">
-                        <h2>COMMUNICATION (PAKIKIPAG-USAP)</h2>
-                        <p>Act of keeping citizens informed in a language they can easily understand and delivered courteously.</p>
-                        <p>(Paggamit ng wika na madaling maunawaan at naipahayag ng magalang.)</p>
-                        <br>
-                        <div class="d-flex flex-wrap justify-content-center">
-                            {{-- ADDED 'true' parameter here for auto-submit --}}
-                            <label class="btn btn-outline-primary m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'communication_rating', 'Very Dissatisfied', true)">
-                                <input type="radio" name="communication_rating" value="Very Dissatisfied" style="display:none;" required>
-                                <span class="emoji-icon">😞</span>
-                                <span class="emoji-rating-text">Very Dissatisfied</span>
-                            </label>
-                            <label class="btn btn-outline-primary m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'communication_rating', 'Dissatisfied', true)">
-                                <input type="radio" name="communication_rating" value="Dissatisfied" style="display:none;">
-                                <span class="emoji-icon">🙁</span>
-                                <span class="emoji-rating-text">Dissatisfied</span>
-                            </label>
-                            <label class="btn btn-outline-primary m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'communication_rating', 'Satisfied', true)">
-                                <input type="radio" name="communication_rating" value="Satisfied" style="display:none;">
-                                <span class="emoji-icon">😊</span>
-                                <span class="emoji-rating-text">Satisfied</span>
-                            </label>
-                            <label class="btn btn-outline-primary m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'communication_rating', 'Very Satisfied', true)">
-                                <input type="radio" name="communication_rating" value="Very Satisfied" style="display:none;">
-                                <span class="emoji-icon">😁</span>
-                                <span class="emoji-rating-text">Very Satisfied</span>
-                            </label>
-                        </div>
-                        <button type="button" class="btn btn-primary mt-3 go-back-btn-large" onclick="prevSlide()">Go Back</button>
-                        {{-- REMOVED THE SUBMIT BUTTON FROM HERE --}}
-                    </div>
-                </div>
-                {{-- END: SLIDE 6 --}}
-
-                {{-- SLIDE 7: QR Code / Thank You Page --}}
-                <div class="carousel-item" id="qr-timeout-slide">
-                    <div class="question-slide">
-
-                        {{-- ADDED SUCCESS MESSAGE LOGIC HERE --}}
-                        @if(session('success'))
-                            <div id="success-message" class="alert alert-success" role="alert"
-                                style="background-color: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-top: 20px;">
-                                {{ session('success') }}
-                            </div>
-                        @endif
-                        {{-- END SUCCESS MESSAGE --}}
-
-                        <h3 style="padding: 50px">Scan the QR code to fill out the comments and suggestions form</h3>
-
-                        <div class="qr-code-container d-flex justify-content-center">
-                            {!! QrCode::size(350)->backgroundColor(255, 255, 255, 0)->generate('https://forms.gle/Tvmm2WmjHGNqteUD9') !!}
-                        </div>
-
-                        <br>
-
-                        <div class="mt-3">
-                            {{-- Button to go back to the first slide (by reloading the page) --}}
-                            <button type="button" class="btn btn-primary m-3 go-back-btn-large" onclick="window.location.reload()">Rate Again</button>
-                            {{-- REMOVED THE SUBMIT BUTTON --}}
-                        </div>
-                    </div>
-                </div>
-                {{-- END: SLIDE 7 --}}
-
-            </div>
+    <div class="container">
+        <div class="center-logo-container">
+            <image src="{{ asset('storage/assets/logo-with-seals.png') }}" alt="HRDO Logo">
         </div>
-    </form>
+        <h5>HUMAN RESOURCE DEVELOPMENT OFFICE</h5>
+        <h1>Customer Satisfaction Survey</h1>
 
-    <!-- Indicators -->
-    {{-- <div class="carousel-indicators">
-        <button type="button" data-bs-target="#surveyCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-        <button type="button" data-bs-target="#surveyCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-        <button type="button" data-bs-target="#surveyCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
-        <button type="button" data-bs-target="#surveyCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
-        <button type="button" data-bs-target="#surveyCarousel" data-bs-slide-to="4" aria-label="Slide 5"></button>
-        <button type="button" data-bs-target="#surveyCarousel" data-bs-slide-to="5" aria-label="Slide 6"></button>
-    </div> --}}
+        <form action="{{ route('survey.submit') }}" method="POST">
+            @csrf
 
-    <div class="carousel-indicators">
-        <button type="button" data-bs-target="#surveyCarousel" class="active" aria-current="true" aria-label="Slide 1"></button>
-        <button type="button" data-bs-target="#surveyCarousel" aria-label="Slide 2"></button>
-        <button type="button" data-bs-target="#surveyCarousel" aria-label="Slide 3"></button>
-        <button type="button" data-bs-target="#surveyCarousel" aria-label="Slide 4"></button>
-        <button type="button" data-bs-target="#surveyCarousel" aria-label="Slide 5"></button>
-        <button type="button" data-bs-target="#surveyCarousel" aria-label="Slide 6"></button>
-        <button type="button" data-bs-target="#surveyCarousel" aria-label="Slide 7"></button>
-    </div>
+            <div id="surveyCarousel" class="carousel slide" data-bs-ride="false" data-bs-interval="false">
+                <div class="carousel-inner">
+
+                    {{-- SLIDE 1: Division Selection --}}
+                    <div class="carousel-item active">
+                        <div class="question-slide">
+                            <h3 style="padding-bottom: 10px">Select Division / Pumili ng Dibisyon:</h3>
+                            <div class="filter-buttons division-buttons-grid">
+                                <button type="button" class="btn btn-all mb-3 division-btn active" data-office-id="all">ALL DIVISIONS</button>
+                                <button type="button" class="btn btn-it mb-3 division-btn" data-office-id="2">INFORMATION TECHNOLOGY</button>
+                                <button type="button" class="btn btn-admin mb-3 division-btn" data-office-id="3">ADMINISTRATIVE</button>
+                                <button type="button" class="btn btn-records mb-3 division-btn" data-office-id="5">RECORDS</button>
+                                <button type="button" class="btn btn-payroll mb-3 division-btn" data-office-id="4">PAYROLL</button>
+                                <button type="button" class="btn btn-claims mb-3 division-btn" data-office-id="6">CLAIMS & BENEFITS</button>
+                                <button type="button" class="btn btn-rsp mb-3 division-btn" data-office-id="7">RSP</button>
+                                <button type="button" class="btn btn-ld mb-3 division-btn" data-office-id="8">LEARNING & DEVELOPMENT</button>
+                                <button type="button" class="btn btn-pm mb-3 division-btn" data-office-id="9">PERFORMANCE MANAGEMENT</button>
+                            </div>
+                        </div>
+                    </div>
+                    {{-- END: SLIDE 1 --}}
+
+                    {{-- SLIDE 2: Staff Selection --}}
+                    <div class="carousel-item" id="staff-selection-slide">
+                        <div class="question-slide">
+                            <h3 style="padding: 50px">Attended by / Inasikaso ni:</h3>
+                            <div class="staff-scroll-container">
+                                <div class="staff-scroll-panel">
+                                    @foreach($staffs as $staff)
+                                        <div class="text-center staff-item" data-office-id="{{ $staff->office_id }}">
+                                            <label>
+                                                <input type="radio" name="user_id" value="{{ $staff->id }}" id="staff-{{ $staff->id }}" data-office-id="{{ $staff->office_id }}" style="display:none;" required>
+
+                                                {{-- START: Optimized Image Loading --}}
+                                                <picture>
+                                                    @if ($staff->getAvatarWebpUrl())
+                                                        <source srcset="{{ $staff->getAvatarWebpUrl() }}" type="image/webp">
+                                                    @endif
+                                                    <img src="{{ $staff->getAvatarUrl() }}"
+                                                        alt="{{ $staff->name }}'s profile picture"
+                                                        class="staff-avatar"
+                                                        loading="lazy">
+                                                </picture>
+                                                {{-- END: Optimized Image Loading --}}
+
+                                            </label>
+                                            <span class="staff-name">{{ $staff->name }}</span>
+                                            <span class="staff-nickname">"{{ $staff->nickname }}"</span>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-primary mt-3 go-back-btn-large" onclick="prevSlide()">Go Back</button>
+                        </div>
+                    </div>
+                    {{-- END: SLIDE 2 --}}
+
+                    {{-- SLIDE 3: Service Selection --}}
+                    <div class="carousel-item service-slide">
+                        <div class="question-slide">
+                            <h3 style="padding-bottom: 20px">Service Received / Serbisyong Natanggap:</h3>
+                            <div class="service-scroll-container">
+                                <div id="service-grid" class="service-scroll-panel">
+                                    @foreach($services as $service)
+                                        <div class="service-item text-center" data-office-id="{{ $service->office_id }}" data-service-id="{{ $service->id }}" style="display: none;">
+                                            <label>
+                                                <input type="radio" name="problem_category_id" value="{{ $service->id }}" style="display:none;" required>
+                                                <div class="service-icon-box">
+                                                    <x-heroicon-o-document-duplicate class="w-14 h-14 text-white-500" />
+                                                </div>
+                                                <span class="service-name">{{ $service->category_name }}</span>
+                                            </label>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-primary mt-3 go-back-btn-large" onclick="prevSlide()">Go Back</button>
+                        </div>
+                    </div>
+                    {{-- END: SLIDE 3 --}}
+
+                    <div class="carousel-item">
+                        <div class="question-slide">
+                            <h2>RESPONSIVENESS (PAGTUGON)</h2>
+                            <p>Willingness to help, assist, and provide prompt service.</p>
+                            <p>(Handang tumugon at magbigay nang mabilis na serbisyo.)</p>
+                            <br>
+                            <div class="d-flex flex-wrap justify-content-center">
+                                {{-- Very Dissatisfied (DANGER - RED) --}}
+                                <label class="rating-option m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'responsiveness_rating', 'Very Dissatisfied')">
+                                    <input type="radio" name="responsiveness_rating" value="Very Dissatisfied" style="display:none;" required>
+                                    <span class="emoji-icon">😞</span>
+                                    <span class="emoji-rating-text">Very Dissatisfied</span>
+                                </label>
+                                {{-- Dissatisfied (WARNING - ORANGE/YELLOW) --}}
+                                <label class="rating-option m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'responsiveness_rating', 'Dissatisfied')">
+                                    <input type="radio" name="responsiveness_rating" value="Dissatisfied" style="display:none;">
+                                    <span class="emoji-icon">🙁</span>
+                                    <span class="emoji-rating-text">Dissatisfied</span>
+                                </label>
+                                {{-- Satisfied (PRIMARY - BLUE) --}}
+                                <label class="rating-option m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'responsiveness_rating', 'Satisfied')">
+                                    <input type="radio" name="responsiveness_rating" value="Satisfied" style="display:none;">
+                                    <span class="emoji-icon">😊</span>
+                                    <span class="emoji-rating-text">Satisfied</span>
+                                </label>
+                                {{-- Very Satisfied (SUCCESS - GREEN) --}}
+                                <label class="rating-option m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'responsiveness_rating', 'Very Satisfied')">
+                                    <input type="radio" name="responsiveness_rating" value="Very Satisfied" style="display:none;">
+                                    <span class="emoji-icon">😁</span>
+                                    <span class="emoji-rating-text">Very Satisfied</span>
+                                </label>
+                            </div>
+                            <button type="button" class="btn btn-primary mt-4 go-back-btn-large" onclick="prevSlide()">Go Back</button>
+                        </div>
+                    </div>
+                    {{-- END: SLIDE 4 --}}
+
+                    {{-- SLIDE 5: TIMELINESS (Rating 2) --}}
+                    <div class="carousel-item">
+                        <div class="question-slide">
+                            <h2>TIMELINESS (BILIS NG PAGTUGON)</h2>
+                            <p>Satisfaction with the timeliness of service/response to your needs.</p>
+                            <p>(Kontento sa bilis ng serbisyo/pagtugon sa iyong pangangailangan.)</p>
+                            <br>
+                            <div class="d-flex flex-wrap justify-content-center">
+                                {{-- Very Dissatisfied (DANGER - RED) --}}
+                                <label class="rating-option m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'timeliness_rating', 'Very Dissatisfied')">
+                                    <input type="radio" name="timeliness_rating" value="Very Dissatisfied" style="display:none;" required>
+                                    <span class="emoji-icon">😞</span>
+                                    <span class="emoji-rating-text">Very Dissatisfied</span>
+                                </label>
+                                {{-- Dissatisfied (WARNING - ORANGE/YELLOW) --}}
+                                <label class="rating-option m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'timeliness_rating', 'Dissatisfied')">
+                                    <input type="radio" name="timeliness_rating" value="Dissatisfied" style="display:none;">
+                                    <span class="emoji-icon">🙁</span>
+                                    <span class="emoji-rating-text">Dissatisfied</span>
+                                </label>
+                                {{-- Satisfied (PRIMARY - BLUE) --}}
+                                <label class="rating-option m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'timeliness_rating', 'Satisfied')">
+                                    <input type="radio" name="timeliness_rating" value="Satisfied" style="display:none;">
+                                    <span class="emoji-icon">😊</span>
+                                    <span class="emoji-rating-text">Satisfied</span>
+                                </label>
+                                {{-- Very Satisfied (SUCCESS - GREEN) --}}
+                                <label class="rating-option m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'timeliness_rating', 'Very Satisfied')">
+                                    <input type="radio" name="timeliness_rating" value="Very Satisfied" style="display:none;">
+                                    <span class="emoji-icon">😁</span>
+                                    <span class="emoji-rating-text">Very Satisfied</span>
+                                </label>
+                            </div>
+                            <button type="button" class="btn btn-primary mt-4 go-back-btn-large" onclick="prevSlide()">Go Back</button>
+                        </div>
+                    </div>
+                    {{-- END: SLIDE 5 --}}
+
+                    {{-- SLIDE 6: COMMUNICATION (Rating 3) - LAST RATING SLIDE --}}
+                    <div class="carousel-item">
+                        <div class="question-slide">
+                            <h2>COMMUNICATION (PAKIKIPAG-USAP)</h2>
+                            <p>Act of keeping citizens informed in a language they can easily understand and delivered courteously.</p>
+                            <p>(Paggamit ng wika na madaling maunawaan at naipahayag ng magalang.)</p>
+                            <br>
+                            <div class="d-flex flex-wrap justify-content-center">
+                                {{-- ADDED 'true' parameter here for auto-submit --}}
+                                {{-- Very Dissatisfied (DANGER - RED) --}}
+                                <label class="rating-option m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'communication_rating', 'Very Dissatisfied', true)">
+                                    <input type="radio" name="communication_rating" value="Very Dissatisfied" style="display:none;" required>
+                                    <span class="emoji-icon">😞</span>
+                                    <span class="emoji-rating-text">Very Dissatisfied</span>
+                                </label>
+                                {{-- Dissatisfied (WARNING - ORANGE/YELLOW) --}}
+                                <label class="rating-option m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'communication_rating', 'Dissatisfied', true)">
+                                    <input type="radio" name="communication_rating" value="Dissatisfied" style="display:none;">
+                                    <span class="emoji-icon">🙁</span>
+                                    <span class="emoji-rating-text">Dissatisfied</span>
+                                </label>
+                                {{-- Satisfied (PRIMARY - BLUE) --}}
+                                <label class="rating-option m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'communication_rating', 'Satisfied', true)">
+                                    <input type="radio" name="communication_rating" value="Satisfied" style="display:none;">
+                                    <span class="emoji-icon">😊</span>
+                                    <span class="emoji-rating-text">Satisfied</span>
+                                </label>
+                                {{-- Very Satisfied (SUCCESS - GREEN) --}}
+                                <label class="rating-option m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'communication_rating', 'Very Satisfied', true)">
+                                    <input type="radio" name="communication_rating" value="Very Satisfied" style="display:none;">
+                                    <span class="emoji-icon">😁</span>
+                                    <span class="emoji-rating-text">Very Satisfied</span>
+                                </label>
+                            </div>
+                            <button type="button" class="btn btn-primary mt-4 go-back-btn-large" onclick="prevSlide()">Go Back</button>
+                        </div>
+                    </div>
+                    {{-- END: SLIDE 6 --}}
+
+                    {{-- SLIDE 7: QR Code / Thank You Page --}}
+                    <div class="carousel-item" id="qr-timeout-slide">
+                        <div class="question-slide">
+
+                            {{-- ADDED SUCCESS MESSAGE LOGIC HERE --}}
+                            @if(session('success'))
+                                <div id="success-message" class="alert alert-success" role="alert"
+                                    style="background-color: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-top: 20px;">
+                                    {{ session('success') }}
+                                </div>
+                            @endif
+                            {{-- END SUCCESS MESSAGE --}}
+
+                            <h3 style="padding: 50px">Scan the QR code to fill out the comments and suggestions form</h3>
+
+                            <div class="qr-code-container d-flex justify-content-center">
+                                {!! QrCode::size(350)->backgroundColor(255, 255, 255, 0)->generate('https://forms.gle/Tvmm2WmjHGNqteUD9') !!}
+                            </div>
+
+                            <br>
+
+                            <div class="mt-3">
+                                {{-- Button to go back to the first slide (by reloading the page) --}}
+                                <button type="button" class="btn btn-primary m-3 go-back-btn-large" onclick="window.location.reload()">Rate Again</button>
+                                {{-- REMOVED THE SUBMIT BUTTON --}}
+                            </div>
+                        </div>
+                    </div>
+                    {{-- END: SLIDE 7 --}}
+
+                </div>
+            </div>
+        </form>
+
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#surveyCarousel" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#surveyCarousel" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#surveyCarousel" aria-label="Slide 3"></button>
+            <button type="button" data-bs-target="#surveyCarousel" aria-label="Slide 4"></button>
+            <button type="button" data-bs-target="#surveyCarousel" aria-label="Slide 5"></button>
+            <button type="button" data-bs-target="#surveyCarousel" aria-label="Slide 6"></button>
+            <button type="button" data-bs-target="#surveyCarousel" aria-label="Slide 7"></button>
+        </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -270,7 +687,6 @@
 <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 <script>
     const surveyCarouselEl = document.getElementById('surveyCarousel');
-    // Ensure the carousel instance is accessible globally for nextSlide/prevSlide
     const surveyCarousel = new bootstrap.Carousel(surveyCarouselEl, {
         touch: false,
         interval: false
@@ -282,6 +698,7 @@
 
     function prevSlide() {
         surveyCarousel.prev();
+        $('.rating-option').removeClass('active');
     }
 
     function submitForm() {
@@ -289,34 +706,46 @@
         form.submit();
     }
 
-function selectRating(selectedLabel, inputName, value, isLastQuestion = false) {
-    // 1. Handle Active State
-    var container = selectedLabel.closest('.d-flex');
-    var labels = container.querySelectorAll('label');
-    labels.forEach(function(label) {
-        // Remove the 'active' class from all buttons in the group
-        label.classList.remove('active');
-    });
+    function selectRating(selectedLabel, inputName, value, isLastQuestion = false) {
+        var container = selectedLabel.closest('.d-flex');
 
-    // 2. Set the clicked button as active and check the radio input
-    selectedLabel.classList.add('active');
-    var input = selectedLabel.querySelector('input[name="' + inputName + '"]');
-    if (input) {
-        input.checked = true;
+        // Target the new class: rating-option
+        var labels = container.querySelectorAll('label.rating-option');
+
+        labels.forEach(function(label) {
+            label.classList.remove('active');
+        });
+
+        selectedLabel.classList.add('active');
+
+        var input = selectedLabel.querySelector('input[type="radio"]');
+        if (input) {
+            input.checked = true;
+        }
+
+        nextSlide();
+
+        if (isLastQuestion) {
+            setTimeout(function() {
+                submitForm();
+            }, 400);
+        }
     }
 
-    // 3. Always transition to the next slide first
-    // This moves the user to the next rating question or the final QR slide.
-    nextSlide();
+    function reActivateRating(slideElement) {
+        const $slide = $(slideElement);
+        // Find the checked radio button within the current slide
+        const $checkedInput = $slide.find('input[type="radio"]:checked');
 
-    // 4. Submission Logic (only for the last rating question)
-    if (isLastQuestion) {
-        // Wait 400ms for the slide transition to complete visually, then submit the form.
-        setTimeout(function() {
-            submitForm();
-        }, 400); // 400ms is a safe delay for a smooth transition
+        // Remove active class from all options in this slide first
+        $slide.find('label.rating-option').removeClass('active');
+
+        if ($checkedInput.length) {
+            // Find the label associated with the checked radio button and apply 'active' class
+            // .closest() finds the nearest ancestor with the selector.
+            $checkedInput.closest('label.rating-option').addClass('active');
+        }
     }
-}
 
     $(document).ready(function() {
 
@@ -421,10 +850,13 @@ function selectRating(selectedLabel, inputName, value, isLastQuestion = false) {
 
             // 2. Service Filtering Fallback (on slide to Service Selection)
             if ($relatedTarget.hasClass('service-slide')) {
-                 $('input[name="user_id"]:checked').trigger('change');
+                $('input[name="user_id"]:checked').trigger('change');
             }
 
-            // 3. Update Indicators (This remains the same)
+            // 🌟 3. NEW: Re-activate the visual rating state on the slide we just landed on (e.relatedTarget) 🌟
+            reActivateRating(e.relatedTarget);
+
+            // 4. Update Indicators (This remains the same)
             const indicators = document.querySelectorAll('.carousel-indicators button');
             indicators.forEach((indicator, index) => {
                 indicator.classList.remove('active');
@@ -436,7 +868,7 @@ function selectRating(selectedLabel, inputName, value, isLastQuestion = false) {
             });
         });
 
-        // Auto-hide success message after 3 seconds
+        // Auto-hide success message after 5 seconds
         setTimeout(() => {
             $('#success-message').fadeOut('slow');
         }, 5000);
@@ -445,7 +877,7 @@ function selectRating(selectedLabel, inputName, value, isLastQuestion = false) {
     document.addEventListener('DOMContentLoaded', function() {
         const surveyCarousel = document.getElementById('surveyCarousel');
         const qrSlide = document.getElementById('qr-timeout-slide');
-        let timeoutId; // Variable to hold the timer ID
+        let timeoutId;
 
         if (surveyCarousel && qrSlide) {
             // 1. Listen for the Bootstrap Carousel slide event
@@ -473,10 +905,9 @@ function selectRating(selectedLabel, inputName, value, isLastQuestion = false) {
     });
 
     document.addEventListener('DOMContentLoaded', function() {
-        const QR_SLIDE_INDEX = 6; // Slide 7 is index 6
+        const QR_SLIDE_INDEX = 6;
         const urlParams = new URLSearchParams(window.location.search);
 
-        // Check if the 'thank_you=1' parameter exists in the URL
         if (urlParams.has('thank_you') && surveyCarouselEl) {
             // Remove the query parameter from the URL bar for cleanliness
             // This stops the browser from defaulting back to the QR page if the user hits refresh manually
@@ -488,11 +919,8 @@ function selectRating(selectedLabel, inputName, value, isLastQuestion = false) {
                 surveyCarousel.to(QR_SLIDE_INDEX);
             }, 100); // Small delay to ensure carousel is fully initialized
         }
-
-        // Your existing DOMContentLoaded timer logic is below,
-        // and it will now correctly fire the 3-minute timer
-        // once the 'slid.bs.carousel' event is triggered by the .to(6) call.
     });
 </script>
 </body>
 </html>
+

@@ -22,11 +22,14 @@ class SurveyRateCounter extends Component implements HasTable, HasForms
 
     protected function getTableQuery(): Builder
     {
-        return User::query()->where('role', User::ROLE_STAFF)
-            ->orWhere(function ($query) {
-                $query->where('role', User::ROLE_DIVISION_HEAD)
-                    ->where('department_id', 1);
-            });
+        return User::query()
+                ->where(function (Builder $query) {
+                    $query->where('role', User::ROLE_STAFF)
+                        ->orWhere(function (Builder $query) {
+                            $query->where('role', User::ROLE_DIVISION_HEAD)
+                                ->where('department_id', 1); // Only for a specific department
+                        });
+                });
     }
 
     protected array $ratingCounts = [];
@@ -114,23 +117,18 @@ class SurveyRateCounter extends Component implements HasTable, HasForms
                     ->label('Staff Name')
                     ->searchable()
                     ->sortable(),
-
                 TextColumn::make('surveys_count')
                     ->label('Total Surveys')
                     ->counts('surveys'),
-
                 TextColumn::make('very_dissatisfied_count')
                     ->label('Very Dissatisfied')
                     ->getStateUsing(fn (User $record) => $this->ratingCounts[$record->id]['very_dissatisfied_count'] ?? 0),
-
                 TextColumn::make('dissatisfied_count')
                     ->label('Dissatisfied')
                     ->getStateUsing(fn (User $record) => $this->ratingCounts[$record->id]['dissatisfied_count'] ?? 0),
-
                 TextColumn::make('satisfied_count')
                     ->label('Satisfied')
                     ->getStateUsing(fn (User $record) => $this->ratingCounts[$record->id]['satisfied_count'] ?? 0),
-
                 TextColumn::make('very_satisfied_count')
                     ->label('Very Satisfied')
                     ->getStateUsing(fn (User $record) => $this->ratingCounts[$record->id]['very_satisfied_count'] ?? 0),
