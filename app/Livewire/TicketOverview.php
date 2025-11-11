@@ -17,6 +17,7 @@ use Livewire\Component;
 use Filament\Support\Contracts\TranslatableContentDriver;
 use Illuminate\Support\Facades\Auth;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter; // Added for the new filter
 use Illuminate\Database\Eloquent\Builder;
 
 class TicketOverview extends Component implements HasTable, HasForms
@@ -33,7 +34,7 @@ class TicketOverview extends Component implements HasTable, HasForms
     protected function getTableQuery(): Builder
     {
         $query = ProblemCategory::query()
-            ->withCount('tickets');
+            ->withCount('tickets'); // Ensure we count tickets for the filter
 
         $user = Auth::user();
 
@@ -83,6 +84,20 @@ class TicketOverview extends Component implements HasTable, HasForms
                     ->sortable(false),
             ])
             ->filters([
+                // NEW: Filter to exclude Problem Categories with zero tickets
+                TernaryFilter::make('has_tickets')
+                    ->label('Tickets > 0')
+                    ->placeholder('Show All Issue Categories')
+                    ->trueLabel('Only show issue categories with tickets')
+                    ->falseLabel('Show issue categories with 0 tickets')
+                    ->queries(
+                        // Use `has` to filter for categories that have tickets
+                        true: fn (Builder $query) => $query->has('tickets'),
+                        // Use `doesntHave` to filter for categories that have zero tickets
+                        false: fn (Builder $query) => $query->doesntHave('tickets'),
+                        // null: Show all (default)
+                    ),
+
                 SelectFilter::make('office_id') // Name matches the public property for default value
                     ->label('Division')
                     ->multiple(false) // Changed to false, as you mentioned "selected division" (singular)
@@ -118,40 +133,4 @@ class TicketOverview extends Component implements HasTable, HasForms
     {
         return [];
     }
-
-    // public function render()
-    // {
-    //     // These can be fetched here if needed for other sections of the view
-    //     $userActivities = User::with(['department', 'office'])
-    //         ->where('department_id', 1)
-    //         ->where('role', '!=', 4)
-    //         ->get();
-
-    //     $divisions = Office::where('department_id', 1)
-    //         ->with(['problemCategories' => function ($query) {
-    //             $query->withCount('tickets');
-    //         }])
-    //         ->get();
-
-    //     foreach ($divisions as $division) {
-    //         foreach ($division->problemCategories as $category) {
-    //             $seconds = Ticket::where('problem_category_id', $category->id)
-    //                 ->whereNotNull('resolved_at')
-    //                 ->avg(DB::raw('TIMESTAMPDIFF(SECOND, created_at, resolved_at)'));
-
-    //             if ($seconds) {
-    //                 $hours = floor($seconds / 3600);
-    //                 $minutes = floor(($seconds % 3600) / 60);
-    //                 $category->average_resolve_time = "{$hours}h {$minutes}m";
-    //             } else {
-    //                 $category->average_resolve_time = 'N/A';
-    //             }
-    //         }
-    //     }
-
-    //     return view('livewire.ticket-overview', [
-    //         'userActivities' => $userActivities,
-    //         'divisionsData' => $divisions,
-    //     ]);
-    // }
 }

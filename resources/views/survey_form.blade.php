@@ -433,7 +433,7 @@
     </video>
 
     <div class="container">
-        <div class="center-logo-container">
+        <div class="center-logo-container" preload="auto">
             <image src="{{ asset('storage/assets/logo-with-seals.png') }}" alt="HRDO Logo">
         </div>
         <h5>HUMAN RESOURCE DEVELOPMENT OFFICE</h5>

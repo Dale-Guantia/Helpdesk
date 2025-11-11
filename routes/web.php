@@ -22,6 +22,8 @@ Route::get('/submit_ticket', [TicketController::class, 'create'])->name('ticket_
 Route::post('/submit_ticket', [TicketController::class, 'store'])->name('ticket_store');
 Route::get('/problem_categories/{office}', [TicketController::class, 'getCategories']);
 Route::get('/download/report', [ReportController::class, 'report'])->name('download_report');
+// NEW ROUTE for CSS Report
+Route::get('/download/css-report', [ReportController::class, 'cssReport'])->name('download_css_report');
 
 // // Show verification notice
 // Route::get('/email/verify', function () {
