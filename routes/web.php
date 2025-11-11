@@ -17,13 +17,13 @@ Route::get('/', function () {
 Route::get('/survey', [SurveyController::class, 'showForm'])->name('survey.form');
 Route::post('/survey', [SurveyController::class, 'submitForm'])->name('survey.submit');
 
-
-Route::get('/submit_ticket', [TicketController::class, 'create'])->name('ticket_create');
-Route::post('/submit_ticket', [TicketController::class, 'store'])->name('ticket_store');
-Route::get('/problem_categories/{office}', [TicketController::class, 'getCategories']);
 Route::get('/download/report', [ReportController::class, 'report'])->name('download_report');
-// NEW ROUTE for CSS Report
 Route::get('/download/css-report', [ReportController::class, 'cssReport'])->name('download_css_report');
+
+
+// Route::get('/submit_ticket', [TicketController::class, 'create'])->name('ticket_create');
+// Route::post('/submit_ticket', [TicketController::class, 'store'])->name('ticket_store');
+// Route::get('/problem_categories/{office}', [TicketController::class, 'getCategories']);
 
 // // Show verification notice
 // Route::get('/email/verify', function () {
