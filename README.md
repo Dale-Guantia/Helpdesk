@@ -28,8 +28,6 @@ cp .env.example .env
 ```
 
 Install PHP dependencies:
-
-Note: Before running composer install, make sure the folder name Widgets under App\Filament\Widgets starts with a capital "W" (i.e., **Widgets**, not widgets).
 ```bash
 composer install
 ```
