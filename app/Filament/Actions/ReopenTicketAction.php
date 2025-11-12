@@ -7,6 +7,7 @@ use Filament\Notifications\Notification;
 use App\Models\Ticket;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Illuminate\Support\Carbon;
 
 class ReopenTicketAction extends Action
 {
@@ -36,6 +37,7 @@ class ReopenTicketAction extends Action
                 $record->status_id = Ticket::STATUS_REOPENED; // Use your new "Reopened" status ID
                 $record->resolved_at = null; // Clear resolved_at timestamp
                 $record->resolved_by = null; // Clear resolved_by when reopened
+                $record->reopened_at = Carbon::now();
                 $record->save();
 
                 // Add an automatic comment for reopening

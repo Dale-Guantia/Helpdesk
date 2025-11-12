@@ -11,6 +11,7 @@ use Filament\Notifications\Actions\Action;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Prunable;
+use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Ticket extends Model
@@ -35,30 +36,23 @@ class Ticket extends Model
 
     public function isResolved()
     {
-        return $this->role === self::STATUS_PENDING;
+        return $this->status_id === self::STATUS_RESOLVED;
     }
 
     public function isPending()
     {
-        return $this->role === self::STATUS_RESOLVED;
+        return $this->status_id === self::STATUS_PENDING;
     }
 
     public function isUnassigned()
     {
-        return $this->role === self::STATUS_UNASSIGNED;
+        return $this->status_id === self::STATUS_UNASSIGNED;
     }
 
     public function isReopened()
     {
-        return $this->role === self::STATUS_REOPENED;
+        return $this->status_id === self::STATUS_REOPENED;
     }
-
-    public function prunable()
-    {
-        // delete if created_at is older than 6 months
-        return static::where('created_at', '<', now()->subMonths(6));
-    }
-
 
     protected $table = 'tickets';
 
@@ -78,13 +72,123 @@ class Ticket extends Model
         'guest_lastName',
         'resolved_at',
         'resolved_by',
+        'reopened_at',
         'assigned_to_user_id',
     ];
 
     protected $casts = [
         'attachment' => 'array',
         'resolved_at' => 'datetime',
+        'reopened_at' => 'datetime',
     ];
+
+    public function prunable()
+    {
+        // delete if created_at is older than 6 months
+        return static::where('created_at', '<', now()->subMonths(6));
+    }
+
+    public function getOverdueBasisDate(): ?Carbon
+    {
+        // Reopened tickets (still active)
+        if ($this->isReopened() && $this->reopened_at) {
+            return Carbon::parse($this->reopened_at);
+        }
+
+        // Pending or unassigned tickets
+        if ($this->isPending() || $this->isUnassigned()) {
+            return Carbon::parse($this->created_at);
+        }
+
+        // Resolved tickets always reference created_at by default
+        if ($this->isResolved()) {
+            return Carbon::parse($this->created_at);
+        }
+
+        return null;
+    }
+
+    public function isOverdue(): bool
+    {
+        // --- CASE 5: Reopened then Resolved ---
+        if ($this->isResolved() && $this->reopened_at && $this->resolved_at) {
+            $diffInDays = Carbon::parse($this->reopened_at)
+                ->diffInDays(Carbon::parse($this->resolved_at));
+            return $diffInDays >= 3;
+        }
+
+        // --- CASE 4: Resolved (no reopened_at) ---
+        if ($this->isResolved() && $this->resolved_at) {
+            $diffInDays = Carbon::parse($this->created_at)
+                ->diffInDays(Carbon::parse($this->resolved_at));
+            return $diffInDays > 3;
+        }
+
+        // --- CASE 3: Reopened (still active) ---
+        if ($this->isReopened() && $this->reopened_at) {
+            return Carbon::parse($this->reopened_at)->diffInDays(now()) >= 3;
+        }
+
+        // --- CASE 1 & 2: Pending / Unassigned ---
+        if ($this->isPending() || $this->isUnassigned()) {
+            return Carbon::parse($this->created_at)->diffInDays(now()) >= 3;
+        }
+
+        return false;
+    }
+
+    public function getOverdueStatusAttribute(): string
+    {
+        $now = now();
+
+        // --- CASE 5: Reopened then Resolved ---
+        if ($this->isResolved() && $this->reopened_at && $this->resolved_at) {
+            $reopenedAt = Carbon::parse($this->reopened_at);
+            $resolvedAt = Carbon::parse($this->resolved_at);
+            $diffInDays = $reopenedAt->diffInDays($resolvedAt);
+
+            return $diffInDays >= 3 ? 'Overdue' : 'On Track';
+        }
+
+        // --- CASE 4: Resolved ---
+        if ($this->isResolved() && $this->resolved_at) {
+            $resolvedAt = Carbon::parse($this->resolved_at);
+            $createdAt = Carbon::parse($this->created_at);
+            $diffInDays = $createdAt->diffInDays($resolvedAt);
+
+            return $diffInDays > 3 ? 'Overdue' : 'On Track';
+        }
+
+        // --- CASE 3: Reopened (still active) ---
+        if ($this->isReopened() && $this->reopened_at) {
+            if ($this->isOverdue()) {
+                return 'Overdue';
+            }
+
+            $basisDate = Carbon::parse($this->reopened_at);
+            $dueDate = $basisDate->copy()->addDays(3);
+            $diff = $now->diff($dueDate);
+
+            return "Due in {$diff->d} day" . ($diff->d !== 1 ? 's' : '') .
+                " {$diff->h} hr" . ($diff->h !== 1 ? 's' : '');
+        }
+
+        // --- CASE 1 & 2: Pending / Unassigned ---
+        if ($this->isPending() || $this->isUnassigned()) {
+            if ($this->isOverdue()) {
+                return 'Overdue';
+            }
+
+            $basisDate = Carbon::parse($this->created_at);
+            $dueDate = $basisDate->copy()->addDays(3);
+            $diff = $now->diff($dueDate);
+
+            return "Due in {$diff->d} day" . ($diff->d !== 1 ? 's' : '') .
+                " {$diff->h} hr" . ($diff->h !== 1 ? 's' : '');
+        }
+
+        return 'N/A';
+    }
 
     protected static function booted()
     {

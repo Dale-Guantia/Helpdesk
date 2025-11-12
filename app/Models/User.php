@@ -124,6 +124,34 @@ class User extends Authenticatable implements FilamentUser, HasAvatar //MustVeri
         ];
     }
 
+    public function overdueTickets()
+    {
+        return $this->hasMany(Ticket::class, 'assigned_to_user_id')
+            ->where(function ($query) {
+                $query->where(function ($q) {
+                    // Pending / Unassigned overdue
+                    $q->whereIn('status_id', [Ticket::STATUS_PENDING, Ticket::STATUS_UNASSIGNED])
+                    ->whereRaw('DATEDIFF(NOW(), created_at) >= 3');
+                })
+                ->orWhere(function ($q) {
+                    // Reopened overdue
+                    $q->where('status_id', Ticket::STATUS_REOPENED)
+                    ->whereRaw('DATEDIFF(NOW(), reopened_at) >= 3');
+                })
+                ->orWhere(function ($q) {
+                    // Resolved after 3 days (created -> resolved)
+                    $q->where('status_id', Ticket::STATUS_RESOLVED)
+                    ->whereRaw('DATEDIFF(resolved_at, created_at) > 3');
+                })
+                ->orWhere(function ($q) {
+                    // Reopened → Resolved after 3 days (reopened -> resolved)
+                    $q->where('status_id', Ticket::STATUS_RESOLVED)
+                    ->whereNotNull('reopened_at')
+                    ->whereRaw('DATEDIFF(resolved_at, reopened_at) >= 3');
+                });
+            });
+    }
+
     public function getAvatarUrl()
     {
         if ($this->avatar_url && Storage::disk('public')->exists($this->avatar_url)) {

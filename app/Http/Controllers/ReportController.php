@@ -31,18 +31,47 @@ class ReportController extends Controller
         $userActivities = User::with(['department', 'office'])
             ->where('department_id', 1)
             ->where('role', '!=', 4) // Assuming role 4 is not an agent
-            ->withCount(['resolvedTickets' => function ($query) use ($startDate, $endDate) {
-                // Filter the tickets by their 'resolved_at' timestamp within the given range
-                $query->when($startDate, fn($q) => $q->where('resolved_at', '>=', $startDate))
-                      ->when($endDate, fn($q) => $q->where('resolved_at', '<=', $endDate));
-            }])
+            ->withCount([
+                'resolvedTickets' => function ($query) use ($startDate, $endDate) {
+                    $query->when($startDate, fn($q) => $q->where('resolved_at', '>=', $startDate))
+                        ->when($endDate, fn($q) => $q->where('resolved_at', '<=', $endDate));
+                },
+                'overdueTickets' => function ($query) use ($startDate, $endDate) {
+                    $query->where(function ($q) {
+                        // Only tickets not resolved yet, or resolved after 3 days
+                        $q->whereIn('status_id', [Ticket::STATUS_PENDING, Ticket::STATUS_UNASSIGNED, Ticket::STATUS_REOPENED])
+                        ->orWhere(function ($q2) {
+                            $q2->where('status_id', Ticket::STATUS_RESOLVED)
+                                ->whereRaw('DATEDIFF(resolved_at, created_at) > 3');
+                        })
+                        ->orWhere(function ($q3) {
+                            $q3->where('status_id', Ticket::STATUS_RESOLVED)
+                                ->whereNotNull('reopened_at')
+                                ->whereRaw('DATEDIFF(resolved_at, reopened_at) >= 3');
+                        });
+                    })
+                    ->when($startDate, fn($q) =>
+                        $q->where(function ($inner) use ($startDate) {
+                            $inner->where('created_at', '>=', $startDate)
+                                ->orWhere('resolved_at', '>=', $startDate)
+                                ->orWhere('reopened_at', '>=', $startDate);
+                        })
+                    )
+                    ->when($endDate, fn($q) =>
+                        $q->where(function ($inner) use ($endDate) {
+                            $inner->where('created_at', '<=', $endDate)
+                                ->orWhere('resolved_at', '<=', $endDate)
+                                ->orWhere('reopened_at', '<=', $endDate);
+                        })
+                    );
+                },
+            ])
             ->get();
 
         // Filter out users who have no resolved tickets in the selected date range
-
         if (!$includeZeroTickets) {
             $userActivities = $userActivities
-            ->filter(fn ($user) => $user->resolved_tickets_count > 0)
+            ->filter(fn ($user) => $user->resolved_tickets_count > 0 || $user->overdue_tickets_count > 0)
             ->values();
         }
 

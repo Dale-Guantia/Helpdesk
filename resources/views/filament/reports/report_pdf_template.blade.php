@@ -129,6 +129,7 @@
                 <th>Name</th>
                 <th>Division</th>
                 <th>Resolved Tickets</th>
+                <th>Overdue Tickets</th>
             </tr>
         </thead>
         <tbody>
@@ -138,6 +139,7 @@
                     <td>{{ $user->name }}</td>
                     <td>{{ $user->office->office_name ?? 'N/A' }}</td>
                     <td>{{ $user->resolved_tickets_count }}</td>
+                    <td>{{ $user->overdue_tickets_count }}</td>
                 </tr>
             @empty
                 <tr>

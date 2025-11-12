@@ -30,6 +30,7 @@ return new class extends Migration
             $table->timestamps();
             $table->timestamp('resolved_at')->nullable();
             $table->foreignId('resolved_by')->nullable()->constrained('users');
+            $table->timestamp('reopened_at')->nullable();
             $table->foreignId('assigned_to_user_id')->nullable()->constrained('users');
             $table->softDeletes();
         });

@@ -1,0 +1,2 @@
+UPDATE users
+SET avatar_url = CONCAT('avatars/', emp_no, '.webp');

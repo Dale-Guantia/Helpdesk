@@ -340,7 +340,6 @@ class TicketResource extends Resource
                     ->label('Issue Description')
                     ->default('N/A')
                     ->searchable()
-                    ->sortable()
                     ->limit(20)
                     ->copyable()
                     ->tooltip(function ($record) {
@@ -362,8 +361,7 @@ class TicketResource extends Resource
                     ->default('N/A')
                     ->badge()
                     ->color(fn ($record): string => $record->priority->badge_color ?? 'secondary')
-                    ->searchable()
-                    ->sortable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('status_id')
                     ->label('Status')
                     ->badge()
@@ -374,8 +372,32 @@ class TicketResource extends Resource
                         Ticket::STATUS_UNASSIGNED => 'gray',
                         Ticket::STATUS_REOPENED => 'primary',
                         default => 'secondary',
-                    })
-                    ->sortable(),
+                    }),
+                Tables\Columns\TextColumn::make('overdue_status')
+                    ->label('Overdue')
+                    ->badge()
+                    ->color(function (Ticket $record): string {
+                        // All overdue = red
+                        if ($record->isOverdue()) {
+                            return 'danger';
+                        }
+
+                        // On Track (resolved on time)
+                        if ($record->isResolved() && !$record->isOverdue()) {
+                            return 'success';
+                        }
+
+                        // Pending, Unassigned, or Reopened (active, not overdue)
+                        if (in_array($record->status_id, [
+                            Ticket::STATUS_PENDING,
+                            Ticket::STATUS_UNASSIGNED,
+                            Ticket::STATUS_REOPENED,
+                        ])) {
+                            return 'warning';
+                        }
+
+                        return 'secondary';
+                    }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Created At')
                     ->dateTime()
