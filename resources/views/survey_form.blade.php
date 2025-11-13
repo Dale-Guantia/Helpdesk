@@ -60,10 +60,11 @@
             padding: 20px;
             flex-wrap: wrap;
         }
-        .center-logo-container img {
+        .center-logo-container picture img {
             max-width: 300px;
-            width: 80%;
+            width: 100%;
             height: auto;
+            display: block;
         }
         .carousel-item {
             min-height: 400px;
@@ -94,7 +95,7 @@
             align-items: center;
         }
         .emoji-icon {
-            font-size: 12rem;
+            font-size: 11.5rem;
         }
         .emoji-rating-text {
             margin-top: -35px;
@@ -272,8 +273,7 @@
             transition: all 0.2s ease-in-out;
         }
         .service-icon-box {
-            background-color: #007bff;
-            color: white;
+            color: #000;
             width: 100px; /* Slightly smaller box for tighter grid */
             height: 100px;
             border-radius: 12px;
@@ -282,6 +282,7 @@
             justify-content: center;
             margin: 0 auto 8px;
             cursor: pointer;
+            border: #000 2px solid;
         }
         /* CONTAINER: Set up the grid and center it */
         .division-buttons-grid {
@@ -303,7 +304,7 @@
         /* Base style overrides for custom buttons */
         .division-buttons-grid .btn {
             color: #000; /* Ensure text is white for contrast */
-            border: none;
+            border: #000 2px solid;
             font-weight: 600;
             transition: background-color 0.2s, box-shadow 0.2s;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -311,63 +312,44 @@
         /* Division 1: All Divisions (Neutral/Default) */
         .division-buttons-grid .btn-all {
             background-color: #57A2F8;
-            border: #000 2px solid;
-            /* text-shadow: #000 2px 3px 0px; */
         }
         /* Division 2: Information Technology */
         .division-buttons-grid .btn-it {
             background-color: #6b757d;
-            border: #000 2px solid;
-            /* text-shadow: #000 2px 3px 0px; */
         }
         /* Division 3: Administrative */
         .division-buttons-grid .btn-admin {
             background-color: #FF4949;
-            border: #000 2px solid;
-            /* text-shadow: #000 2px 3px 0px; */
         }
         /* Division 4: Payroll */
         .division-buttons-grid .btn-payroll {
             background-color: #50FFB6;
-            border: #000 2px solid;
-            /* text-shadow: #000 2px 3px 0px; */
         }
         /* Division 5: Records */
         .division-buttons-grid .btn-records {
             background-color: #D050FF;
-            border: #000 2px solid;
-            /* text-shadow: #000 2px 3px 0px; */
         }
         /* Division 6: Claims and Benefits */
         .division-buttons-grid .btn-claims {
             background-color: #FFE149;
-            border: #000 2px solid;
-            /* text-shadow: #000 2px 3px 0px; */
         }
         /* Division 7: RSP */
         .division-buttons-grid .btn-rsp {
             background-color: #FFAA49;
-            border: #000 2px solid;
-            /* text-shadow: #000 2px 3px 0px; */
         }
         /* Division 8: Learning and Development */
         .division-buttons-grid .btn-ld {
             background-color: #50F3FF;
-            border: #000 2px solid;
-            /* text-shadow: #000 2px 3px 0px; */
 
         }
         /* Division 9: Performance Management */
         .division-buttons-grid .btn-pm {
             background-color: #8850FF;
-            border: #000 2px solid;
-            /* text-shadow: #000 2px 3px 0px; */
         }
-        @media (max-width: 768px) {
+        /* @media (max-width: 768px) {
             .service-scroll-panel {
-                /* Allow for smaller columns on mobile */
                 grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-                max-height: 300px; /* Smaller scroll area on mobile */
+                max-height: 300px;
             }
             .service-item {
                 width: 120px;
@@ -402,7 +384,6 @@
                 max-width: 100%;
             }
         }
-        /* ✅ Responsive Adjustments */
         @media (max-width: 992px) {
             .staff-avatar {
                 width: 100px;
@@ -412,7 +393,6 @@
                 font-size: 3.5rem;
             }
         }
-
         @media (max-width: 480px) {
             .emoji-icon {
                 font-size: 3rem;
@@ -421,7 +401,7 @@
                 width: 100%;
                 margin-bottom: 10px;
             }
-        }
+        } */
     </style>
 
     <video id="background-video" autoplay loop muted playsinline preload="auto">
@@ -434,7 +414,10 @@
 
     <div class="container">
         <div class="center-logo-container" preload="auto">
-            <image src="{{ asset('storage/assets/logo-with-seals.png') }}" alt="HRDO Logo">
+            <picture>
+                <source type="image/webp" srcset="{{ asset('storage/assets/logo-with-seal.webp') }}">
+                <img src="{{ asset('storage/assets/logo-with-seal.webp') }}" alt="HRDO Logo" loading="lazy">
+            </picture>
         </div>
         <h5>HUMAN RESOURCE DEVELOPMENT OFFICE</h5>
         <h1>Customer Satisfaction Survey</h1>
@@ -475,7 +458,6 @@
                                             <label>
                                                 <input type="radio" name="user_id" value="{{ $staff->id }}" id="staff-{{ $staff->id }}" data-office-id="{{ $staff->office_id }}" style="display:none;" required>
 
-                                                {{-- START: Optimized Image Loading --}}
                                                 <picture>
                                                     @if ($staff->getAvatarWebpUrl())
                                                         <source srcset="{{ $staff->getAvatarWebpUrl() }}" type="image/webp">
@@ -485,7 +467,6 @@
                                                         class="staff-avatar"
                                                         loading="lazy">
                                                 </picture>
-                                                {{-- END: Optimized Image Loading --}}
 
                                             </label>
                                             <span class="staff-name">{{ $staff->name }}</span>
@@ -523,6 +504,7 @@
                     </div>
                     {{-- END: SLIDE 3 --}}
 
+                    {{-- SLIDE 4: RESPONSIVENESS (Rating 1) --}}
                     <div class="carousel-item">
                         <div class="question-slide">
                             <h2>RESPONSIVENESS (PAGTUGON)</h2>
@@ -530,25 +512,21 @@
                             <p>(Handang tumugon at magbigay nang mabilis na serbisyo.)</p>
                             <br>
                             <div class="d-flex flex-wrap justify-content-center">
-                                {{-- Very Dissatisfied (DANGER - RED) --}}
                                 <label class="rating-option m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'responsiveness_rating', 'Very Dissatisfied')">
                                     <input type="radio" name="responsiveness_rating" value="Very Dissatisfied" style="display:none;" required>
                                     <span class="emoji-icon">😞</span>
                                     <span class="emoji-rating-text">Very Dissatisfied</span>
                                 </label>
-                                {{-- Dissatisfied (WARNING - ORANGE/YELLOW) --}}
                                 <label class="rating-option m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'responsiveness_rating', 'Dissatisfied')">
                                     <input type="radio" name="responsiveness_rating" value="Dissatisfied" style="display:none;">
                                     <span class="emoji-icon">🙁</span>
                                     <span class="emoji-rating-text">Dissatisfied</span>
                                 </label>
-                                {{-- Satisfied (PRIMARY - BLUE) --}}
                                 <label class="rating-option m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'responsiveness_rating', 'Satisfied')">
                                     <input type="radio" name="responsiveness_rating" value="Satisfied" style="display:none;">
                                     <span class="emoji-icon">😊</span>
                                     <span class="emoji-rating-text">Satisfied</span>
                                 </label>
-                                {{-- Very Satisfied (SUCCESS - GREEN) --}}
                                 <label class="rating-option m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'responsiveness_rating', 'Very Satisfied')">
                                     <input type="radio" name="responsiveness_rating" value="Very Satisfied" style="display:none;">
                                     <span class="emoji-icon">😁</span>
@@ -568,25 +546,21 @@
                             <p>(Kontento sa bilis ng serbisyo/pagtugon sa iyong pangangailangan.)</p>
                             <br>
                             <div class="d-flex flex-wrap justify-content-center">
-                                {{-- Very Dissatisfied (DANGER - RED) --}}
                                 <label class="rating-option m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'timeliness_rating', 'Very Dissatisfied')">
                                     <input type="radio" name="timeliness_rating" value="Very Dissatisfied" style="display:none;" required>
                                     <span class="emoji-icon">😞</span>
                                     <span class="emoji-rating-text">Very Dissatisfied</span>
                                 </label>
-                                {{-- Dissatisfied (WARNING - ORANGE/YELLOW) --}}
                                 <label class="rating-option m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'timeliness_rating', 'Dissatisfied')">
                                     <input type="radio" name="timeliness_rating" value="Dissatisfied" style="display:none;">
                                     <span class="emoji-icon">🙁</span>
                                     <span class="emoji-rating-text">Dissatisfied</span>
                                 </label>
-                                {{-- Satisfied (PRIMARY - BLUE) --}}
                                 <label class="rating-option m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'timeliness_rating', 'Satisfied')">
                                     <input type="radio" name="timeliness_rating" value="Satisfied" style="display:none;">
                                     <span class="emoji-icon">😊</span>
                                     <span class="emoji-rating-text">Satisfied</span>
                                 </label>
-                                {{-- Very Satisfied (SUCCESS - GREEN) --}}
                                 <label class="rating-option m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'timeliness_rating', 'Very Satisfied')">
                                     <input type="radio" name="timeliness_rating" value="Very Satisfied" style="display:none;">
                                     <span class="emoji-icon">😁</span>
@@ -606,26 +580,21 @@
                             <p>(Paggamit ng wika na madaling maunawaan at naipahayag ng magalang.)</p>
                             <br>
                             <div class="d-flex flex-wrap justify-content-center">
-                                {{-- ADDED 'true' parameter here for auto-submit --}}
-                                {{-- Very Dissatisfied (DANGER - RED) --}}
                                 <label class="rating-option m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'communication_rating', 'Very Dissatisfied', true)">
                                     <input type="radio" name="communication_rating" value="Very Dissatisfied" style="display:none;" required>
                                     <span class="emoji-icon">😞</span>
                                     <span class="emoji-rating-text">Very Dissatisfied</span>
                                 </label>
-                                {{-- Dissatisfied (WARNING - ORANGE/YELLOW) --}}
                                 <label class="rating-option m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'communication_rating', 'Dissatisfied', true)">
                                     <input type="radio" name="communication_rating" value="Dissatisfied" style="display:none;">
                                     <span class="emoji-icon">🙁</span>
                                     <span class="emoji-rating-text">Dissatisfied</span>
                                 </label>
-                                {{-- Satisfied (PRIMARY - BLUE) --}}
                                 <label class="rating-option m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'communication_rating', 'Satisfied', true)">
                                     <input type="radio" name="communication_rating" value="Satisfied" style="display:none;">
                                     <span class="emoji-icon">😊</span>
                                     <span class="emoji-rating-text">Satisfied</span>
                                 </label>
-                                {{-- Very Satisfied (SUCCESS - GREEN) --}}
                                 <label class="rating-option m-2 d-flex flex-column align-items-center" onclick="selectRating(this, 'communication_rating', 'Very Satisfied', true)">
                                     <input type="radio" name="communication_rating" value="Very Satisfied" style="display:none;">
                                     <span class="emoji-icon">😁</span>
@@ -661,7 +630,6 @@
                             <div class="mt-3">
                                 {{-- Button to go back to the first slide (by reloading the page) --}}
                                 <button type="button" class="btn btn-primary m-3 go-back-btn-large" onclick="window.location.reload()">Rate Again</button>
-                                {{-- REMOVED THE SUBMIT BUTTON --}}
                             </div>
                         </div>
                     </div>
@@ -915,10 +883,58 @@
 
             // Force the carousel to the QR slide (index 6) immediately
             // This makes the QR slide 'active'
-            setTimeout(() => {
-                surveyCarousel.to(QR_SLIDE_INDEX);
-            }, 100); // Small delay to ensure carousel is fully initialized
+            surveyCarousel.to(QR_SLIDE_INDEX);
         }
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
+        // Division color mapping
+        const divisionColors = {
+            'all': '#57A2F8',  // All Divisions
+            '2': '#6b757d',    // IT
+            '3': '#FF4949',    // Admin
+            '4': '#50FFB6',    // Payroll
+            '5': '#D050FF',    // Records
+            '6': '#FFE149',    // Claims & Benefits
+            '7': '#FFAA49',    // RSP
+            '8': '#50F3FF',    // L&D
+            '9': '#8850FF',    // PM
+        };
+
+        let selectedDivisionId = 'all'; // default
+
+        // Step 2: Handle division button click
+        $(".division-btn").on("click", function() {
+            $(".division-btn").removeClass("active");
+            $(this).addClass("active");
+            selectedDivisionId = $(this).data("office-id").toString();
+
+            // Apply color update for service buttons
+            updateServiceIconColors(selectedDivisionId);
+        });
+
+        // Step 3: Function to apply colors
+        function updateServiceIconColors(divisionId) {
+            const color = divisionColors[divisionId] || '#007bff'; // fallback color
+
+            // Change all service icon boxes background to division color
+            $(".service-icon-box").css({
+                backgroundColor: color,
+            });
+
+            // Change selected border color style
+            $(".service-item.selected").css({
+                borderColor: color,
+                boxShadow: `0 0 10px ${color}`,
+            });
+        }
+
+        // Step 4: Handle service item selection (optional highlight)
+        $(".service-item").on("click", function() {
+            $(".service-item").removeClass("selected");
+            $(this).addClass("selected");
+            $(this).find("input[type='radio']").prop("checked", true);
+        });
     });
 </script>
 </body>

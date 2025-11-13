@@ -111,6 +111,6 @@ class CommentsRelationManager extends RelationManager
                     ->hidden(fn ($record) => !auth()->user()->isSuperAdmin()),
             ])
             ->bulkActions([])
-            ->poll('10s');
+            ->poll('20s');
     }
 }
