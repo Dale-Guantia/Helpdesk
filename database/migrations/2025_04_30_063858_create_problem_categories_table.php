@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('department_id')->constrained('departments');
             $table->foreignId('office_id')->nullable()->constrained('offices');
             $table->string('category_name');
+            $table->string('icon')->nullable();
             $table->timestamps();
         });
     }

@@ -13,6 +13,7 @@ class SurveyController extends Controller
 {
     public function showForm()
     {
+        $colors = ['#ff6ae6ff', '#b56bff', '#3496ff', '#57caff', '#1dffb0', '#58fa5d', '#e3f85d', '#ffd152', '#ff9a42', '#ff7572'];
         $divisions = Office::where('department_id', 1)->get();
         $staffs = User::query()->where('role', User::ROLE_STAFF)
         ->orWhere(function ($query) {
@@ -20,7 +21,7 @@ class SurveyController extends Controller
                 ->where('department_id', 1);
         })->get();
         $services = ProblemCategory::all();
-        return view('survey_form', compact('divisions', 'staffs', 'services'));
+        return view('survey_form', compact('divisions', 'staffs', 'services', 'colors'));
     }
 
     public function submitForm(Request $request)

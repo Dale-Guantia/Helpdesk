@@ -52,7 +52,7 @@ class SurveyResource extends Resource
                     ->schema([
                         TextEntry::make('created_at')
                             ->label('Submission Date')
-                            ->dateTime('M d, Y - H:i:s'),
+                            ->dateTime('M d, Y - h:i:s A'),
                         TextEntry::make('staff.name')
                             ->label('Staff Rated'),
                         TextEntry::make('service.category_name')

@@ -211,25 +211,27 @@
             border: 2px solid #fff; /* Add a border to highlight */
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
         }
+        /* --- Service Item & Icon Styling --- */
         .service-item {
-            width: 150px; /* Set a fixed width for alignment */
-            padding: 15px;
-            margin: 10px;
+            width: 250px; /* Fixed width for consistent grid item size */
+            padding: 5px;
+            margin: 0; /* Remove horizontal margin for tighter packing */
             cursor: pointer;
-            border: 2px solid transparent; /* Default state */
+            border: 2px solid transparent;
             border-radius: 8px;
             transition: all 0.2s ease-in-out;
         }
         .service-icon-box {
-            background-color: #007bff; /* Primary color (Bootstrap blue) */
-            color: white;
-            width: 80px;
-            height: 80px;
+            color: #000;
+            width: 110px; /* Slightly smaller box for tighter grid */
+            height: 110px;
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 10px;
+            margin: 0 auto 8px;
+            cursor: pointer;
+            border: #000 2px solid;
         }
         .service-item.selected {
             border: 2px solid #0056b3;
@@ -262,28 +264,6 @@
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
         }
-        /* --- Service Item & Icon Styling --- */
-        .service-item {
-            width: 250px; /* Fixed width for consistent grid item size */
-            padding: 5px;
-            margin: 0; /* Remove horizontal margin for tighter packing */
-            cursor: pointer;
-            border: 2px solid transparent;
-            border-radius: 8px;
-            transition: all 0.2s ease-in-out;
-        }
-        .service-icon-box {
-            color: #000;
-            width: 100px; /* Slightly smaller box for tighter grid */
-            height: 100px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 8px;
-            cursor: pointer;
-            border: #000 2px solid;
-        }
         /* CONTAINER: Set up the grid and center it */
         .division-buttons-grid {
             display: grid;
@@ -311,97 +291,41 @@
         }
         /* Division 1: All Divisions (Neutral/Default) */
         .division-buttons-grid .btn-all {
-            background-color: #57A2F8;
+            background-color: #ff7572;
         }
         /* Division 2: Information Technology */
         .division-buttons-grid .btn-it {
-            background-color: #6b757d;
+            background-color: #b56bff;
         }
         /* Division 3: Administrative */
         .division-buttons-grid .btn-admin {
-            background-color: #FF4949;
+            background-color: #3496ff;
         }
-        /* Division 4: Payroll */
-        .division-buttons-grid .btn-payroll {
-            background-color: #50FFB6;
-        }
-        /* Division 5: Records */
+        /* Division 4: Records */
         .division-buttons-grid .btn-records {
-            background-color: #D050FF;
+            background-color: #57caff;
+        }
+        /* Division 5: Payroll */
+        .division-buttons-grid .btn-payroll {
+            background-color: #1dffb0;
         }
         /* Division 6: Claims and Benefits */
         .division-buttons-grid .btn-claims {
-            background-color: #FFE149;
+            background-color: #58fa5d;
         }
         /* Division 7: RSP */
         .division-buttons-grid .btn-rsp {
-            background-color: #FFAA49;
+            background-color: #e3f85d;
         }
         /* Division 8: Learning and Development */
         .division-buttons-grid .btn-ld {
-            background-color: #50F3FF;
+            background-color: #ffd152;
 
         }
         /* Division 9: Performance Management */
         .division-buttons-grid .btn-pm {
-            background-color: #8850FF;
+            background-color: #ff9a42;
         }
-        /* @media (max-width: 768px) {
-            .service-scroll-panel {
-                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-                max-height: 300px;
-            }
-            .service-item {
-                width: 120px;
-                margin: 10px;
-            }
-            .service-icon-box {
-                width: 60px;
-                height: 60px;
-            }
-            .service-icon-box i {
-                font-size: 2rem;
-            }
-            .service-name {
-                font-size: 0.8rem;
-            }
-            .staff-scroll-panel {
-                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-                gap: 20px 25px;
-                max-height: 360px;
-            }
-            .staff-avatar {
-                width: 110px;
-                height: 110px;
-            }
-            .question-slide {
-                padding: 20px 10px;
-            }
-            .center-logo-container img {
-                max-width: 220px;
-            }
-            .staff-carousel-container {
-                max-width: 100%;
-            }
-        }
-        @media (max-width: 992px) {
-            .staff-avatar {
-                width: 100px;
-                height: 100px;
-            }
-            .emoji-icon {
-                font-size: 3.5rem;
-            }
-        }
-        @media (max-width: 480px) {
-            .emoji-icon {
-                font-size: 3rem;
-            }
-            .btn {
-                width: 100%;
-                margin-bottom: 10px;
-            }
-        } */
     </style>
 
     <video id="background-video" autoplay loop muted playsinline preload="auto">
@@ -433,7 +357,6 @@
                         <div class="question-slide">
                             <h3 style="padding-bottom: 10px">Select Division / Pumili ng Dibisyon:</h3>
                             <div class="filter-buttons division-buttons-grid">
-                                <button type="button" class="btn btn-all mb-3 division-btn active" data-office-id="all">ALL DIVISIONS</button>
                                 <button type="button" class="btn btn-it mb-3 division-btn" data-office-id="2">INFORMATION TECHNOLOGY</button>
                                 <button type="button" class="btn btn-admin mb-3 division-btn" data-office-id="3">ADMINISTRATIVE</button>
                                 <button type="button" class="btn btn-records mb-3 division-btn" data-office-id="5">RECORDS</button>
@@ -442,6 +365,7 @@
                                 <button type="button" class="btn btn-rsp mb-3 division-btn" data-office-id="7">RSP</button>
                                 <button type="button" class="btn btn-ld mb-3 division-btn" data-office-id="8">LEARNING & DEVELOPMENT</button>
                                 <button type="button" class="btn btn-pm mb-3 division-btn" data-office-id="9">PERFORMANCE MANAGEMENT</button>
+                                <button type="button" class="btn btn-all mb-3 division-btn active" data-office-id="all">ALL DIVISIONS</button>
                             </div>
                         </div>
                     </div>
@@ -486,13 +410,22 @@
                             <h3 style="padding-bottom: 20px">Service Received / Serbisyong Natanggap:</h3>
                             <div class="service-scroll-container">
                                 <div id="service-grid" class="service-scroll-panel">
-                                    @foreach($services as $service)
-                                        <div class="service-item text-center" data-office-id="{{ $service->office_id }}" data-service-id="{{ $service->id }}" style="display: none;">
+                                    @foreach($services as $index => $service)
+                                        @php
+                                            $color = $colors[$index % count($colors)];
+                                        @endphp
+
+                                        <div class="service-item text-center"
+                                            data-office-id="{{ $service->office_id }}"
+                                            data-service-id="{{ $service->id }}"
+                                            style="display:none;">
                                             <label>
                                                 <input type="radio" name="problem_category_id" value="{{ $service->id }}" style="display:none;" required>
-                                                <div class="service-icon-box">
-                                                    <x-heroicon-o-document-duplicate class="w-14 h-14 text-white-500" />
+
+                                                <div class="service-icon-box" style="background-color: {{ $color }};">
+                                                    <i data-lucide="{{ $service->icon }}" class="w-14 h-14"></i>
                                                 </div>
+
                                                 <span class="service-name">{{ $service->category_name }}</span>
                                             </label>
                                         </div>
@@ -796,16 +729,11 @@
 
 
         // --- SERVICE SELECTION AND VISUAL FEEDBACK (Service Slide 3) ---
-        $('.service-item').on('click', function() {
+        $('input[name="problem_category_id"]').on('change', function () {
             $('.service-item').removeClass('selected');
+            $(this).closest('.service-item').addClass('selected');
 
-            $(this).addClass('selected');
-
-            $(this).find('input[name="problem_category_id"]').prop('checked', true);
-
-            setTimeout(() => {
-                surveyCarousel.next();
-            }, 300);
+            setTimeout(() => surveyCarousel.next(), 300);
         });
 
         // --- CAROUSEL SLIDE EVENT HANDLER (Main Logic Controller) ---
@@ -885,56 +813,6 @@
             // This makes the QR slide 'active'
             surveyCarousel.to(QR_SLIDE_INDEX);
         }
-    });
-
-    document.addEventListener("DOMContentLoaded", function() {
-        // Division color mapping
-        const divisionColors = {
-            'all': '#57A2F8',  // All Divisions
-            '2': '#6b757d',    // IT
-            '3': '#FF4949',    // Admin
-            '4': '#50FFB6',    // Payroll
-            '5': '#D050FF',    // Records
-            '6': '#FFE149',    // Claims & Benefits
-            '7': '#FFAA49',    // RSP
-            '8': '#50F3FF',    // L&D
-            '9': '#8850FF',    // PM
-        };
-
-        let selectedDivisionId = 'all'; // default
-
-        // Step 2: Handle division button click
-        $(".division-btn").on("click", function() {
-            $(".division-btn").removeClass("active");
-            $(this).addClass("active");
-            selectedDivisionId = $(this).data("office-id").toString();
-
-            // Apply color update for service buttons
-            updateServiceIconColors(selectedDivisionId);
-        });
-
-        // Step 3: Function to apply colors
-        function updateServiceIconColors(divisionId) {
-            const color = divisionColors[divisionId] || '#007bff'; // fallback color
-
-            // Change all service icon boxes background to division color
-            $(".service-icon-box").css({
-                backgroundColor: color,
-            });
-
-            // Change selected border color style
-            $(".service-item.selected").css({
-                borderColor: color,
-                boxShadow: `0 0 10px ${color}`,
-            });
-        }
-
-        // Step 4: Handle service item selection (optional highlight)
-        $(".service-item").on("click", function() {
-            $(".service-item").removeClass("selected");
-            $(this).addClass("selected");
-            $(this).find("input[type='radio']").prop("checked", true);
-        });
     });
 </script>
 </body>
