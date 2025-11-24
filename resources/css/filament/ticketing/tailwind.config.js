@@ -5,6 +5,7 @@ export default {
     content: [
         './app/Filament/**/*.php',
         './resources/views/filament/**/*.blade.php',
+        './resources/views/**/*.blade.php',
         './vendor/filament/**/*.blade.php',
         './vendor/diogogpinto/filament-auth-ui-enhancer/resources/**/*.blade.php',
     ],

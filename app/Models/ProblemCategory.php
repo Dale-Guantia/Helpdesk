@@ -17,9 +17,10 @@ class ProblemCategory extends Model
     protected $table = 'problem_categories';
 
     protected $fillable = [
-        'category_name',
         'department_id',
         'office_id',
+        'category_name',
+        'icon',
         'created_at',
         'updated_at',
     ];

@@ -242,8 +242,8 @@
             font-weight: 600;
         }
         #service-grid {
-            margin: 20px auto;
-            max-width: 1600px; /* Adjust as needed */
+            margin: 10px auto;
+            max-width: 1700px; /* Adjust as needed */
         }
         .service-scroll-container {
             /* Max width to maximize space (adjust 1000px as needed) */
@@ -423,7 +423,7 @@
                                                 <input type="radio" name="problem_category_id" value="{{ $service->id }}" style="display:none;" required>
 
                                                 <div class="service-icon-box" style="background-color: {{ $color }};">
-                                                    <i data-lucide="{{ $service->icon }}" class="w-14 h-14"></i>
+                                                    <i data-lucide="{{ Str::after($service->icon, 'lucide-') }}" class="w-14 h-14"></i>
                                                 </div>
 
                                                 <span class="service-name">{{ $service->category_name }}</span>
@@ -586,11 +586,17 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
 <script>
+    lucide.createIcons();
     const surveyCarouselEl = document.getElementById('surveyCarousel');
     const surveyCarousel = new bootstrap.Carousel(surveyCarouselEl, {
         touch: false,
         interval: false
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        lucide.createIcons();
     });
 
     function nextSlide() {

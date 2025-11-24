@@ -11,29 +11,29 @@ class ProblemCategoryTableSeeder extends Seeder
     {
         $admin_issues = [
             ['name' => 'Administrative Case/Complaint', 'icon' => 'scale'],
-            ['name' => 'Overtime Request-Related Concern', 'icon' => 'clock'],
-            ['name' => 'Policy on Overtime Services Inquiries', 'icon' => 'file-text'],
-            ['name' => 'Annual SALN Submission/Inquiries', 'icon' => 'clipboard-list'],
-            ['name' => 'Grievance Concern', 'icon' => 'megaphone'],
-            ['name' => 'Extension of Service', 'icon' => 'arrow-up-right'],
+            ['name' => 'Overtime Request-Related Concern', 'icon' => 'calendar-clock'],
+            ['name' => 'Policy on Overtime Services Inquiries', 'icon' => 'scroll-text'],
+            ['name' => 'Annual SALN Submission/Inquiries', 'icon' => 'file-input'],
+            ['name' => 'Grievance Concern', 'icon' => 'message-square-warning'],
+            ['name' => 'Extension of Service', 'icon' => 'file-cog'],
             ['name' => 'Sexual Harassment Complaint', 'icon' => 'alert-triangle'],
             ['name' => 'Reassignment', 'icon' => 'refresh-cw'],
-            ['name' => 'Recall', 'icon' => 'redo'],
+            ['name' => 'Recall', 'icon' => 'undo-2'],
             ['name' => 'Pre-Termination', 'icon' => 'ban'],
-            ['name' => 'Data Privacy', 'icon' => 'lock'],
+            ['name' => 'Data Privacy', 'icon' => 'folder-lock'],
             ['name' => 'HR Coordinator Replacement', 'icon' => 'users'],
         ];
 
         $payroll_issues = [
-            ['name' => 'Salary Deduction (LWOP/UL)', 'icon' => 'minus-circle'],
-            ['name' => 'Salary Adjustment/Differential', 'icon' => 'sliders'],
-            ['name' => 'No Salary Received', 'icon' => 'alert-circle'],
-            ['name' => 'No Benefits/Bonuses Received', 'icon' => 'gift'],
+            ['name' => 'Salary Deduction (LWOP/UL)', 'icon' => 'banknote-arrow-down'],
+            ['name' => 'Salary Adjustment/Differential', 'icon' => 'file-sliders'],
+            ['name' => 'No Salary Received', 'icon' => 'banknote-x'],
+            ['name' => 'No Benefits/Bonuses Received', 'icon' => 'hand-coins'],
             ['name' => 'Overtime Pay/Allowance', 'icon' => 'banknote'],
             ['name' => 'Hazard Pay, Subsistence and Laundry Allowance', 'icon' => 'shield-check'],
-            ['name' => 'Request for Certificate of Last Salary Received', 'icon' => 'file-check'],
-            ['name' => 'Request for Certificate of No Bonus/Benefits Received', 'icon' => 'file-minus'],
-            ['name' => 'Salary Underpayment/Overpayment', 'icon' => 'scale'],
+            ['name' => 'Request for Certificate of Last Salary Received', 'icon' => 'file-badge'],
+            ['name' => 'Request for Certificate of No Bonus/Benefits Received', 'icon' => 'file-badge'],
+            ['name' => 'Salary Underpayment/ Overpayment', 'icon' => 'banknote'],
             ['name' => 'Status of First Salary', 'icon' => 'clock'],
             ['name' => 'Terminal Leave Clearance', 'icon' => 'badge-check'],
             ['name' => 'Status of Special/Other Payroll', 'icon' => 'archive'],
@@ -41,12 +41,12 @@ class ProblemCategoryTableSeeder extends Seeder
         ];
 
         $records_issues = [
-            ['name' => 'DTR Rectification', 'icon' => 'pencil'],
-            ['name' => 'Request of Certificate of LWOP', 'icon' => 'file'],
-            ['name' => 'Request of Certificate of No LWOP', 'icon' => 'file'],
-            ['name' => 'Request of Certificate of Leave Credits', 'icon' => 'file-check'],
-            ['name' => 'Request of Document from 201 File', 'icon' => 'folder'],
-            ['name' => 'Salary Deductions Concerns', 'icon' => 'minus-circle'],
+            ['name' => 'DTR Rectification', 'icon' => 'square-pen'],
+            ['name' => 'Request of Certificate of LWOP', 'icon' => 'file-badge'],
+            ['name' => 'Request of Certificate of No LWOP', 'icon' => 'file-badge'],
+            ['name' => 'Request of Certificate of Leave Credits', 'icon' => 'file-badge'],
+            ['name' => 'Request of Document from 201 File', 'icon' => 'folder-open'],
+            ['name' => 'Salary Deductions Concerns', 'icon' => 'banknote-arrow-down'],
             ['name' => 'Leave Application for Certain Types of Leave', 'icon' => 'calendar-days'],
             ['name' => 'Tagging of Employees', 'icon' => 'tag'],
             ['name' => 'Schedule for i-Face/Biometrics Registration', 'icon' => 'fingerprint'],
@@ -115,7 +115,7 @@ class ProblemCategoryTableSeeder extends Seeder
             ['name' => 'Certified True Copy of Performance Ratings', 'icon' => 'copy'],
             ['name' => 'OPCR/DPCR and IPCR Appeals', 'icon' => 'cog'],
             ['name' => 'Request for System Access Extension', 'icon' => 'arrow-up-right'],
-            ['name' => 'Log-In Credential Issues', 'icon' => 'key'],
+            ['name' => 'Log-In Credential Issues', 'icon' => 'key-round'],
             ['name' => 'Request to Edit Submitted OPCR/DPCR/IPCR', 'icon' => 'pencil'],
             ['name' => 'Request to Submit OPCR/DPCR/IPCR (New Employees)', 'icon' => 'send'],
             ['name' => 'Request for Technical Assistance', 'icon' => 'wrench'],
@@ -125,7 +125,7 @@ class ProblemCategoryTableSeeder extends Seeder
 
         $it_issues = [
             ['name' => 'Office assignment/Retagging', 'icon' => 'tag'],
-            ['name' => 'GEMS account password reset', 'icon' => 'key'],
+            ['name' => 'GEMS account password reset', 'icon' => 'rotate-ccw-key'],
         ];
 
         $office_mapping = [
@@ -145,7 +145,7 @@ class ProblemCategoryTableSeeder extends Seeder
                     'department_id' => 1,
                     'office_id'     => $office_id,
                     'category_name' => $issue['name'],
-                    'icon'          => $issue['icon'] ?? null,
+                    'icon'          => 'lucide-' . $issue['icon'],
                 ]);
             }
         }

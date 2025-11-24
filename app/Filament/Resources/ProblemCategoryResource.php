@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Models\Department;
 use App\Models\Office;
 use Filament\Tables\Filters\SelectFilter;
+use App\Forms\Components\LucideIconPicker;
 
 class ProblemCategoryResource extends Resource
 {
@@ -76,6 +77,9 @@ class ProblemCategoryResource extends Resource
                         ->label('Issue Description')
                         ->required()
                         ->maxLength(255),
+                    LucideIconPicker::make('icon')
+                        ->label('Icon')
+                        ->default('lucide-file'),
             ]);
     }
 
