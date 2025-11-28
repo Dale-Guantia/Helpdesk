@@ -79,6 +79,10 @@ class TicketObserver
             ->get();
 
         foreach ($divisionHeads as $divisionHead) {
+            if (empty($divisionHead->email)) {
+                continue; // Skip users with no email address
+            }
+
             Mail::to($divisionHead->email)->send(new $mailableClass($ticket, $divisionHead, ...$extraMailableParams));
         }
     }

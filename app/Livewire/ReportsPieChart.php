@@ -40,7 +40,7 @@ class ReportsPieChart extends ApexChartWidget
                 'height' => 350,
                 'width' => '100%',
             ],
-            'colors' => ['#008ffb', '#00e396', '#feb019', '#ff4560', '#775dd0', '#60ffff', '#b94479'],
+            'colors' => ['#ff7572', '#b56bff', '#3496ff', '#57caff', '#1dffb0', '#58fa5d', '#e3f85d', '#ffd152', '#ff9a42', '#ee75de' ],
             'series' => $ticketCount->pluck('tickets_count')->toArray(),
             'labels' => $ticketCount->pluck('office_name')->toArray(),
             // 'labels' => ['IT', 'ADMIN', 'PAYROLL', 'RECORDS', 'CLAIMS', 'RSP', 'L&D', 'PM'],

@@ -24,7 +24,8 @@ use App\Filament\Pages\Auth\Register;
 use App\Filament\Pages\Auth\Login;
 use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
 use App\Filament\Widgets;
-
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Facades\Route;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -38,7 +39,22 @@ class AdminPanelProvider extends PanelProvider
             ->registration(Register::class)
             ->passwordReset()
             ->emailVerification()
-            ->brandName('Employee Care')
+            ->favicon(asset('storage/assets/gems.png'))
+            ->brandLogo(function () {
+                $isAuthRoute = Route::is([
+                    'filament.ticketing.auth.login',
+                    'filament.ticketing.auth.register',
+                ]);
+
+                // If it is an authentication page, return an empty string to hide the logo.
+                if ($isAuthRoute) {
+                    return url('storage/assets/logo.png');
+                }
+
+                // Return the custom brand logo using a standard <img> tag.
+                return url('storage/assets/emp-care-logo-1.png');
+            })
+            ->brandLogoHeight('2rem')
             ->darkMode(false)
             ->sidebarCollapsibleOnDesktop()
             ->sidebarWidth('15rem')
@@ -52,6 +68,16 @@ class AdminPanelProvider extends PanelProvider
                 'success' => Color::Green,
                 'warning' => Color::Amber,
                 'secondary' => Color::Zinc,
+                'deptHead' => Color::hex('#ff7572'),
+                'it' => Color::hex('#b56bff'),
+                'admin' => Color::hex('#3496ff'),
+                'records' => Color::hex('#57caff'),
+                'payroll' => Color::hex('#1dffb0'),
+                'claims' => Color::hex('#58fa5d'),
+                'rsp' => Color::hex('#e3f85d'),
+                'ld' => Color::hex('#ffd152'),
+                'pm' => Color::hex('#ff9a42'),
+                'extra' => Color::hex('#ee75de'),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
@@ -101,7 +127,7 @@ class AdminPanelProvider extends PanelProvider
                     ->formPanelPosition('left')
                     ->mobileFormPanelPosition('bottom')
                     ->formPanelWidth('40%')
-                    ->emptyPanelBackgroundImageUrl(asset('images/AuthPagePanel.png'))
+                    ->emptyPanelBackgroundImageUrl(asset('images/AuthPagePanel1.png'))
             ])
             ->userMenuItems([
                 'profile' => MenuItem::make()

@@ -104,7 +104,7 @@
             color: #333333;
             transition: all 0.2s ease-in-out;
         }
-        /* --- NEW RATING OPTION STYLES: This replaces the button look --- */
+        /* --- RATING OPTION STYLES --- */
         .rating-option {
             background: transparent !important;
             border: none !important;
@@ -126,8 +126,8 @@
             min-width: 120px;
         }
         .go-back-btn-large {
-            padding: 15px 40px !important; /* Larger padding for a bigger button */
-            font-size: 1.5rem !important; /* Larger font size for prominence */
+            padding: 15px 40px !important;
+            font-size: 1.5rem !important;
             border-radius: 12px;
         }
         .staff-scroll-container {
@@ -135,8 +135,8 @@
             width: 100%;
             max-width: 1500px;
             margin: 0 auto;
-            overflow: visible; /* allow circular borders to be visible */
-            padding: 0; /* remove padding that can clip the avatar */
+            overflow: visible;
+            padding: 0;
         }
         .staff-scroll-panel {
             display: grid;
@@ -147,13 +147,11 @@
             overflow-y: scroll;
             scroll-snap-type: y mandatory;
             max-height: 450px;
-            /* padding: 0 20px; */
             width: 100%;
             overflow-x: visible;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
         }
-        /* Each "page" or full row block for snapping */
         .staff-item {
             text-align: center;
             transition: transform 0.25s, box-shadow 0.25s;
@@ -164,7 +162,6 @@
             min-width: 340px;
             max-width: 340px;
         }
-        /* Avatar style */
         .staff-avatar {
             width: 300px;
             height: 300px;
@@ -178,19 +175,16 @@
             border-color: #007bff;
             box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
         }
-        /* Name label */
         .staff-name {
             display: block;
             font-weight: 500;
             font-size: 1.5rem;
         }
-        /* Nickname label */
         .staff-nickname {
             display: block;
             font-weight: 1000;
             font-size: 2.5rem;
         }
-        /* Scrollbar design */
         .staff-scroll-panel::-webkit-scrollbar {
             width: 8px;
         }
@@ -206,24 +200,50 @@
             transition: opacity 0.2s;
         }
         .filter-btn.active {
-            opacity: 1; /* Full opacity for the active button */
-            font-weight: bold; /* Make the text bold */
-            border: 2px solid #fff; /* Add a border to highlight */
+            opacity: 1;
+            font-weight: bold;
+            border: 2px solid #fff;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
         }
-        /* --- Service Item & Icon Styling --- */
+
+        /* --- NEW SERVICE PAGINATION STYLES (4 Columns x 2 Rows) --- */
+
+        .service-carousel-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* The Grid Container */
+        #service-grid-paginated {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* Force 4 columns */
+            grid-template-rows: auto auto; /* Force 2 rows height behavior */
+            gap: 20px;
+            justify-items: center;
+            width: 100%;
+            min-height: 500px; /* Fixed height to prevent jumping */
+            padding: 10px;
+        }
+
         .service-item {
-            width: 250px; /* Fixed width for consistent grid item size */
+            width: 100%;
+            max-width: 250px; /* Max width inside grid cell */
             padding: 5px;
-            margin: 0; /* Remove horizontal margin for tighter packing */
             cursor: pointer;
             border: 2px solid transparent;
             border-radius: 8px;
             transition: all 0.2s ease-in-out;
+            box-sizing: border-box;
         }
+
         .service-icon-box {
             color: #000;
-            width: 110px; /* Slightly smaller box for tighter grid */
+            width: 110px;
             height: 110px;
             border-radius: 12px;
             display: flex;
@@ -233,38 +253,55 @@
             cursor: pointer;
             border: #000 2px solid;
         }
-        .service-item.selected {
-            border: 2px solid #0056b3;
-            background-color: #e9ecef;
+
+        .service-item:hover {
+            transform: scale(1.1);
         }
+
+        .service-item.selected {
+            transform: scale(1.1);
+        }
+
+        .service-item.selected .service-name {
+            font-weight: 700;
+        }
+
         .service-name {
             font-size: 1.5rem;
-            font-weight: 600;
+            font-weight: 500;
+            white-space: normal;
+            display: block;
         }
-        #service-grid {
-            margin: 10px auto;
-            max-width: 1700px; /* Adjust as needed */
+
+        /* Navigation Buttons */
+        .service-nav-btn {
+            background-color: rgba(0, 0, 0, 0.05);
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            z-index: 10;
         }
-        .service-scroll-container {
-            /* Max width to maximize space (adjust 1000px as needed) */
-            width: 100%;
-            max-width: 1600px;
-            margin: 0 auto;
+
+        .service-nav-btn:hover {
+            background-color: rgba(0, 0, 0, 0.2);
+            transform: scale(1.1);
         }
-        .service-scroll-panel {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            justify-items: center; /* Center items within their grid cells */
-            align-items: start;
-            gap: 30px; /* Space between items */
-            overflow-y: auto;
-            max-height: 450px; /* Set a specific height to enforce vertical scroll */
-            margin: 0;
-            overflow-x: visible;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
+
+        .service-nav-btn:disabled,
+        .service-nav-btn.disabled-visual {
+            opacity: 0.1;
+            cursor: default;
+            pointer-events: none;
         }
-        /* CONTAINER: Set up the grid and center it */
+
+        /* --- Division Buttons Grid --- */
         .division-buttons-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -272,7 +309,7 @@
             max-width: 1200px;
             margin-left: auto;
             margin-right: auto;
-            padding: 0 10px; /* Add slight padding on sides for responsiveness */
+            padding: 0 10px;
         }
         .division-buttons-grid .division-btn {
             width: 100%;
@@ -281,51 +318,22 @@
             text-align: center;
             border-radius: 25px;
         }
-        /* Base style overrides for custom buttons */
         .division-buttons-grid .btn {
-            color: #000; /* Ensure text is white for contrast */
+            color: #000;
             border: #000 2px solid;
             font-weight: 600;
             transition: background-color 0.2s, box-shadow 0.2s;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        /* Division 1: All Divisions (Neutral/Default) */
-        .division-buttons-grid .btn-all {
-            background-color: #ff7572;
-        }
-        /* Division 2: Information Technology */
-        .division-buttons-grid .btn-it {
-            background-color: #b56bff;
-        }
-        /* Division 3: Administrative */
-        .division-buttons-grid .btn-admin {
-            background-color: #3496ff;
-        }
-        /* Division 4: Records */
-        .division-buttons-grid .btn-records {
-            background-color: #57caff;
-        }
-        /* Division 5: Payroll */
-        .division-buttons-grid .btn-payroll {
-            background-color: #1dffb0;
-        }
-        /* Division 6: Claims and Benefits */
-        .division-buttons-grid .btn-claims {
-            background-color: #58fa5d;
-        }
-        /* Division 7: RSP */
-        .division-buttons-grid .btn-rsp {
-            background-color: #e3f85d;
-        }
-        /* Division 8: Learning and Development */
-        .division-buttons-grid .btn-ld {
-            background-color: #ffd152;
-
-        }
-        /* Division 9: Performance Management */
-        .division-buttons-grid .btn-pm {
-            background-color: #ff9a42;
-        }
+        .division-buttons-grid .btn-all { background-color: #ff7572; }
+        .division-buttons-grid .btn-it { background-color: #b56bff; }
+        .division-buttons-grid .btn-admin { background-color: #3496ff; }
+        .division-buttons-grid .btn-records { background-color: #57caff; }
+        .division-buttons-grid .btn-payroll { background-color: #1dffb0; }
+        .division-buttons-grid .btn-claims { background-color: #58fa5d; }
+        .division-buttons-grid .btn-rsp { background-color: #e3f85d; }
+        .division-buttons-grid .btn-ld { background-color: #ffd152; }
+        .division-buttons-grid .btn-pm { background-color: #ff9a42; }
     </style>
 
     <video id="background-video" autoplay loop muted playsinline preload="auto">
@@ -343,8 +351,8 @@
                 <img src="{{ asset('storage/assets/logo-with-seal.webp') }}" alt="HRDO Logo" loading="lazy">
             </picture>
         </div>
-        <h5>HUMAN RESOURCE DEVELOPMENT OFFICE</h5>
-        <h1>Customer Satisfaction Survey</h1>
+        <h5 style="color: red">HUMAN RESOURCE DEVELOPMENT OFFICE</h5>
+        <h1 style="color: #0056b3">Customer Satisfaction Survey</h1>
 
         <form action="{{ route('survey.submit') }}" method="POST">
             @csrf
@@ -355,7 +363,7 @@
                     {{-- SLIDE 1: Division Selection --}}
                     <div class="carousel-item active">
                         <div class="question-slide">
-                            <h3 style="padding-bottom: 10px">Select Division / Pumili ng Dibisyon:</h3>
+                            <h3 style="padding-bottom: 10px;">Select Division / Pumili ng Dibisyon:</h3>
                             <div class="filter-buttons division-buttons-grid">
                                 <button type="button" class="btn btn-it mb-3 division-btn" data-office-id="2">INFORMATION TECHNOLOGY</button>
                                 <button type="button" class="btn btn-admin mb-3 division-btn" data-office-id="3">ADMINISTRATIVE</button>
@@ -374,14 +382,13 @@
                     {{-- SLIDE 2: Staff Selection --}}
                     <div class="carousel-item" id="staff-selection-slide">
                         <div class="question-slide">
-                            <h3 style="padding: 50px">Attended by / Inasikaso ni:</h3>
+                            <h3 style="padding: 50px; color: #0056b3;">Attended by / Inasikaso ni:</h3>
                             <div class="staff-scroll-container">
                                 <div class="staff-scroll-panel">
                                     @foreach($staffs as $staff)
                                         <div class="text-center staff-item" data-office-id="{{ $staff->office_id }}">
                                             <label>
                                                 <input type="radio" name="user_id" value="{{ $staff->id }}" id="staff-{{ $staff->id }}" data-office-id="{{ $staff->office_id }}" style="display:none;" required>
-
                                                 <picture>
                                                     @if ($staff->getAvatarWebpUrl())
                                                         <source srcset="{{ $staff->getAvatarWebpUrl() }}" type="image/webp">
@@ -391,7 +398,6 @@
                                                         class="staff-avatar"
                                                         loading="lazy">
                                                 </picture>
-
                                             </label>
                                             <span class="staff-name">{{ $staff->name }}</span>
                                             <span class="staff-nickname">"{{ $staff->nickname }}"</span>
@@ -404,34 +410,43 @@
                     </div>
                     {{-- END: SLIDE 2 --}}
 
-                    {{-- SLIDE 3: Service Selection --}}
+                    {{-- SLIDE 3: Service Selection (UPDATED GRID PAGINATION) --}}
                     <div class="carousel-item service-slide">
                         <div class="question-slide">
-                            <h3 style="padding-bottom: 20px">Service Received / Serbisyong Natanggap:</h3>
-                            <div class="service-scroll-container">
-                                <div id="service-grid" class="service-scroll-panel">
-                                    @foreach($services as $index => $service)
-                                        @php
-                                            $color = $colors[$index % count($colors)];
-                                        @endphp
+                            <h3 style="padding-bottom: 20px; color: crimson;">Service Received / Serbisyong Natanggap:</h3>
 
-                                        <div class="service-item text-center"
-                                            data-office-id="{{ $service->office_id }}"
-                                            data-service-id="{{ $service->id }}"
-                                            style="display:none;">
-                                            <label>
-                                                <input type="radio" name="problem_category_id" value="{{ $service->id }}" style="display:none;" required>
+                            <div class="service-carousel-wrapper">
+                                <button type="button" class="service-nav-btn prev-service-btn" onclick="changeServicePage(-1)">
+                                    <i data-lucide="chevron-left"></i>
+                                </button>
 
-                                                <div class="service-icon-box" style="background-color: {{ $color }};">
-                                                    <i data-lucide="{{ Str::after($service->icon, 'lucide-') }}" class="w-14 h-14"></i>
-                                                </div>
+                                <div class="service-container" style="width: 100%;">
+                                    <div id="service-grid-paginated">
+                                        @foreach($services as $index => $service)
+                                            @php $color = $colors[$index % count($colors)]; @endphp
 
-                                                <span class="service-name">{{ $service->category_name }}</span>
-                                            </label>
-                                        </div>
-                                    @endforeach
+                                            <div class="service-item text-center"
+                                                data-office-id="{{ $service->office_id }}"
+                                                data-service-id="{{ $service->id }}"
+                                                style="display:none;"> <label>
+                                                    <input type="radio" name="problem_category_id" value="{{ $service->id }}" style="display:none;" required>
+                                                    <div class="service-icon-box" style="background-color: {{ $color }};">
+                                                        <i data-lucide="{{ Str::after($service->icon, 'lucide-') }}" class="w-14 h-14"></i>
+                                                    </div>
+                                                    <span class="service-name">{{ $service->category_name }}</span>
+                                                </label>
+                                            </div>
+                                        @endforeach
+                                    </div>
                                 </div>
+
+                                <button type="button" class="service-nav-btn next-service-btn" onclick="changeServicePage(1)">
+                                    <i data-lucide="chevron-right"></i>
+                                </button>
                             </div>
+
+                            <div id="service-page-indicator" class="text-center mt-2 text-muted fw-bold"></div>
+
                             <button type="button" class="btn btn-primary mt-3 go-back-btn-large" onclick="prevSlide()">Go Back</button>
                         </div>
                     </div>
@@ -440,7 +455,7 @@
                     {{-- SLIDE 4: RESPONSIVENESS (Rating 1) --}}
                     <div class="carousel-item">
                         <div class="question-slide">
-                            <h2>RESPONSIVENESS (PAGTUGON)</h2>
+                            <h2 style="color: orangered;">RESPONSIVENESS (PAGTUGON)</h2>
                             <p>Willingness to help, assist, and provide prompt service.</p>
                             <p>(Handang tumugon at magbigay nang mabilis na serbisyo.)</p>
                             <br>
@@ -474,7 +489,7 @@
                     {{-- SLIDE 5: TIMELINESS (Rating 2) --}}
                     <div class="carousel-item">
                         <div class="question-slide">
-                            <h2>TIMELINESS (BILIS NG PAGTUGON)</h2>
+                            <h2 style="color: mediumvioletred;">TIMELINESS (BILIS NG PAGTUGON)</h2>
                             <p>Satisfaction with the timeliness of service/response to your needs.</p>
                             <p>(Kontento sa bilis ng serbisyo/pagtugon sa iyong pangangailangan.)</p>
                             <br>
@@ -505,10 +520,10 @@
                     </div>
                     {{-- END: SLIDE 5 --}}
 
-                    {{-- SLIDE 6: COMMUNICATION (Rating 3) - LAST RATING SLIDE --}}
+                    {{-- SLIDE 6: COMMUNICATION (Rating 3) --}}
                     <div class="carousel-item">
                         <div class="question-slide">
-                            <h2>COMMUNICATION (PAKIKIPAG-USAP)</h2>
+                            <h2 style="color: rgb(0, 182, 91);">COMMUNICATION (PAKIKIPAG-USAP)</h2>
                             <p>Act of keeping citizens informed in a language they can easily understand and delivered courteously.</p>
                             <p>(Paggamit ng wika na madaling maunawaan at naipahayag ng magalang.)</p>
                             <br>
@@ -543,16 +558,14 @@
                     <div class="carousel-item" id="qr-timeout-slide">
                         <div class="question-slide">
 
-                            {{-- ADDED SUCCESS MESSAGE LOGIC HERE --}}
                             @if(session('success'))
                                 <div id="success-message" class="alert alert-success" role="alert"
                                     style="background-color: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-top: 20px;">
                                     {{ session('success') }}
                                 </div>
                             @endif
-                            {{-- END SUCCESS MESSAGE --}}
 
-                            <h3 style="padding: 50px">Scan the QR code to fill out the comments and suggestions form</h3>
+                            <h3 style="padding: 50px; color: #0056b3;">Scan the QR code to fill out the comments and suggestions form</h3>
 
                             <div class="qr-code-container d-flex justify-content-center">
                                 {!! QrCode::size(350)->backgroundColor(255, 255, 255, 0)->generate('https://forms.gle/Tvmm2WmjHGNqteUD9') !!}
@@ -561,7 +574,6 @@
                             <br>
 
                             <div class="mt-3">
-                                {{-- Button to go back to the first slide (by reloading the page) --}}
                                 <button type="button" class="btn btn-primary m-3 go-back-btn-large" onclick="window.location.reload()">Rate Again</button>
                             </div>
                         </div>
@@ -581,246 +593,257 @@
             <button type="button" data-bs-target="#surveyCarousel" aria-label="Slide 6"></button>
             <button type="button" data-bs-target="#surveyCarousel" aria-label="Slide 7"></button>
         </div>
-</div>
+    </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-<script src="https://unpkg.com/lucide@latest"></script>
-<script>
-    lucide.createIcons();
-    const surveyCarouselEl = document.getElementById('surveyCarousel');
-    const surveyCarousel = new bootstrap.Carousel(surveyCarouselEl, {
-        touch: false,
-        interval: false
-    });
-
-    document.addEventListener("DOMContentLoaded", () => {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
         lucide.createIcons();
-    });
-
-    function nextSlide() {
-        surveyCarousel.next();
-    }
-
-    function prevSlide() {
-        surveyCarousel.prev();
-        $('.rating-option').removeClass('active');
-    }
-
-    function submitForm() {
-        const form = document.querySelector('form');
-        form.submit();
-    }
-
-    function selectRating(selectedLabel, inputName, value, isLastQuestion = false) {
-        var container = selectedLabel.closest('.d-flex');
-
-        // Target the new class: rating-option
-        var labels = container.querySelectorAll('label.rating-option');
-
-        labels.forEach(function(label) {
-            label.classList.remove('active');
+        const surveyCarouselEl = document.getElementById('surveyCarousel');
+        const surveyCarousel = new bootstrap.Carousel(surveyCarouselEl, {
+            touch: false,
+            interval: false
         });
 
-        selectedLabel.classList.add('active');
+        // --- GLOBAL VARIABLES FOR SERVICE PAGINATION ---
+        let servicePage = 0;
+        const itemsPerPage = 8; // 4 columns * 2 rows
+        let $currentServiceSet = $(); // Holds the filtered list of services
 
-        var input = selectedLabel.querySelector('input[type="radio"]');
-        if (input) {
-            input.checked = true;
+        function nextSlide() {
+            surveyCarousel.next();
         }
 
-        nextSlide();
-
-        if (isLastQuestion) {
-            setTimeout(function() {
-                submitForm();
-            }, 400);
-        }
-    }
-
-    function reActivateRating(slideElement) {
-        const $slide = $(slideElement);
-        // Find the checked radio button within the current slide
-        const $checkedInput = $slide.find('input[type="radio"]:checked');
-
-        // Remove active class from all options in this slide first
-        $slide.find('label.rating-option').removeClass('active');
-
-        if ($checkedInput.length) {
-            // Find the label associated with the checked radio button and apply 'active' class
-            // .closest() finds the nearest ancestor with the selector.
-            $checkedInput.closest('label.rating-option').addClass('active');
-        }
-    }
-
-    $(document).ready(function() {
-
-        // --- HEADER TOGGLE FUNCTION ---
-        function toggleHeader(slideIndex) {
-            // Check if the current slide is the first one (index 0)
-            if (slideIndex === 0) {
-                $('.center-logo-container, h5, h1').show();
-            } else {
-                // Hide the header elements on all subsequent slides
-                $('.center-logo-container, h5, h1').hide();
-            }
+        function prevSlide() {
+            surveyCarousel.prev();
+            $('.rating-option').removeClass('active');
         }
 
-        // Initialize header state on load
-        toggleHeader(0);
+        function submitForm() {
+            const form = document.querySelector('form');
+            form.submit();
+        }
 
-        // --- DIVISION SELECTION AND SLIDE TRANSITION (NEW Slide 1) ---
-        $('.division-btn').on('click', function() {
-            var selectedOfficeId = $(this).data('office-id');
-
-            // 1. Update active button state
-            $('.division-btn').removeClass('active');
-            $(this).addClass('active');
-
-            // 2. Filter the staff list (in the *next* slide)
-            if (selectedOfficeId === 'all') {
-                $('.staff-item').show();
-            } else {
-                $('.staff-item').hide();
-                $('.staff-item[data-office-id="' + selectedOfficeId + '"]').show();
-            }
-
-            // Store the selected ID to initialize the filter on the staff slide's back button click
-            $('#staff-selection-slide').data('current-office-id', selectedOfficeId);
-
-            // 3. Move to the Staff Selection slide
-            setTimeout(() => {
-                surveyCarousel.next();
-            }, 300);
-        });
-
-
-        // --- STAFF SELECTION AND SLIDE TRANSITION (Slide 2) ---
-        $('.staff-item label').on('click', function(e) {
-            e.preventDefault();
-
-            var $input = $(this).find('input[name="user_id"]');
-            var $avatar = $(this).find('.staff-avatar');
-
-            // Clear previous selections
-            $('input[name="user_id"]').prop('checked', false);
-            $('.staff-avatar').removeClass('selected');
-
-            // Set new selection
-            $input.prop('checked', true);
-            $avatar.addClass('selected');
-
-            $input.trigger('change');
-
-            // Move to the next slide (Service Selection)
-            setTimeout(() => {
-                surveyCarousel.next();
-            }, 300);
-        });
-
-
-        // --- SERVICE FILTERING (Triggered by Staff Change) ---
-        // This is necessary to show the right services when navigating back to this slide (Slide 3)
-        $('input[name="user_id"]').on('change', function() {
-            var selectedOfficeId = $(this).data('office-id').toString();
-
+        // --- SERVICE GRID PAGINATION FUNCTIONS ---
+        function renderServiceGrid() {
+            // 1. Hide ALL items initially
             $('.service-item').hide();
 
-            $('.service-item[data-office-id="' + selectedOfficeId + '"]').show();
+            // 2. Calculate range for current page
+            const start = servicePage * itemsPerPage;
+            const end = start + itemsPerPage;
 
-            $('input[name="problem_category_id"]').prop('checked', false);
-            $('.service-item').removeClass('selected');
-        });
+            // 3. Show only items in the slice
+            const $visibleSlice = $currentServiceSet.slice(start, end);
+            $visibleSlice.fadeIn(200);
 
+            // 4. Update Button States
+            const totalPages = Math.ceil($currentServiceSet.length / itemsPerPage);
 
-        // --- SERVICE SELECTION AND VISUAL FEEDBACK (Service Slide 3) ---
-        $('input[name="problem_category_id"]').on('change', function () {
-            $('.service-item').removeClass('selected');
-            $(this).closest('.service-item').addClass('selected');
+            // Disable Prev if on page 0
+            $('.prev-service-btn').prop('disabled', servicePage === 0)
+                                .toggleClass('disabled-visual', servicePage === 0);
 
-            setTimeout(() => surveyCarousel.next(), 300);
-        });
+            // Disable Next if on last page (or if there are no items)
+            const isLastPage = (servicePage + 1) >= totalPages || totalPages === 0;
+            $('.next-service-btn').prop('disabled', isLastPage)
+                                .toggleClass('disabled-visual', isLastPage);
 
-        // --- CAROUSEL SLIDE EVENT HANDLER (Main Logic Controller) ---
-        $('#surveyCarousel').on('slid.bs.carousel', function (e) {
-            const currentSlideIndex = e.to;
-            const $relatedTarget = $(e.relatedTarget);
+            // 5. Update Text Indicator
+            if ($currentServiceSet.length > 0) {
+                $('#service-page-indicator').text(`Page ${servicePage + 1} of ${totalPages}`);
+            } else {
+                $('#service-page-indicator').text('');
+            }
+        }
 
-            // 1. Toggle Header Visibility
-            toggleHeader(currentSlideIndex);
+        function changeServicePage(direction) {
+            servicePage += direction;
+            renderServiceGrid();
+        }
 
-            // 2. Service Filtering Fallback (on slide to Service Selection)
-            if ($relatedTarget.hasClass('service-slide')) {
-                $('input[name="user_id"]:checked').trigger('change');
+        function selectRating(selectedLabel, inputName, value, isLastQuestion = false) {
+            var container = selectedLabel.closest('.d-flex');
+            var labels = container.querySelectorAll('label.rating-option');
+
+            labels.forEach(function(label) {
+                label.classList.remove('active');
+            });
+
+            selectedLabel.classList.add('active');
+
+            var input = selectedLabel.querySelector('input[type="radio"]');
+            if (input) {
+                input.checked = true;
             }
 
-            // 🌟 3. NEW: Re-activate the visual rating state on the slide we just landed on (e.relatedTarget) 🌟
-            reActivateRating(e.relatedTarget);
+            nextSlide();
 
-            // 4. Update Indicators (This remains the same)
-            const indicators = document.querySelectorAll('.carousel-indicators button');
-            indicators.forEach((indicator, index) => {
-                indicator.classList.remove('active');
-                indicator.removeAttribute('aria-current');
-                if (index === currentSlideIndex) {
-                    indicator.classList.add('active');
-                    indicator.setAttribute('aria-current', 'true');
+            if (isLastQuestion) {
+                setTimeout(function() {
+                    submitForm();
+                }, 400);
+            }
+        }
+
+        function reActivateRating(slideElement) {
+            const $slide = $(slideElement);
+            const $checkedInput = $slide.find('input[type="radio"]:checked');
+
+            $slide.find('label.rating-option').removeClass('active');
+
+            if ($checkedInput.length) {
+                $checkedInput.closest('label.rating-option').addClass('active');
+            }
+        }
+
+        $(document).ready(function() {
+            // Initialize Icons
+            lucide.createIcons();
+
+            // --- HEADER TOGGLE FUNCTION ---
+            function toggleHeader(slideIndex) {
+                if (slideIndex === 0) {
+                    $('.center-logo-container, h5, h1').show();
+                } else {
+                    $('.center-logo-container, h5, h1').hide();
                 }
+            }
+            toggleHeader(0);
+
+            // --- DIVISION SELECTION (Slide 1) ---
+            $('.division-btn').on('click', function() {
+                var selectedOfficeId = $(this).data('office-id');
+
+                $('.division-btn').removeClass('active');
+                $(this).addClass('active');
+
+                if (selectedOfficeId === 'all') {
+                    $('.staff-item').show();
+                } else {
+                    $('.staff-item').hide();
+                    $('.staff-item[data-office-id="' + selectedOfficeId + '"]').show();
+                }
+
+                $('#staff-selection-slide').data('current-office-id', selectedOfficeId);
+
+                setTimeout(() => {
+                    surveyCarousel.next();
+                }, 300);
             });
+
+            // --- STAFF SELECTION (Slide 2) ---
+            $('.staff-item label').on('click', function(e) {
+                e.preventDefault();
+
+                var $input = $(this).find('input[name="user_id"]');
+                var $avatar = $(this).find('.staff-avatar');
+
+                $('input[name="user_id"]').prop('checked', false);
+                $('.staff-avatar').removeClass('selected');
+
+                $input.prop('checked', true);
+                $avatar.addClass('selected');
+
+                $input.trigger('change');
+
+                setTimeout(() => {
+                    surveyCarousel.next();
+                }, 300);
+            });
+
+            // --- SERVICE FILTERING & PAGINATION TRIGGER (Slide 3) ---
+            $('input[name="user_id"]').on('change', function() {
+                var selectedOfficeId = $(this).data('office-id').toString();
+
+                // 1. Filter: Find all items matching this office and store them
+                $currentServiceSet = $('.service-item[data-office-id="' + selectedOfficeId + '"]');
+
+                // 2. Clear old selections
+                $('input[name="problem_category_id"]').prop('checked', false);
+                $('.service-item').removeClass('selected');
+
+                // 3. Reset to Page 0
+                servicePage = 0;
+
+                // 4. Render the grid
+                renderServiceGrid();
+            });
+
+            // --- SERVICE SELECTION VISUALS ---
+            $('input[name="problem_category_id"]').on('change', function () {
+                $('.service-item').removeClass('selected');
+                $(this).closest('.service-item').addClass('selected');
+                setTimeout(() => surveyCarousel.next(), 300);
+            });
+
+            // --- CAROUSEL SLIDE CONTROLLER ---
+            $('#surveyCarousel').on('slid.bs.carousel', function (e) {
+                const currentSlideIndex = e.to;
+                const $relatedTarget = $(e.relatedTarget);
+
+                toggleHeader(currentSlideIndex);
+
+                // Ensure Grid is rendered if we land on Service Slide
+                if ($relatedTarget.hasClass('service-slide')) {
+                    if ($('input[name="user_id"]:checked').length > 0) {
+                        renderServiceGrid();
+                    }
+                }
+
+                reActivateRating(e.relatedTarget);
+
+                const indicators = document.querySelectorAll('.carousel-indicators button');
+                indicators.forEach((indicator, index) => {
+                    indicator.classList.remove('active');
+                    indicator.removeAttribute('aria-current');
+                    if (index === currentSlideIndex) {
+                        indicator.classList.add('active');
+                        indicator.setAttribute('aria-current', 'true');
+                    }
+                });
+            });
+
+            // Auto-hide success message
+            setTimeout(() => {
+                $('#success-message').fadeOut('slow');
+            }, 5000);
         });
 
-        // Auto-hide success message after 5 seconds
-        setTimeout(() => {
-            $('#success-message').fadeOut('slow');
-        }, 5000);
-    });
+        // --- TIMEOUT LOGIC ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const qrSlide = document.getElementById('qr-timeout-slide');
+            let timeoutId;
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const surveyCarousel = document.getElementById('surveyCarousel');
-        const qrSlide = document.getElementById('qr-timeout-slide');
-        let timeoutId;
+            if (surveyCarouselEl && qrSlide) {
+                surveyCarouselEl.addEventListener('slid.bs.carousel', function () {
+                    if (qrSlide.classList.contains('active')) {
+                        clearTimeout(timeoutId);
+                        const timeoutDuration = 3 * 60 * 1000; // 3 minutes
+                        console.log('QR slide active. Setting timeout for 3 minutes.');
 
-        if (surveyCarousel && qrSlide) {
-            // 1. Listen for the Bootstrap Carousel slide event
-            surveyCarousel.addEventListener('slid.bs.carousel', function () {
-                // Check if the currently active slide is the QR slide
-                if (qrSlide.classList.contains('active')) {
-                    // Clear any existing timer just in case
-                    clearTimeout(timeoutId);
+                        timeoutId = setTimeout(function() {
+                            window.location.reload();
+                        }, timeoutDuration);
+                    } else {
+                        clearTimeout(timeoutId);
+                    }
+                });
+            }
+        });
 
-                    // Set a new timer for 3 minutes (3 minutes * 60 seconds * 1000 milliseconds)
-                    const timeoutDuration = 3 * 60 * 1000;
-                    console.log('QR slide active. Setting timeout for 3 minutes.');
+        // --- QR REDIRECT LOGIC ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const QR_SLIDE_INDEX = 6;
+            const urlParams = new URLSearchParams(window.location.search);
 
-                    timeoutId = setTimeout(function() {
-                        // Action to perform after 3 minutes: Reload the page
-                        window.location.reload();
-                    }, timeoutDuration);
-                } else {
-                    // If the user navigates away from the QR slide (e.g., clicks 'Go Back')
-                    // Clear the timer so it doesn't interrupt the user.
-                    clearTimeout(timeoutId);
-                }
-            });
-        }
-    });
-
-    document.addEventListener('DOMContentLoaded', function() {
-        const QR_SLIDE_INDEX = 6;
-        const urlParams = new URLSearchParams(window.location.search);
-
-        if (urlParams.has('thank_you') && surveyCarouselEl) {
-            // Remove the query parameter from the URL bar for cleanliness
-            // This stops the browser from defaulting back to the QR page if the user hits refresh manually
-            history.replaceState({}, document.title, window.location.pathname);
-
-            // Force the carousel to the QR slide (index 6) immediately
-            // This makes the QR slide 'active'
-            surveyCarousel.to(QR_SLIDE_INDEX);
-        }
-    });
-</script>
+            if (urlParams.has('thank_you') && surveyCarouselEl) {
+                history.replaceState({}, document.title, window.location.pathname);
+                surveyCarousel.to(QR_SLIDE_INDEX);
+            }
+        });
+    </script>
 </body>
 </html>
-

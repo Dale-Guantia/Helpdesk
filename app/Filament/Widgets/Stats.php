@@ -17,20 +17,20 @@ class Stats extends BaseWidget
         return [
             Stat::make('Total Users', User::count())
                 ->icon('heroicon-o-user-group')
-                ->color('primary')
-                ->chart([1, 1, 1, 1, 1, 1, 1]),
+                ->color('admin')
+                ->chart([7, 2, 10, 3, 15, 4, 17]),
             Stat::make('Total Tickets', Ticket::count())
                 ->icon('heroicon-o-ticket')
-                ->color('primary')
-                ->chart([1, 1, 1, 1, 1, 1, 1]),
+                ->color('pm')
+                ->chart([7, 2, 10, 3, 15, 4, 17]),
             Stat::make('Total Divisions', Office::count())
                 ->icon('heroicon-o-building-office')
-                ->color('primary')
-                ->chart([1, 1, 1, 1, 1, 1, 1]),
+                ->color('payroll')
+                ->chart([7, 2, 10, 3, 15, 4, 17]),
             Stat::make('Total Issues', ProblemCategory::count())
                 ->icon('heroicon-o-exclamation-triangle')
-                ->color('primary')
-                ->chart([1, 1, 1, 1, 1, 1, 1]),
+                ->color('deptHead')
+                ->chart([7, 2, 10, 3, 15, 4, 17]),
         ];
     }
 

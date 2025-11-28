@@ -34,6 +34,31 @@ class Column extends ApexChartWidget
      * @return array
      */
 
+    protected function generateColors(int $count): array
+    {
+        // Define a palette of distinct colors (using bright, modern hex codes)
+        $palette = [
+            '#ff7572',
+            '#b56bff',
+            '#3496ff',
+            '#1dffb0',
+            '#57caff',
+            '#58fa5d',
+            '#e3f85d',
+            '#ffd152',
+            '#ff9a42',
+            '#ee75de',
+        ];
+
+        $colors = [];
+        for ($i = 0; $i < $count; $i++) {
+            // Cycle through the palette array
+            $colors[] = $palette[$i % count($palette)];
+        }
+        return $colors;
+    }
+
+
     // protected function getFormSchema(): array
     // {
     //     return [
@@ -64,24 +89,33 @@ class Column extends ApexChartWidget
             ->where('department_id', $departmentId)
             ->get();
 
+        $barColors = $this->generateColors($offices->count());
+
         return [
             'chart' => [
                 'type' => 'bar',
-                'height' => 300,
-                'toolbar' => ['show' => false],
+                'height' => 340,
+                'toolbar' => ['show' => true],
             ],
+
+            'legend' => [
+                'show' => false,
+            ],
+
             'series' => [
                 [
                     'name' => 'Total Tickets',
                     'data' => $offices->pluck('tickets_count')->toArray(),
                 ],
             ],
+
             'xaxis' => [
                 'categories' => $offices->pluck('office_name')->toArray(),
                 'labels' => [
                     'style' => [
                         'fontFamily' => 'inherit',
                         'fontSize' => '10px',
+                        'fontWeight' => 'bold',
                     ],
                 ],
             ],
@@ -92,15 +126,21 @@ class Column extends ApexChartWidget
                     ],
                 ],
             ],
-            'colors' => ['#0e2f66'],
-            'title' => [
-                'text' => "{$departmentName}",
-                'align' => 'center',
-                'style' => [
-                    'fontSize' => '11px',
-                    'fontWeight' => 'bold',
-                    'fontFamily' => 'inherit',
+            'colors' => $barColors,
+
+            'plotOptions' => [
+                'bar' => [
+                    'distributed' => true,
+                    'horizontal' => false,
                 ],
+            ],
+
+            'dataLabels' => [
+                'enabled' => true,
+                'style' => [
+                    'fontSize' => '12px',
+                    'colors' => ['#000']
+                ]
             ],
         ];
     }

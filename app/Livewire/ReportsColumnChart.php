@@ -110,7 +110,7 @@ class ReportsColumnChart extends ApexChartWidget
                     ],
                 ],
             ],
-            'colors' => ['#0e2f66'],
+            'colors' => ['#ff7572', '#b56bff', '#3496ff', '#57caff', '#1dffb0', '#58fa5d', '#e3f85d', '#ffd152', '#ff9a42', '#ee75de']
         ];
     }
 

@@ -32,6 +32,13 @@ class Login extends BaseLogin
         ];
     }
 
+    protected function hasBrandLogo(): bool
+    {
+        // By returning false, we prevent the brand logo from rendering
+        // on the login screen.
+        return false;
+    }
+
     protected function getLoginFormComponent(): Component
     {
         return TextInput::make('login')

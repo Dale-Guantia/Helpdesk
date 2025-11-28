@@ -26,9 +26,9 @@ class ProblemCategoryTableSeeder extends Seeder
 
         $payroll_issues = [
             ['name' => 'Salary Deduction (LWOP/UL)', 'icon' => 'banknote-arrow-down'],
-            ['name' => 'Salary Adjustment/Differential', 'icon' => 'file-sliders'],
+            ['name' => 'Salary Adjustment/ Differential', 'icon' => 'file-sliders'],
             ['name' => 'No Salary Received', 'icon' => 'banknote-x'],
-            ['name' => 'No Benefits/Bonuses Received', 'icon' => 'hand-coins'],
+            ['name' => 'No Benefits/ Bonuses Received', 'icon' => 'hand-coins'],
             ['name' => 'Overtime Pay/Allowance', 'icon' => 'banknote'],
             ['name' => 'Hazard Pay, Subsistence and Laundry Allowance', 'icon' => 'shield-check'],
             ['name' => 'Request for Certificate of Last Salary Received', 'icon' => 'file-badge'],
@@ -36,7 +36,7 @@ class ProblemCategoryTableSeeder extends Seeder
             ['name' => 'Salary Underpayment/ Overpayment', 'icon' => 'banknote'],
             ['name' => 'Status of First Salary', 'icon' => 'clock'],
             ['name' => 'Terminal Leave Clearance', 'icon' => 'badge-check'],
-            ['name' => 'Status of Special/Other Payroll', 'icon' => 'archive'],
+            ['name' => 'Status of Special/ Other Payroll', 'icon' => 'archive'],
             ['name' => 'Status of Last Salary', 'icon' => 'banknote'],
         ];
 
@@ -81,7 +81,7 @@ class ProblemCategoryTableSeeder extends Seeder
             ['name' => 'PASIGLAKAS', 'icon' => 'sparkles'],
             ['name' => 'CSS Fun Run', 'icon' => 'sparkles'],
             ['name' => 'Employee Fun Run', 'icon' => 'sparkles'],
-            ['name' => 'Lost access in the loyalty award/incentive module', 'icon' => 'lock-open'],
+            ['name' => 'Lost access in the loyalty award/   incentive module', 'icon' => 'lock-open'],
             ['name' => 'Summary list of Pag-IBIG MP2 number', 'icon' => 'list'],
             ['name' => 'Loan deduction', 'icon' => 'minus-circle'],
             ['name' => 'Loans in monitoring index not reflected in payroll', 'icon' => 'alert-triangle'],
@@ -93,11 +93,11 @@ class ProblemCategoryTableSeeder extends Seeder
             ['name' => 'Status of Request for Employment Records', 'icon' => 'clock'],
             ['name' => 'Status of Job application', 'icon' => 'briefcase'],
             ['name' => 'Status of Recruitment Request Form', 'icon' => 'file-text'],
-            ['name' => 'Status of Renewal/Non-Renewal of Employees', 'icon' => 'refresh-cw'],
+            ['name' => 'Status of Renewal/ Non-Renewal of Employees', 'icon' => 'refresh-cw'],
             ['name' => 'Status of Update on Personal Information', 'icon' => 'user'],
             ['name' => 'Status of Update on Separated employees', 'icon' => 'user-minus'],
             ['name' => 'Access of status from Admin Div', 'icon' => 'building'],
-            ['name' => 'Access of status for memos of Dropped/Suspension', 'icon' => 'file-down'],
+            ['name' => 'Access of status for memos of Dropped/ Suspension', 'icon' => 'file-down'],
             ['name' => 'Access of status for receiving of Death Cert', 'icon' => 'inbox'],
         ];
 
@@ -124,7 +124,7 @@ class ProblemCategoryTableSeeder extends Seeder
         ];
 
         $it_issues = [
-            ['name' => 'Office assignment/Retagging', 'icon' => 'tag'],
+            ['name' => 'Office assignment/ Retagging', 'icon' => 'tag'],
             ['name' => 'GEMS account password reset', 'icon' => 'rotate-ccw-key'],
         ];
 
